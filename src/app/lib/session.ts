@@ -37,3 +37,24 @@ export async function createSession(role: SessionPayload['role']) {
         path: '/',
     });
 }
+
+export async function updateSession() {
+    const session = cookies().get('session')?.value;
+    if (!session) return;
+
+    const payload = await decrypt(session);
+    if (!payload) return;
+
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    cookies().set('session', session, {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: 'lax',
+        path: '/',
+    });
+}
+
+export function deleteSession() {
+    cookies().delete('session');
+}

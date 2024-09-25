@@ -1,6 +1,6 @@
 'use server';
 import { FormState, LoginFormSchema } from '@/app/lib/definitions';
-import { createSession } from '@/app/lib/session';
+import { createSession, deleteSession } from '@/app/lib/session';
 import { redirect } from 'next/navigation';
 
 export async function login(state: FormState, formData: FormData) {
@@ -25,4 +25,9 @@ export async function login(state: FormState, formData: FormData) {
 
     // redirect to dashboard
     redirect('/dashboard');
+}
+
+export async function logout() {
+    deleteSession();
+    redirect('/');
 }
