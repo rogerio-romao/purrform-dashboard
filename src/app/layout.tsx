@@ -1,5 +1,5 @@
+import { cn } from '@/app/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
-import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 

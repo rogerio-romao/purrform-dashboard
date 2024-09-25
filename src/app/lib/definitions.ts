@@ -23,3 +23,8 @@ export type FormState =
           message?: string;
       }
     | undefined;
+
+export type SessionPayload = {
+    role: 'admin' | 'user';
+    expiresAt: Date;
+};
