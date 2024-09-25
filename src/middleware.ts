@@ -22,7 +22,7 @@ export default async function middleware(req: NextRequest) {
     }
 
     // 5. Redirect to dashboard if session is valid
-    if (isPublicRoute && session?.role) {
+    if (isPublicRoute && session?.role && !path.includes('dashboard')) {
         return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
     }
 

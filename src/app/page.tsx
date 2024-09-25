@@ -1,11 +1,18 @@
-import { LoginForm } from '@/components/login-form';
-import { ModeToggle } from '@/components/ui/mode-toggle';
-import Image from 'next/image';
+'use client';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
-    return (
-        <section className='flex justify-center items-center h-full'>
-            <LoginForm />
-        </section>
-    );
+    const router = useRouter();
+
+    useEffect(() => {
+        const sessionCookie = document.cookie.includes('session=');
+        if (sessionCookie) {
+            router.push('/dashboard');
+        } else {
+            router.push('/login');
+        }
+    }, [router]);
+
+    return <div></div>;
 }
