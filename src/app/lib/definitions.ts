@@ -11,7 +11,7 @@ export const LoginFormSchema = z.object({
         ],
         { message: 'Invalid email' }
     ),
-    password: z.enum(['5$=~E)7P~r@1'], { message: 'Invalid password' }),
+    password: z.enum(['password'], { message: 'Invalid password' }),
 });
 
 export type FormState =
