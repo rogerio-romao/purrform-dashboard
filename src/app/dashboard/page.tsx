@@ -99,8 +99,8 @@ export default async function Page() {
                                     <CardDescription>
                                         Orders This month
                                     </CardDescription>
-                                    <CardTitle className='text-3xl'>
-                                        £341,841.85
+                                    <CardTitle className='text-2xl lg:text-3xl'>
+                                        £341,841
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -114,7 +114,7 @@ export default async function Page() {
                                     <CardDescription>
                                         Loyalty Points This Month
                                     </CardDescription>
-                                    <CardTitle className='text-4xl'>
+                                    <CardTitle className='text-2xl lg:text-3xl'>
                                         £5,329
                                     </CardTitle>
                                 </CardHeader>
