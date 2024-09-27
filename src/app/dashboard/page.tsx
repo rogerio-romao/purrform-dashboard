@@ -124,10 +124,22 @@ export default async function Page() {
                                     </div>
                                 </CardContent>
                                 <CardFooter>
-                                    <Progress
-                                        value={12}
-                                        aria-label='12% increase'
-                                    />
+                                    <div className='flex flex-col w-full gap-2'>
+                                        <div className='text-xs text-muted-foreground'>
+                                            1.5% of value
+                                        </div>
+                                        <Progress
+                                            value={1.5}
+                                            aria-label='1.5% of value'
+                                        />
+                                        <div className='text-xs text-muted-foreground'>
+                                            5.5% of orders
+                                        </div>
+                                        <Progress
+                                            value={5.5}
+                                            aria-label='5.5% of orders'
+                                        />
+                                    </div>
                                 </CardFooter>
                             </Card>
                         </div>
