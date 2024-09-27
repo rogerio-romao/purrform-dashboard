@@ -1,9 +1,9 @@
 import { cn } from '@/app/lib/utils';
+import LogoutButton from '@/components/logout-button';
 import { ThemeProvider } from '@/components/theme-provider';
+import { ModeToggle } from '@/components/ui/mode-toggle';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-
-import { ModeToggle } from '@/components/ui/mode-toggle';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -33,11 +33,14 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <main className='px-6 py-4 min-h-screen'>
-                        <header className='flex justify-between'>
-                            <h1 className='text-4xl'>
+                        <header className='flex justify-between items-center py-2'>
+                            <h1 className='text-2xl font-semibold tracking-tight'>
                                 Purrform Apps Dashboard
                             </h1>
-                            <ModeToggle />
+                            <div className='flex items-center gap-2'>
+                                <LogoutButton />
+                                <ModeToggle />
+                            </div>
                         </header>
 
                         {children}
