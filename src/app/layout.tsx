@@ -33,8 +33,8 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <main className='px-6 py-4 min-h-screen'>
-                        <header className='flex justify-between items-center py-2'>
-                            <h1 className='text-2xl font-semibold tracking-tight'>
+                        <header className='flex justify-between items-center py-2 border-b border-green-900'>
+                            <h1 className='text-3xl font-semibold tracking-tight'>
                                 Purrform Apps Dashboard
                             </h1>
                             <div className='flex items-center gap-2'>
