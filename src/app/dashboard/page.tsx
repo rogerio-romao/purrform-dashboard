@@ -10,7 +10,57 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
+interface ControlPanelStats {
+    id: number;
+    month: number;
+    year: number;
+    sales_value: number;
+    sales_nr: number;
+    loyalty_value: number;
+    loyalty_nr: number;
+}
+
 export default async function Page() {
+    const response = await fetch('http://localhost:5555/controlPanel');
+    const data = (await response.json()) as ControlPanelStats[];
+
+    const currentMonth = data[0];
+    const currentMonthSalesValue = new Intl.NumberFormat('en-UK').format(
+        currentMonth.sales_value
+    );
+    const currentMonthSalesNr = new Intl.NumberFormat('en-UK').format(
+        currentMonth.sales_nr
+    );
+    const loyaltyPointsThisMonth = new Intl.NumberFormat('en-UK').format(
+        currentMonth.loyalty_value
+    );
+    const loyaltyPointsNr = new Intl.NumberFormat('en-UK').format(
+        currentMonth.loyalty_nr
+    );
+
+    const lastMonth = data[1];
+    const lastMonthSalesValue = new Intl.NumberFormat('en-UK').format(
+        lastMonth.sales_value
+    );
+    const lastMonthSalesNr = new Intl.NumberFormat('en-UK').format(
+        lastMonth.sales_nr
+    );
+    const loyaltyPointsLastMonth = new Intl.NumberFormat('en-UK').format(
+        lastMonth.loyalty_value
+    );
+    const loyaltyPointsLastMonthNr = new Intl.NumberFormat('en-UK').format(
+        lastMonth.loyalty_nr
+    );
+
+    const loyaltyPercentageOfValue = (
+        (currentMonth.loyalty_value / currentMonth.sales_value) *
+        100
+    ).toFixed(2);
+    const loyaltyPercentageOfOrders = (
+        (currentMonth.loyalty_nr / currentMonth.sales_nr) *
+        100
+    ).toFixed(2);
+
     return (
         <div className='flex min-h-screen w-full flex-col bg-muted/40'>
             <div className='flex flex-col sm:gap-4 sm:py-4 '>
@@ -38,12 +88,12 @@ export default async function Page() {
                                         Orders This month
                                     </CardDescription>
                                     <CardTitle className='text-2xl lg:text-3xl'>
-                                        £341,841
+                                        £{currentMonthSalesValue}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className='text-xs text-muted-foreground'>
-                                        2,826 orders
+                                        {currentMonthSalesNr} orders
                                     </div>
                                 </CardContent>
                                 <CardHeader className='pb-2'>
@@ -51,12 +101,12 @@ export default async function Page() {
                                         Orders Last Month
                                     </CardDescription>
                                     <CardTitle className='text-2xl lg:text-3xl'>
-                                        £322,348
+                                        £{lastMonthSalesValue}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className='text-xs text-muted-foreground'>
-                                        2,699 orders
+                                        {lastMonthSalesNr} orders
                                     </div>
                                 </CardContent>
                             </Card>
@@ -66,29 +116,34 @@ export default async function Page() {
                                         Loyalty Points This Month
                                     </CardDescription>
                                     <CardTitle className='text-2xl lg:text-3xl'>
-                                        £5,329
+                                        £{loyaltyPointsThisMonth}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className='text-xs text-muted-foreground'>
-                                        156 orders
+                                        {loyaltyPointsNr} orders
                                     </div>
                                 </CardContent>
                                 <CardFooter>
                                     <div className='flex flex-col w-full gap-2'>
                                         <div className='text-xs text-muted-foreground'>
-                                            1.5% of value
+                                            {loyaltyPercentageOfValue}% of value
                                         </div>
                                         <Progress
-                                            value={1.5}
-                                            aria-label='1.5% of value'
+                                            value={Number(
+                                                loyaltyPercentageOfValue
+                                            )}
+                                            aria-label={`%{loyaltyPercentageOfValue}% of value`}
                                         />
                                         <div className='text-xs text-muted-foreground'>
-                                            5.5% of orders
+                                            {loyaltyPercentageOfOrders}% of
+                                            orders
                                         </div>
                                         <Progress
-                                            value={5.5}
-                                            aria-label='5.5% of orders'
+                                            value={Number(
+                                                loyaltyPercentageOfOrders
+                                            )}
+                                            aria-label={`%{loyaltyPercentageOfOrders}% of orders`}
                                         />
                                     </div>
                                 </CardFooter>
