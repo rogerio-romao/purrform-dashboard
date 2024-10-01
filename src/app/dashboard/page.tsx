@@ -1,4 +1,5 @@
-import OrdersBarChart from '@/components/orders-bar-chart';
+import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
+import OrdersValueBarChart from '@/components/orders-value-bar-chart';
 
 import {
     Card,
@@ -9,6 +10,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { TrendingUp } from 'lucide-react';
 
 interface ControlPanelStats {
     id: number;
@@ -19,6 +21,21 @@ interface ControlPanelStats {
     loyalty_value: number;
     loyalty_nr: number;
 }
+
+const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+];
 
 export default async function Page() {
     const response = await fetch('http://localhost:5555/controlPanel');
@@ -45,12 +62,6 @@ export default async function Page() {
     const lastMonthSalesNr = new Intl.NumberFormat('en-UK').format(
         lastMonth.sales_nr
     );
-    const loyaltyPointsLastMonth = new Intl.NumberFormat('en-UK').format(
-        lastMonth.loyalty_value
-    );
-    const loyaltyPointsLastMonthNr = new Intl.NumberFormat('en-UK').format(
-        lastMonth.loyalty_nr
-    );
 
     const loyaltyPercentageOfValue = (
         (currentMonth.loyalty_value / currentMonth.sales_value) *
@@ -60,6 +71,22 @@ export default async function Page() {
         (currentMonth.loyalty_nr / currentMonth.sales_nr) *
         100
     ).toFixed(2);
+
+    const ordersValueChartData = data.toReversed().map((month) => ({
+        month: months[month.month - 1],
+        orders: month.sales_value,
+        loyalty: month.loyalty_value,
+        percent: Number(
+            ((month.loyalty_value / month.sales_value) * 100).toFixed(2)
+        ),
+    }));
+
+    const ordersNumberChartData = data.toReversed().map((month) => ({
+        month: months[month.month - 1],
+        orders: month.sales_nr,
+        loyalty: month.loyalty_nr,
+        percent: Number(((month.loyalty_nr / month.sales_nr) * 100).toFixed(2)),
+    }));
 
     return (
         <div className='flex min-h-screen w-full flex-col bg-muted/40'>
@@ -152,13 +179,23 @@ export default async function Page() {
                         <Card>
                             <CardHeader className='px-7'>
                                 <CardTitle>Orders & Loyalty Points</CardTitle>
-                                <CardDescription>
+                                <CardDescription className='flex items-center gap-2'>
                                     Last 6 months breakdown
+                                    <TrendingUp className='h-4 w-4' />
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <OrdersBarChart />
-                            </CardContent>
+                            <section className='grid lg:grid-cols-2'>
+                                <CardContent>
+                                    <OrdersValueBarChart
+                                        chartData={ordersValueChartData}
+                                    />
+                                </CardContent>
+                                <CardContent>
+                                    <OrdersNumberBarChart
+                                        chartData={ordersNumberChartData}
+                                    />
+                                </CardContent>
+                            </section>
                         </Card>
                     </div>
                 </main>
