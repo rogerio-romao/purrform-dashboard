@@ -1,13 +1,11 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
@@ -20,21 +18,12 @@ import {
     ChartTooltipContent,
 } from '@/components/ui/chart';
 
-const chartData = [
-    { month: 'April', desktop: 186, mobile: 80, percent: 3 },
-    { month: 'May', desktop: 305, mobile: 200, percent: 5 },
-    { month: 'June', desktop: 237, mobile: 120, percent: 4 },
-    { month: 'July', desktop: 73, mobile: 190, percent: 2 },
-    { month: 'August', desktop: 209, mobile: 130, percent: 3 },
-    { month: 'September', desktop: 214, mobile: 140, percent: 8 },
-];
-
 const chartConfig = {
-    desktop: {
+    orders: {
         label: 'Orders',
         color: 'hsl(var(--chart-1))',
     },
-    mobile: {
+    loyalty: {
         label: 'Loyalty Points',
         color: 'hsl(var(--chart-2))',
     },
@@ -44,12 +33,31 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-export default function OrdersBarChart() {
+type OrdersValueBarChartProps = {
+    month: string;
+    orders: number;
+    loyalty: number;
+    percent: number;
+}[];
+
+export default function OrdersValueBarChart({
+    chartData,
+}: {
+    chartData: OrdersValueBarChartProps;
+}) {
+    if (!chartData) {
+        return null;
+    }
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>£ Value</CardTitle>
-                <CardDescription>April - September 2024</CardDescription>
+                <CardTitle>By £ Value</CardTitle>
+                <CardDescription>
+                    {chartData[0].month} -{' '}
+                    {chartData[chartData.length - 1].month}{' '}
+                    {new Date().getFullYear()}
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
@@ -60,7 +68,7 @@ export default function OrdersBarChart() {
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tickFormatter={(value: string) => value.slice(0, 3)}
                         />
                         <YAxis
                             tickLine={true}
@@ -74,13 +82,13 @@ export default function OrdersBarChart() {
                         />
                         <ChartLegend content={<ChartLegendContent />} />
                         <Bar
-                            dataKey='desktop'
-                            fill='var(--color-desktop)'
+                            dataKey='orders'
+                            fill='var(--color-orders)'
                             radius={4}
                         />
                         <Bar
-                            dataKey='mobile'
-                            fill='var(--color-mobile)'
+                            dataKey='loyalty'
+                            fill='var(--color-loyalty)'
                             radius={4}
                         />
                         <Bar
@@ -91,15 +99,6 @@ export default function OrdersBarChart() {
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className='flex-col items-start gap-2 text-sm'>
-                <div className='flex gap-2 font-medium leading-none'>
-                    Trending up by 5.2% this month{' '}
-                    <TrendingUp className='h-4 w-4' />
-                </div>
-                <div className='leading-none text-muted-foreground'>
-                    Showing total orders for the last 6 months
-                </div>
-            </CardFooter>
         </Card>
     );
 }
