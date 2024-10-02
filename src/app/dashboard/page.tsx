@@ -37,6 +37,8 @@ const months = [
     'December',
 ];
 
+export const revalidate = 7200; // invalidate every 2 hours
+
 export default async function Page() {
     const response = await fetch('http://localhost:5555/controlPanel');
     const data = (await response.json()) as ControlPanelStats[];
