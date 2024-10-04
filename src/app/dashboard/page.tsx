@@ -10,6 +10,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { TrendingUp } from 'lucide-react';
 
 interface ControlPanelStats {
@@ -186,6 +193,48 @@ export default async function Page() {
                                     <TrendingUp className='h-4 w-4' />
                                 </CardDescription>
                             </CardHeader>
+                            <section className='grid lg:grid-cols-2'>
+                                <CardContent>
+                                    <OrdersValueBarChart
+                                        chartData={ordersValueChartData}
+                                    />
+                                </CardContent>
+                                <CardContent>
+                                    <OrdersNumberBarChart
+                                        chartData={ordersNumberChartData}
+                                    />
+                                </CardContent>
+                            </section>
+                        </Card>
+                        <Card>
+                            <CardHeader className='px-7'>
+                                <CardTitle>Compare Time Periods</CardTitle>
+                                <CardDescription className='flex flex-col gap-2'>
+                                    Select time periods to compare
+                                    <Select>
+                                        <SelectTrigger className='w-[180px]'>
+                                            <SelectValue placeholder='Period' />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value='year'>
+                                                Year
+                                            </SelectItem>
+                                            <SelectItem value='month'>
+                                                Month
+                                            </SelectItem>
+                                            <SelectItem value='week'>
+                                                Week
+                                            </SelectItem>
+                                            <SelectItem value='day'>
+                                                Day
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className='grid grid-cols-2'>
+                                Period type:
+                            </CardContent>
                             <section className='grid lg:grid-cols-2'>
                                 <CardContent>
                                     <OrdersValueBarChart
