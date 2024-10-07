@@ -8,7 +8,6 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
@@ -66,7 +65,7 @@ export default function PeriodComparison(
                         onValueChange={handleSelectPeriodType}
                     >
                         <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='Period' />
+                            <SelectValue placeholder='Select Period' />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value='Year'>Year</SelectItem>
@@ -77,15 +76,15 @@ export default function PeriodComparison(
                     </Select>
                 </CardDescription>
             </CardHeader>
-            {selectedPeriodType && (
+            {selectedPeriodType ? (
                 <TimeSelection
-                    selectedPeriod={selectedPeriodType}
+                    selectedPeriodType={selectedPeriodType}
                     selectedPeriod1={selectedPeriod1}
                     handleSelectPeriod1={handleSelectPeriod1}
                     selectedPeriod2={selectedPeriod2}
                     handleSelectPeriod2={handleSelectPeriod2}
                 />
-            )}
+            ) : null}
             <section className='grid lg:grid-cols-2'>
                 <CardContent>
                     <OrdersValueBarChart chartData={ordersValueChartData} />

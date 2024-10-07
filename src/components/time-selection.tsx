@@ -1,10 +1,11 @@
 import { CardContent } from './ui/card';
 
 import MonthSelection from './month-selection';
+import WeekSelection from './week-selection';
 import YearSelection from './year-selection';
 
 type TimeSelectionProps = {
-    selectedPeriod: string;
+    selectedPeriodType: string;
     selectedPeriod1: string;
     selectedPeriod2: string;
     handleSelectPeriod1: (value: string) => void;
@@ -12,13 +13,13 @@ type TimeSelectionProps = {
 };
 
 export default function TimeSelection({
-    selectedPeriod,
+    selectedPeriodType,
     selectedPeriod1,
     selectedPeriod2,
     handleSelectPeriod1,
     handleSelectPeriod2,
 }: TimeSelectionProps) {
-    if (selectedPeriod === 'Year') {
+    if (selectedPeriodType === 'Year') {
         return (
             <CardContent className='grid grid-cols-2'>
                 <YearSelection
@@ -35,7 +36,7 @@ export default function TimeSelection({
         );
     }
 
-    if (selectedPeriod === 'Month') {
+    if (selectedPeriodType === 'Month') {
         return (
             <CardContent className='grid grid-cols-2'>
                 <MonthSelection
@@ -46,6 +47,21 @@ export default function TimeSelection({
                 <MonthSelection
                     handleSelectPeriod={handleSelectPeriod2}
                     selectedPeriod={selectedPeriod2}
+                    otherPeriod={selectedPeriod1}
+                />
+            </CardContent>
+        );
+    }
+
+    if (selectedPeriodType === 'Week') {
+        return (
+            <CardContent className='grid grid-cols-1 gap-2 lg:grid-cols-2 lg:gap-12'>
+                <WeekSelection
+                    handleSelectPeriod={handleSelectPeriod1}
+                    otherPeriod={selectedPeriod2}
+                />
+                <WeekSelection
+                    handleSelectPeriod={handleSelectPeriod2}
                     otherPeriod={selectedPeriod1}
                 />
             </CardContent>
