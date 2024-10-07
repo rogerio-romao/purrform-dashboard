@@ -1,5 +1,6 @@
 import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
 import OrdersValueBarChart from '@/components/orders-value-bar-chart';
+import PeriodComparison from '@/components/period-comparison';
 
 import {
     Card,
@@ -206,48 +207,10 @@ export default async function Page() {
                                 </CardContent>
                             </section>
                         </Card>
-                        <Card>
-                            <CardHeader className='px-7'>
-                                <CardTitle>Compare Time Periods</CardTitle>
-                                <CardDescription className='flex flex-col gap-2'>
-                                    Select time periods to compare
-                                    <Select>
-                                        <SelectTrigger className='w-[180px]'>
-                                            <SelectValue placeholder='Period' />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value='year'>
-                                                Year
-                                            </SelectItem>
-                                            <SelectItem value='month'>
-                                                Month
-                                            </SelectItem>
-                                            <SelectItem value='week'>
-                                                Week
-                                            </SelectItem>
-                                            <SelectItem value='day'>
-                                                Day
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className='grid grid-cols-2'>
-                                Period type:
-                            </CardContent>
-                            <section className='grid lg:grid-cols-2'>
-                                <CardContent>
-                                    <OrdersValueBarChart
-                                        chartData={ordersValueChartData}
-                                    />
-                                </CardContent>
-                                <CardContent>
-                                    <OrdersNumberBarChart
-                                        chartData={ordersNumberChartData}
-                                    />
-                                </CardContent>
-                            </section>
-                        </Card>
+                        <PeriodComparison
+                            ordersValueChartData={ordersValueChartData}
+                            ordersNumberChartData={ordersNumberChartData}
+                        />
                     </div>
                 </main>
             </div>
