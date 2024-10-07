@@ -29,7 +29,7 @@ export default function YearSelection({
             Year:{' '}
             <Select value={selectedPeriod} onValueChange={handleSelectPeriod}>
                 <SelectTrigger className='w-[180px]'>
-                    <SelectValue placeholder='Year' />
+                    <SelectValue placeholder='Pick an option' />
                 </SelectTrigger>
                 <SelectContent>
                     {yearsForOrders

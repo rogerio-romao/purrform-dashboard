@@ -1,13 +1,7 @@
 import { CardContent } from './ui/card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from './ui/select';
 
-import YearSelection from './ui/year-selection';
+import MonthSelection from './month-selection';
+import YearSelection from './year-selection';
 
 type TimeSelectionProps = {
     selectedPeriod: string;
@@ -33,6 +27,23 @@ export default function TimeSelection({
                     otherPeriod={selectedPeriod2}
                 />
                 <YearSelection
+                    handleSelectPeriod={handleSelectPeriod2}
+                    selectedPeriod={selectedPeriod2}
+                    otherPeriod={selectedPeriod1}
+                />
+            </CardContent>
+        );
+    }
+
+    if (selectedPeriod === 'Month') {
+        return (
+            <CardContent className='grid grid-cols-2'>
+                <MonthSelection
+                    handleSelectPeriod={handleSelectPeriod1}
+                    selectedPeriod={selectedPeriod1}
+                    otherPeriod={selectedPeriod2}
+                />
+                <MonthSelection
                     handleSelectPeriod={handleSelectPeriod2}
                     selectedPeriod={selectedPeriod2}
                     otherPeriod={selectedPeriod1}
