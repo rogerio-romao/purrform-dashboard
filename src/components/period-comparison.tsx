@@ -18,7 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 type OrdersNumberBarChartProps = {
     month: string;
@@ -41,6 +41,12 @@ export default function PeriodComparison(
     const [selectedPeriodType, setSelectedPeriodType] = useState<string>('');
     const [selectedPeriod1, setSelectedPeriod1] = useState<string>('');
     const [selectedPeriod2, setSelectedPeriod2] = useState<string>('');
+
+    useEffect(() => {
+        if (selectedPeriod1 && selectedPeriod2) {
+            console.log('Selected periods:', selectedPeriod1, selectedPeriod2);
+        }
+    }, [selectedPeriod1, selectedPeriod2]);
 
     const handleSelectPeriodType = (value: string) => {
         setSelectedPeriodType(value);
