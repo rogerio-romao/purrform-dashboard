@@ -1,6 +1,6 @@
 'use client';
 import { endOfWeek, startOfWeek } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DateRange, DayPicker, rangeIncludesDate } from 'react-day-picker';
 
 type WeekSelectionProps = {
@@ -13,6 +13,38 @@ export default function WeekSelection({
     handleSelectPeriod,
 }: WeekSelectionProps) {
     const [selectedWeek, setSelectedWeek] = useState<DateRange | undefined>();
+
+    const startDate = useMemo(() => new Date(2022, 7, 22), []);
+    const endDate = useMemo(() => new Date().getTime() + 86400000, []);
+
+    const [disabledDays, setDisabledDays] = useState([
+        { from: new Date(0), to: startDate }, // Disable all dates before startDate
+        { from: new Date(endDate), to: new Date(2100, 0, 1) }, // Disable all dates after today
+    ]);
+
+    useEffect(() => {
+        if (!otherPeriod) {
+            return;
+        }
+        const [from, to] = otherPeriod.split(' - ');
+        const fromParts = from.split('/');
+        const toParts = to.split('/');
+        const fromYear = parseInt(fromParts[2], 10);
+        const fromMonth = parseInt(fromParts[1], 10) - 1;
+        const fromDay = parseInt(fromParts[0], 10);
+        const toYear = parseInt(toParts[2], 10);
+        const toMonth = parseInt(toParts[1], 10) - 1;
+        const toDay = parseInt(toParts[0], 10);
+        setDisabledDays([
+            { from: new Date(0), to: startDate }, // Disable all dates before startDate
+            { from: new Date(endDate), to: new Date(2100, 0, 1) }, // Disable all dates after today
+            {
+                from: new Date(fromYear, fromMonth, fromDay),
+                to: new Date(toYear, toMonth, toDay),
+            },
+        ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [otherPeriod]);
 
     useEffect(() => {
         if (!selectedWeek) {
@@ -28,7 +60,7 @@ export default function WeekSelection({
             <p>Week: </p>
             <DayPicker
                 showOutsideDays={true}
-                disabled={{ after: new Date(), before: new Date(2022, 7, 22) }}
+                disabled={disabledDays}
                 fixedWeeks
                 captionLayout='dropdown'
                 defaultMonth={new Date()}

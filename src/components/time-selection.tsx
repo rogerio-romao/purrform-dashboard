@@ -1,5 +1,6 @@
 import { CardContent } from './ui/card';
 
+import DaySelection from './day-selection';
 import MonthSelection from './month-selection';
 import WeekSelection from './week-selection';
 import YearSelection from './year-selection';
@@ -61,6 +62,21 @@ export default function TimeSelection({
                     otherPeriod={selectedPeriod2}
                 />
                 <WeekSelection
+                    handleSelectPeriod={handleSelectPeriod2}
+                    otherPeriod={selectedPeriod1}
+                />
+            </CardContent>
+        );
+    }
+
+    if (selectedPeriodType === 'Day') {
+        return (
+            <CardContent className='grid grid-cols-1 gap-2 lg:grid-cols-2 lg:gap-12'>
+                <DaySelection
+                    handleSelectPeriod={handleSelectPeriod1}
+                    otherPeriod={selectedPeriod2}
+                />
+                <DaySelection
                     handleSelectPeriod={handleSelectPeriod2}
                     otherPeriod={selectedPeriod1}
                 />
