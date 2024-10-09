@@ -4,6 +4,7 @@ import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
 import OrdersValueBarChart from '@/components/orders-value-bar-chart';
 import TimeSelection from './time-selection';
 
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -18,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type OrdersNumberBarChartProps = {
     month: string;
@@ -42,10 +43,13 @@ export default function PeriodComparison(
     const [selectedPeriod1, setSelectedPeriod1] = useState<string>('');
     const [selectedPeriod2, setSelectedPeriod2] = useState<string>('');
 
+    const showGetDataButton = selectedPeriod1 && selectedPeriod2;
+
     useEffect(() => {
-        if (selectedPeriod1 && selectedPeriod2) {
-            console.log('Selected periods:', selectedPeriod1, selectedPeriod2);
+        if (!selectedPeriod1 || !selectedPeriod2) {
+            return;
         }
+        console.log('Selected periods:', selectedPeriod1, selectedPeriod2);
     }, [selectedPeriod1, selectedPeriod2]);
 
     const handleSelectPeriodType = (value: string) => {
@@ -62,7 +66,7 @@ export default function PeriodComparison(
 
     return (
         <Card>
-            <CardHeader className='px-7'>
+            <CardHeader className='px-7 relative'>
                 <CardTitle>Compare Time Periods</CardTitle>
                 <CardDescription className='flex flex-col gap-2'>
                     Select time periods to compare
@@ -81,6 +85,11 @@ export default function PeriodComparison(
                         </SelectContent>
                     </Select>
                 </CardDescription>
+                {showGetDataButton ? (
+                    <Button size={'lg'} className='md:absolute top-4 right-6'>
+                        Get Data
+                    </Button>
+                ) : null}
             </CardHeader>
             {selectedPeriodType ? (
                 <TimeSelection
