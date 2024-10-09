@@ -26,9 +26,9 @@ export default function WeekSelection({
         if (!otherPeriod) {
             return;
         }
-        const [from, to] = otherPeriod.split(' - ');
-        const fromParts = from.split('/');
-        const toParts = to.split('/');
+        const [from, to] = otherPeriod?.split(' - ');
+        const fromParts = from?.split('/');
+        const toParts = to?.split('/');
         const fromYear = parseInt(fromParts[2], 10);
         const fromMonth = parseInt(fromParts[1], 10) - 1;
         const fromDay = parseInt(fromParts[0], 10);

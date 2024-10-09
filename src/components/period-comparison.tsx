@@ -2,6 +2,7 @@
 
 import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
 import OrdersValueBarChart from '@/components/orders-value-bar-chart';
+import ComparisonCharts from './comparison-charts';
 import TimeSelection from './time-selection';
 
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,8 @@ export default function PeriodComparison(
 
     const handleSelectPeriodType = (value: string) => {
         setSelectedPeriodType(value);
+        setSelectedPeriod1('');
+        setSelectedPeriod2('');
     };
 
     const handleSelectPeriod1 = (value: string) => {
@@ -100,14 +103,7 @@ export default function PeriodComparison(
                     handleSelectPeriod2={handleSelectPeriod2}
                 />
             ) : null}
-            <section className='grid lg:grid-cols-2'>
-                <CardContent>
-                    <OrdersValueBarChart chartData={ordersValueChartData} />
-                </CardContent>
-                <CardContent>
-                    <OrdersNumberBarChart chartData={ordersNumberChartData} />
-                </CardContent>
-            </section>
+            <ComparisonCharts />
         </Card>
     );
 }
