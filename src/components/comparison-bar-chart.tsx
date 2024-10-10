@@ -12,18 +12,12 @@ import {
 import {
     Card,
     CardContent,
-    CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartLegend,
-    ChartLegendContent,
-    ChartTooltip,
-    ChartTooltipContent,
-} from '@/components/ui/chart';
+import { ChartConfig, ChartContainer } from '@/components/ui/chart';
+import { Equal, TrendingDown, TrendingUp } from 'lucide-react';
 
 const chartConfig = {
     sales_value: {
@@ -67,6 +61,13 @@ export default function ComparisonBarChart({
 
     const labelPrefix = type.includes('value') ? '£ ' : '';
 
+    const firstValue = chartData[0][type];
+    const lastValue = chartData[chartData.length - 1][type];
+    const lastLabel = chartData[chartData.length - 1].label;
+
+    const difference = Math.abs(firstValue - lastValue);
+    const percentageDifference = (difference / firstValue) * 100;
+
     return (
         <Card>
             <CardHeader>
@@ -88,11 +89,6 @@ export default function ComparisonBarChart({
                             tickMargin={8}
                             tickCount={5}
                         />
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent indicator='dashed' />}
-                        />
-                        <ChartLegend content={<ChartLegendContent />} />
                         <Bar
                             dataKey={type}
                             fill={`var(--color-${type})`}
@@ -103,7 +99,7 @@ export default function ComparisonBarChart({
                                 position='outside'
                                 offset={8}
                                 className='fill-foreground'
-                                fontSize={12}
+                                fontSize={14}
                                 formatter={(value: number) =>
                                     `${labelPrefix}${value.toLocaleString()}`
                                 }
@@ -112,6 +108,50 @@ export default function ComparisonBarChart({
                     </BarChart>
                 </ChartContainer>
             </CardContent>
+            <CardFooter className='flex-col items-start gap-2 text-sm'>
+                <div className='flex gap-2 font-medium leading-none'>
+                    <TrendingText
+                        percentageDifference={percentageDifference}
+                        firstValue={firstValue}
+                        secondValue={lastValue}
+                        label={lastLabel}
+                    />
+                </div>
+            </CardFooter>
         </Card>
+    );
+}
+
+function TrendingText({
+    percentageDifference,
+    firstValue,
+    secondValue,
+    label,
+}: {
+    percentageDifference: number;
+    firstValue: number;
+    secondValue: number;
+    label: string;
+}) {
+    if (percentageDifference <= 2) {
+        const positiveDifference = firstValue < secondValue;
+        return (
+            <>
+                Roughly equal in {label} {`(${percentageDifference}%)`}{' '}
+                <Equal className='h-4 w-4' />
+            </>
+        );
+    }
+
+    return firstValue < secondValue ? (
+        <>
+            Up by {percentageDifference.toFixed(2)}% in {label}{' '}
+            <TrendingUp className='h-4 w-4' />
+        </>
+    ) : (
+        <>
+            Down by {percentageDifference.toFixed(2)}% in {label}{' '}
+            <TrendingDown className='h-4 w-4' />
+        </>
     );
 }
