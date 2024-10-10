@@ -137,8 +137,8 @@ function TrendingText({
         const positiveDifference = firstValue < secondValue;
         return (
             <>
-                Roughly equal in {label} {`(${percentageDifference}%)`}{' '}
-                <Equal className='h-4 w-4' />
+                Roughly equal in {label} {positiveDifference ? '+' : '-'}
+                {`(${percentageDifference}%)`} <Equal className='h-4 w-4' />
             </>
         );
     }
