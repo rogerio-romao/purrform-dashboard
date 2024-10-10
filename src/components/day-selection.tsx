@@ -81,6 +81,7 @@ function SingleDay({ disabledDays, handleSelectPeriod }: SingleDayProps) {
             showOutsideDays={true}
             mode='single'
             disabled={disabledDays}
+            weekStartsOn={1}
             onDayClick={(day) => {
                 handleSelectPeriod(day.toLocaleDateString());
             }}
@@ -116,6 +117,7 @@ function MultipleDays({ disabledDays, handleSelectPeriod }: MultipleDaysProps) {
             showOutsideDays={true}
             mode='multiple'
             disabled={disabledDays}
+            weekStartsOn={1}
             onDayClick={(day, modifiers) => {
                 if (modifiers.selected) {
                     setSelectedDays((prev) =>

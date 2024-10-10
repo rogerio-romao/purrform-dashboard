@@ -1,5 +1,6 @@
 'use client';
 
+import getComparisonData from '@/app/actions/getComparisonData';
 import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
 import OrdersValueBarChart from '@/components/orders-value-bar-chart';
 import ComparisonCharts from './comparison-charts';
@@ -20,6 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { set } from 'date-fns';
 import { useEffect, useState } from 'react';
 
 type OrdersNumberBarChartProps = {
@@ -28,6 +30,18 @@ type OrdersNumberBarChartProps = {
     loyalty: number;
     percent: number;
 }[];
+
+interface ComparisonData {
+    sales_value: number;
+    sales_nr: number;
+    loyalty_value: number;
+    loyalty_nr: number;
+    label: string;
+}
+
+type ControlPanelComparisonDataResponse =
+    | { ok: true; data: { period1: ComparisonData; period2: ComparisonData } }
+    | { ok: false; error: string };
 
 interface PeriodComparisonProps {
     ordersValueChartData: OrdersNumberBarChartProps;
@@ -43,6 +57,8 @@ export default function PeriodComparison(
     const [selectedPeriodType, setSelectedPeriodType] = useState<string>('');
     const [selectedPeriod1, setSelectedPeriod1] = useState<string>('');
     const [selectedPeriod2, setSelectedPeriod2] = useState<string>('');
+    const [period1Data, setPeriod1Data] = useState<ComparisonData | null>(null);
+    const [period2Data, setPeriod2Data] = useState<ComparisonData | null>(null);
 
     const showGetDataButton = selectedPeriod1 && selectedPeriod2;
 
@@ -67,6 +83,28 @@ export default function PeriodComparison(
         setSelectedPeriod2(value);
     };
 
+    const handleGetData = async () => {
+        const comparisonData: ControlPanelComparisonDataResponse =
+            await getComparisonData(
+                selectedPeriodType,
+                selectedPeriod1,
+                selectedPeriod2
+            );
+
+        if (!comparisonData.ok) {
+            console.error(
+                'Error fetching comparison data:',
+                comparisonData.error
+            );
+            setPeriod1Data(null);
+            setPeriod2Data(null);
+            return;
+        }
+
+        setPeriod1Data(comparisonData.data.period1);
+        setPeriod2Data(comparisonData.data.period2);
+    };
+
     return (
         <Card>
             <CardHeader className='px-7 relative'>
@@ -89,7 +127,11 @@ export default function PeriodComparison(
                     </Select>
                 </CardDescription>
                 {showGetDataButton ? (
-                    <Button size={'lg'} className='md:absolute top-4 right-6'>
+                    <Button
+                        size={'lg'}
+                        className='md:absolute top-4 right-6'
+                        onClick={handleGetData}
+                    >
                         Get Data
                     </Button>
                 ) : null}
@@ -103,7 +145,10 @@ export default function PeriodComparison(
                     handleSelectPeriod2={handleSelectPeriod2}
                 />
             ) : null}
-            <ComparisonCharts />
+            <ComparisonCharts
+                period1Data={period1Data}
+                period2Data={period2Data}
+            />
         </Card>
     );
 }

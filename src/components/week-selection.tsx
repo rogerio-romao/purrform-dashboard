@@ -14,7 +14,7 @@ export default function WeekSelection({
 }: WeekSelectionProps) {
     const [selectedWeek, setSelectedWeek] = useState<DateRange | undefined>();
 
-    const startDate = useMemo(() => new Date(2022, 7, 22), []);
+    const startDate = useMemo(() => new Date(2022, 7, 21), []);
     const endDate = useMemo(() => new Date().getTime() + 86400000, []);
 
     const [disabledDays, setDisabledDays] = useState([
@@ -26,9 +26,9 @@ export default function WeekSelection({
         if (!otherPeriod) {
             return;
         }
-        const [from, to] = otherPeriod?.split(' - ');
-        const fromParts = from?.split('/');
-        const toParts = to?.split('/');
+        const [from, to] = otherPeriod.split(' - ');
+        const fromParts = from.split('/');
+        const toParts = to.split('/');
         const fromYear = parseInt(fromParts[2], 10);
         const fromMonth = parseInt(fromParts[1], 10) - 1;
         const fromDay = parseInt(fromParts[0], 10);
@@ -62,6 +62,7 @@ export default function WeekSelection({
                 showOutsideDays={true}
                 disabled={disabledDays}
                 fixedWeeks
+                weekStartsOn={1}
                 captionLayout='dropdown'
                 defaultMonth={new Date()}
                 startMonth={new Date(2022, 7)}
@@ -81,8 +82,8 @@ export default function WeekSelection({
                         return;
                     }
                     setSelectedWeek({
-                        from: startOfWeek(day),
-                        to: endOfWeek(day),
+                        from: startOfWeek(day, { weekStartsOn: 1 }),
+                        to: endOfWeek(day, { weekStartsOn: 1 }),
                     });
                 }}
                 className='rounded-md border'
