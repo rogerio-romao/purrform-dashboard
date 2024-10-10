@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
+import ComparisonBarChart from './comparison-bar-chart';
 
 type PeriodData = {
     sales_value: number;
@@ -22,12 +23,12 @@ export default function ComparisonCharts(
     return (
         <section className='grid lg:grid-cols-2 gap-12 p-6'>
             {period1Data ? (
-                <div>{JSON.stringify(period1Data)}</div>
+                <ComparisonBarChart chartData={[period1Data]} />
             ) : (
                 <Skeleton className='h-96' />
             )}
             {period2Data ? (
-                <div>{JSON.stringify(period2Data)}</div>
+                <ComparisonBarChart chartData={[period2Data]} />
             ) : (
                 <Skeleton className='h-96' />
             )}
