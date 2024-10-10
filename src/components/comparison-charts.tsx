@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import ComparisonBarChart from './comparison-bar-chart';
+import ComparisonBarCharts from './comparison-bar-charts';
 
 type PeriodData = {
     sales_value: number;
@@ -20,18 +20,16 @@ export default function ComparisonCharts(
         period2Data: null,
     }
 ) {
-    return (
-        <section className='grid lg:grid-cols-2 gap-12 p-6'>
-            {period1Data ? (
-                <ComparisonBarChart chartData={[period1Data]} />
-            ) : (
+    const noData = !period1Data && !period2Data;
+
+    if (noData) {
+        return (
+            <section className='grid lg:grid-cols-2 gap-12 p-6'>
                 <Skeleton className='h-96' />
-            )}
-            {period2Data ? (
-                <ComparisonBarChart chartData={[period2Data]} />
-            ) : (
                 <Skeleton className='h-96' />
-            )}
-        </section>
-    );
+            </section>
+        );
+    }
+
+    return <ComparisonBarCharts chartData={[period1Data!, period2Data!]} />;
 }

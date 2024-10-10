@@ -1,6 +1,13 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    LabelList,
+    XAxis,
+    YAxis,
+} from 'recharts';
 
 import {
     Card,
@@ -24,46 +31,57 @@ const chartConfig = {
         color: 'hsl(var(--chart-1))',
     },
     sales_nr: {
-        label: 'Total Orders',
+        label: 'Number of Orders',
         color: 'hsl(var(--chart-2))',
     },
     loyalty_value: {
-        label: 'Loyalty Value',
+        label: 'Loyalty Points Value',
         color: 'hsl(var(--chart-3))',
     },
     loyalty_nr: {
-        label: 'Total Loyalty',
+        label: 'Number of Loyalty Orders',
         color: 'hsl(var(--chart-4))',
     },
 } satisfies ChartConfig;
 
 type ComparisonBarChartProps = {
-    sales_value: number;
-    sales_nr: number;
-    loyalty_value: number;
-    loyalty_nr: number;
-    label: string;
-}[];
+    type: 'sales_value' | 'sales_nr' | 'loyalty_value' | 'loyalty_nr';
+    chartData: {
+        sales_value: number;
+        sales_nr: number;
+        loyalty_value: number;
+        loyalty_nr: number;
+        label: string;
+    }[];
+};
 
 export default function ComparisonBarChart({
+    type,
     chartData,
-}: {
-    chartData: ComparisonBarChartProps;
-}) {
+}: ComparisonBarChartProps) {
     if (!chartData) {
         return null;
     }
 
+    const title = chartConfig[type].label;
+
+    const labelPrefix = type.includes('value') ? '£ ' : '';
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{chartData[0].label}</CardTitle>
+                <CardTitle>{title}</CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
                     <BarChart accessibilityLayer data={chartData}>
                         <CartesianGrid vertical={false} />
-
+                        <XAxis
+                            dataKey='label'
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                        />
                         <YAxis
                             tickLine={true}
                             axisLine={false}
@@ -76,25 +94,21 @@ export default function ComparisonBarChart({
                         />
                         <ChartLegend content={<ChartLegendContent />} />
                         <Bar
-                            dataKey='sales_value'
-                            fill='var(--color-sales_value)'
+                            dataKey={type}
+                            fill={`var(--color-${type})`}
                             radius={4}
-                        />
-                        <Bar
-                            dataKey='sales_nr'
-                            fill='var(--color-sales_nr)'
-                            radius={4}
-                        />
-                        <Bar
-                            dataKey='loyalty_value'
-                            fill='var(--color-loyalty_value)'
-                            radius={4}
-                        />
-                        <Bar
-                            dataKey='loyalty_nr'
-                            fill='var(--color-loyalty_nr)'
-                            radius={4}
-                        />
+                        >
+                            <LabelList
+                                dataKey={type}
+                                position='outside'
+                                offset={8}
+                                className='fill-foreground'
+                                fontSize={12}
+                                formatter={(value: number) =>
+                                    `${labelPrefix}${value.toLocaleString()}`
+                                }
+                            />
+                        </Bar>
                     </BarChart>
                 </ChartContainer>
             </CardContent>
