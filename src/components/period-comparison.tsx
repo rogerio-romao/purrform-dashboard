@@ -7,6 +7,7 @@ import TimeSelection from './time-selection';
 import { Button } from '@/components/ui/button';
 import {
     Card,
+    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -55,6 +56,7 @@ export default function PeriodComparison(
     const [selectedPeriod2, setSelectedPeriod2] = useState<string>('');
     const [period1Data, setPeriod1Data] = useState<ComparisonData | null>(null);
     const [period2Data, setPeriod2Data] = useState<ComparisonData | null>(null);
+    const [fetchDataError, setFetchDataError] = useState<string | null>(null);
 
     const showGetDataButton = selectedPeriod1 && selectedPeriod2;
 
@@ -94,9 +96,11 @@ export default function PeriodComparison(
             );
             setPeriod1Data(null);
             setPeriod2Data(null);
+            setFetchDataError(comparisonData.error);
             return;
         }
 
+        setFetchDataError(null);
         setPeriod1Data(comparisonData.data.period1);
         setPeriod2Data(comparisonData.data.period2);
     };
@@ -132,6 +136,11 @@ export default function PeriodComparison(
                     </Button>
                 ) : null}
             </CardHeader>
+            {fetchDataError ? (
+                <CardContent className='text-red-500 py-2 px-6'>
+                    {fetchDataError}. Please try again.
+                </CardContent>
+            ) : null}
             {selectedPeriodType ? (
                 <TimeSelection
                     selectedPeriodType={selectedPeriodType}

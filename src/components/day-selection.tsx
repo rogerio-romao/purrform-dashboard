@@ -12,7 +12,7 @@ export default function DaySelection({
     handleSelectPeriod,
 }: DaySelectionProps) {
     const startDate = useMemo(() => new Date(2022, 7, 22), []);
-    const endDate = useMemo(() => new Date().getTime() + 86400000, []);
+    const endDate = useMemo(() => new Date().getTime(), []);
 
     const [multiple, setMultiple] = useState(false);
     const [disabledDays, setDisabledDays] = useState([
