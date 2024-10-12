@@ -17,7 +17,9 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { Equal, TrendingDown, TrendingUp } from 'lucide-react';
+import { TrendingDown, TrendingUp } from 'lucide-react';
+
+import { calculateDifference } from '@/app/lib/utils';
 
 const chartConfig = {
     sales_value: {
@@ -65,8 +67,7 @@ export default function ComparisonBarChart({
     const lastValue = chartData[chartData.length - 1][type];
     const lastLabel = chartData[chartData.length - 1].label;
 
-    const difference = Math.abs(firstValue - lastValue);
-    const percentageDifference = (difference / firstValue) * 100;
+    const percentageDifference = calculateDifference(firstValue, lastValue);
 
     return (
         <Card>
@@ -115,6 +116,7 @@ export default function ComparisonBarChart({
                         firstValue={firstValue}
                         secondValue={lastValue}
                         label={lastLabel}
+                        labelPrefix={labelPrefix}
                     />
                 </div>
             </CardFooter>
@@ -127,18 +129,32 @@ function TrendingText({
     firstValue,
     secondValue,
     label,
+    labelPrefix,
 }: {
     percentageDifference: number;
     firstValue: number;
     secondValue: number;
     label: string;
+    labelPrefix: string;
 }) {
     if (percentageDifference <= 2) {
         const positiveDifference = firstValue < secondValue;
         return (
             <>
-                Roughly equal in {label} {positiveDifference ? '+' : '-'}
-                {`(${percentageDifference}%)`} <Equal className='h-4 w-4' />
+                Roughly equal in {label}{' '}
+                <span className='text-muted-foreground'>
+                    {positiveDifference ? '[+ ' : '[- '}
+                    {`${percentageDifference.toFixed(2)}%]`}
+                </span>
+            </>
+        );
+    }
+
+    if (percentageDifference === Infinity) {
+        return (
+            <>
+                Up by {labelPrefix} {secondValue.toLocaleString()} in {label}{' '}
+                <TrendingUp className='h-4 w-4' />
             </>
         );
     }

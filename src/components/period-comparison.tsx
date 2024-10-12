@@ -1,15 +1,12 @@
 'use client';
 
 import getComparisonData from '@/app/actions/getComparisonData';
-import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
-import OrdersValueBarChart from '@/components/orders-value-bar-chart';
 import ComparisonCharts from './comparison-charts';
 import TimeSelection from './time-selection';
 
 import { Button } from '@/components/ui/button';
 import {
     Card,
-    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -21,7 +18,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { set } from 'date-fns';
 import { useEffect, useState } from 'react';
 
 type OrdersNumberBarChartProps = {
