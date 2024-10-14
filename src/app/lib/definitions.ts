@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const PASSWORD = process.env.PASSWORD;
+
 export const LoginFormSchema = z.object({
     email: z.enum(
         [
@@ -11,7 +13,7 @@ export const LoginFormSchema = z.object({
         ],
         { message: 'Invalid email' }
     ),
-    password: z.enum(['password'], { message: 'Invalid password' }),
+    password: z.enum([PASSWORD!], { message: 'Invalid password' }),
 });
 
 export type FormState =
