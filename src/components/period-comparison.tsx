@@ -60,13 +60,6 @@ export default function PeriodComparison(
 
     const showGetDataButton = selectedPeriod1 && selectedPeriod2;
 
-    useEffect(() => {
-        if (!selectedPeriod1 || !selectedPeriod2) {
-            return;
-        }
-        console.log('Selected periods:', selectedPeriod1, selectedPeriod2);
-    }, [selectedPeriod1, selectedPeriod2]);
-
     const handleSelectPeriodType = (value: string) => {
         setSelectedPeriodType(value);
         setSelectedPeriod1('');

@@ -7,7 +7,7 @@ export default async function getComparisonData(
 ) {
     try {
         const response = await fetch(
-            `http://localhost:5555/comparisonData?periodType=${periodType}&period1=${period1}&period2=${period2}`
+            `https://purrform-apps-027e.onrender.com/comparisonData?periodType=${periodType}&period1=${period1}&period2=${period2}`
         );
 
         if (!response.ok) {
