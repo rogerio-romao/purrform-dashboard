@@ -1,0 +1,11 @@
+services:
+    - type: web
+      name: next-js
+      runtime: node
+      plan: free
+      buildCommand: pnpm install; pnpm run build
+      startCommand: pnpm start
+      autoDeploy: true
+      envVars:
+          - key: NODE_ENV
+            value: production
