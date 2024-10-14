@@ -56,7 +56,7 @@ export default function MonthSelection({
                         <SelectGroup key={year}>
                             <SelectLabel>{year}</SelectLabel>
                             {months
-                                .toReversed()
+
                                 .filter((m) => `${m}-${year}` !== otherPeriod)
                                 .map((month, index) => {
                                     if (
@@ -82,7 +82,8 @@ export default function MonthSelection({
                                             </span>
                                         </SelectItem>
                                     );
-                                })}
+                                })
+                                .toReversed()}
                         </SelectGroup>
                     ))}
                 </SelectContent>
