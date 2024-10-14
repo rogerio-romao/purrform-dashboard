@@ -52,10 +52,11 @@ export default function MonthSelection({
                     <SelectValue placeholder='Pick an option' />
                 </SelectTrigger>
                 <SelectContent>
-                    {yearsForOrders.map((year) => (
+                    {yearsForOrders.toReversed().map((year) => (
                         <SelectGroup key={year}>
                             <SelectLabel>{year}</SelectLabel>
                             {months
+                                .toReversed()
                                 .filter((m) => `${m}-${year}` !== otherPeriod)
                                 .map((month, index) => {
                                     if (
