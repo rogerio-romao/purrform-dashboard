@@ -281,7 +281,7 @@ const SidebarTrigger = React.forwardRef<
     const { toggleSidebar } = useSidebar();
 
     return (
-        <div onClick={toggleSidebar} className='ml-1'>
+        <div onClick={toggleSidebar} className='ml-1 mb-2'>
             <Button
                 ref={ref}
                 data-sidebar='trigger'

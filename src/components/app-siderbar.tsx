@@ -3,51 +3,36 @@ import {
     SidebarContent,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarRail,
+    SidebarSeparator,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
+import { BarChart, Beef } from 'lucide-react';
 
 // Menu items.
 const items = [
     {
-        title: 'Home',
+        title: 'Sales & Loyalty Stats',
         url: '#',
-        icon: Home,
+        icon: BarChart,
     },
     {
-        title: 'Inbox',
+        title: 'Traceability Ingredients',
         url: '#',
-        icon: Inbox,
-    },
-    {
-        title: 'Calendar',
-        url: '#',
-        icon: Calendar,
-    },
-    {
-        title: 'Search',
-        url: '#',
-        icon: Search,
-    },
-    {
-        title: 'Settings',
-        url: '#',
-        icon: Settings,
+        icon: Beef,
     },
 ];
 
 export default function AppSidebar() {
     return (
-        <Sidebar collapsible='icon' className='mt-24'>
+        <Sidebar collapsible='icon' className='mt-24 rounded'>
             {' '}
             {/* Adjust the marginTop value as needed */}
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem>
@@ -55,13 +40,12 @@ export default function AppSidebar() {
                                     <SidebarTrigger />
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
+                            <SidebarSeparator />
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </a>
+                                    <SidebarMenuButton>
+                                        <item.icon />
+                                        <span>{item.title}</span>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -69,6 +53,7 @@ export default function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarRail />
         </Sidebar>
     );
 }
