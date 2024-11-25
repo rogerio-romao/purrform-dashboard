@@ -40,6 +40,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import createIngredient from '../actions/createIngredient';
 
 const formSchema = z.object({
     title: z
@@ -111,7 +112,61 @@ export default function TraceabilityIngredients() {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        const validated = formSchema.safeParse(values);
+
+        if (!validated.success) {
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description: validated.error.errors[0].message,
+            });
+            return;
+        }
+
+        createIngredient(validated.data).then((response) => {
+            if ('error' in response) {
+                toast({
+                    variant: 'destructive',
+                    title: 'ERROR',
+                    description: response.error,
+                });
+                return;
+            }
+
+            form.reset();
+            setIngredients((prevIngredients) => {
+                const newIngredients = [
+                    {
+                        type: 'Feature' as const,
+                        geometry: {
+                            type: 'Point' as const,
+                            coordinates: [
+                                response.longitude,
+                                response.latitude,
+                            ] as [number, number],
+                        },
+                        properties: {
+                            id: response.id,
+                            title: response.title,
+                            location: response.location,
+                        },
+                    },
+                    ...prevIngredients,
+                ];
+
+                newIngredients.sort((a, b) =>
+                    a.properties.title.localeCompare(b.properties.title)
+                );
+
+                return newIngredients;
+            });
+
+            toast({
+                variant: 'default',
+                title: 'SUCCESS',
+                description: 'Ingredient added successfully.',
+            });
+        });
     }
 
     const handleGetCoordinates = async (location: string) => {
