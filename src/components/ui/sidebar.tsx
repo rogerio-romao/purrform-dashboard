@@ -282,17 +282,26 @@ const SidebarTrigger = React.forwardRef<
 
     return (
         <div onClick={toggleSidebar} className='ml-1 mb-2'>
-            <Button
-                ref={ref}
-                data-sidebar='trigger'
-                variant='ghost'
-                size='icon'
-                className={cn('h-4 w-4', className)}
-                {...props}
-            >
-                <PanelLeft />
-                <span>Toggle Sidebar</span>
-            </Button>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            ref={ref}
+                            data-sidebar='trigger'
+                            variant='ghost'
+                            size='icon'
+                            className={cn('h-4 w-4', className)}
+                            {...props}
+                        >
+                            <PanelLeft />
+                            <span>Toggle Menu</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side='right' align='center'>
+                        Toggle Menu
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         </div>
     );
 });

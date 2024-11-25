@@ -10,6 +10,12 @@ import {
     SidebarSeparator,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { BarChart, Beef } from 'lucide-react';
 
 // Menu items.
@@ -49,14 +55,28 @@ export default function AppSidebar({ setActiveWidget }: AppSidebarProps) {
                             <SidebarSeparator />
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton
-                                        onClick={() =>
-                                            setActiveWidget(item.stateLabel)
-                                        }
-                                    >
-                                        <item.icon />
-                                        <span>{item.title}</span>
-                                    </SidebarMenuButton>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <SidebarMenuButton
+                                                    onClick={() =>
+                                                        setActiveWidget(
+                                                            item.stateLabel
+                                                        )
+                                                    }
+                                                >
+                                                    <item.icon />
+                                                    <span>{item.title}</span>
+                                                </SidebarMenuButton>
+                                            </TooltipTrigger>
+                                            <TooltipContent
+                                                side='right'
+                                                align='center'
+                                            >
+                                                {item.title}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 </SidebarMenuItem>
                             ))}
                         </SidebarMenu>

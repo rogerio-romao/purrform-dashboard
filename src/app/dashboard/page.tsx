@@ -12,7 +12,6 @@ export default function Page() {
     return (
         <SidebarProvider>
             <AppSidebar setActiveWidget={setActiveWidget} />
-
             {activeWidget === 'orders' && <OrdersLoyaltyStats />}
             {activeWidget === 'traceability' && <TraceabilityIngredients />}
         </SidebarProvider>
