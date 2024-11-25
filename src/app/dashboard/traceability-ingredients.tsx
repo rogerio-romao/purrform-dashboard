@@ -1,5 +1,6 @@
 'use client';
 
+import getCoordinates from '@/app/actions/getCoordinates';
 import Loading from '@/components/loading';
 import { Button } from '@/components/ui/button';
 import {
@@ -62,7 +63,7 @@ interface TraceabilityIngredientsFeature {
         location: string;
     };
 }
-interface TraceabilityIngredientsGeodata {
+export interface TraceabilityIngredientsGeodata {
     type: 'FeatureCollection';
     features: TraceabilityIngredientsFeature[];
 }
@@ -98,6 +99,25 @@ export default function TraceabilityIngredients() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
     }
+
+    const handleGetCoordinates = async (location: string) => {
+        if (!location) {
+            return;
+        }
+
+        const coordinatesData = await getCoordinates(location);
+
+        if (!coordinatesData.ok) {
+            console.error(
+                'Error fetching comparison data:',
+                coordinatesData.error
+            );
+            return;
+        }
+
+        form.setValue('longitude', coordinatesData.data!.longitude);
+        form.setValue('latitude', coordinatesData.data!.latitude);
+    };
 
     if (ingredients.length === 0) {
         return <Loading />;
@@ -207,7 +227,15 @@ export default function TraceabilityIngredients() {
                                                 />
                                             </div>
                                             <div className='flex gap-2'>
-                                                <Button variant='outline'>
+                                                <Button
+                                                    variant='outline'
+                                                    onClick={() =>
+                                                        handleGetCoordinates(
+                                                            form.getValues()
+                                                                .location
+                                                        )
+                                                    }
+                                                >
                                                     Get Coordinates
                                                 </Button>
                                                 <Button type='submit'>
