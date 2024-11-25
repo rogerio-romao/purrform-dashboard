@@ -34,6 +34,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -69,6 +70,8 @@ export interface TraceabilityIngredientsGeodata {
 }
 
 export default function TraceabilityIngredients() {
+    const { toast } = useToast();
+
     const [ingredients, setIngredients] = useState<
         TraceabilityIngredientsFeature[]
     >([]);
@@ -83,7 +86,18 @@ export default function TraceabilityIngredients() {
 
             setIngredients(data.features);
         };
-        fetchData();
+        try {
+            fetchData();
+        } catch (error) {
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description:
+                    'An error occurred while fetching the ingredients data.',
+            });
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -102,16 +116,24 @@ export default function TraceabilityIngredients() {
 
     const handleGetCoordinates = async (location: string) => {
         if (!location) {
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description:
+                    'Fill in the location field to get the coordinates.',
+            });
             return;
         }
 
         const coordinatesData = await getCoordinates(location);
 
         if (!coordinatesData.ok) {
-            console.error(
-                'Error fetching comparison data:',
-                coordinatesData.error
-            );
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description:
+                    'Sorry, an error occurred while fetching the coordinates.',
+            });
             return;
         }
 
@@ -228,7 +250,8 @@ export default function TraceabilityIngredients() {
                                             </div>
                                             <div className='flex gap-2'>
                                                 <Button
-                                                    variant='outline'
+                                                    type='button'
+                                                    variant='link'
                                                     onClick={() =>
                                                         handleGetCoordinates(
                                                             form.getValues()
