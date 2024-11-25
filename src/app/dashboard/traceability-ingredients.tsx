@@ -41,6 +41,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import createIngredient from '../actions/createIngredient';
+import deleteIngredient from '../actions/deleteIngredient';
 
 const formSchema = z.object({
     title: z
@@ -165,6 +166,31 @@ export default function TraceabilityIngredients() {
                 variant: 'default',
                 title: 'SUCCESS',
                 description: 'Ingredient added successfully.',
+            });
+        });
+    }
+
+    function handleDeleteIngredient(id: number) {
+        deleteIngredient(id).then((success) => {
+            if (!success) {
+                toast({
+                    variant: 'destructive',
+                    title: 'ERROR',
+                    description: 'Failed to delete ingredient.',
+                });
+                return;
+            }
+
+            setIngredients((prevIngredients) =>
+                prevIngredients.filter(
+                    (ingredient) => ingredient.properties.id !== id
+                )
+            );
+
+            toast({
+                variant: 'default',
+                title: 'SUCCESS',
+                description: 'Ingredient deleted successfully.',
             });
         });
     }
@@ -403,7 +429,15 @@ export default function TraceabilityIngredients() {
                                                                     <TooltipTrigger
                                                                         asChild
                                                                     >
-                                                                        <button>
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleDeleteIngredient(
+                                                                                    ingredient
+                                                                                        .properties
+                                                                                        .id
+                                                                                )
+                                                                            }
+                                                                        >
                                                                             <Trash2 className='w-4 h-4' />
                                                                         </button>
                                                                     </TooltipTrigger>
