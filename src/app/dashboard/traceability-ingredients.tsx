@@ -1,6 +1,7 @@
 'use client';
 
 import Loading from '@/components/loading';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -8,6 +9,16 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
     Table,
     TableBody,
@@ -22,8 +33,22 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const formSchema = z.object({
+    title: z
+        .string({ required_error: 'Title is required' })
+        .min(3, 'Title must be at least 3 characters'),
+    location: z
+        .string({ required_error: 'Location is required' })
+        .min(3, 'Location must be at least 3 characters'),
+    longitude: z.number({ required_error: 'Longitude is required' }),
+    latitude: z.number({ required_error: 'Latitude is required' }),
+});
 
 interface TraceabilityIngredientsFeature {
     type: 'Feature';
@@ -60,6 +85,20 @@ export default function TraceabilityIngredients() {
         fetchData();
     }, []);
 
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: '',
+            location: '',
+            longitude: 0,
+            latitude: 0,
+        },
+    });
+
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log(values);
+    }
+
     if (ingredients.length === 0) {
         return <Loading />;
     }
@@ -69,10 +108,7 @@ export default function TraceabilityIngredients() {
             <div className='flex flex-col sm:gap-4 sm:py-4 '>
                 <main className='grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-2'>
                     <div className='grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2'>
-                        <Card
-                            className='sm:col-span-2'
-                            x-chunk='dashboard-05-chunk-0'
-                        >
+                        <Card className='sm:col-span-2'>
                             <CardHeader className='pb-3'>
                                 <CardTitle>Traceability Ingredients</CardTitle>
                                 <CardDescription className='text-balance leading-relaxed'>
@@ -83,15 +119,104 @@ export default function TraceabilityIngredients() {
                                 </CardDescription>
                             </CardHeader>
                         </Card>
-                        <Card
-                            className='sm:col-span-2'
-                            x-chunk='dashboard-05-chunk-0'
-                        >
+                        <Card className='sm:col-span-2 w-full'>
                             <CardHeader className='pb-3'>
                                 <CardTitle className='text-lg'>
                                     Add an Ingredient
                                 </CardTitle>
-                                <CardContent></CardContent>
+                                <CardContent>
+                                    <Form {...form}>
+                                        <form
+                                            onSubmit={form.handleSubmit(
+                                                onSubmit
+                                            )}
+                                            className='space-y-8'
+                                        >
+                                            <div className='flex flex-col justify-center gap-4'>
+                                                <FormField
+                                                    control={form.control}
+                                                    name='title'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>
+                                                                Title
+                                                            </FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder='Rabbit Legs'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name='location'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>
+                                                                Location
+                                                            </FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder='Paris France'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name='longitude'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>
+                                                                Longitude
+                                                            </FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                    type='number'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name='latitude'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>
+                                                                Latitude
+                                                            </FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                    type='number'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className='flex gap-2'>
+                                                <Button variant='outline'>
+                                                    Get Coordinates
+                                                </Button>
+                                                <Button type='submit'>
+                                                    Submit
+                                                </Button>
+                                            </div>
+                                        </form>
+                                    </Form>
+                                </CardContent>
                             </CardHeader>
                         </Card>
                         <Card
