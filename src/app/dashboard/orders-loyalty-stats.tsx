@@ -32,7 +32,6 @@ interface ControlPanelStats {
 }
 
 export default function OrdersLoyaltyStats() {
-    console.log('rendering OrdersLoyaltyStats');
     const [data, setData] = useState<ControlPanelStats[]>([]);
     useEffect(() => {
         const fetchData = async () => {
