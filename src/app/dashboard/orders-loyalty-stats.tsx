@@ -1,3 +1,8 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
+import Loading from '@/components/loading';
 import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
 import OrdersValueBarChart from '@/components/orders-value-bar-chart';
 import PeriodComparison from '@/components/period-comparison';
@@ -26,11 +31,24 @@ interface ControlPanelStats {
     loyalty_nr: number;
 }
 
-export default async function OrdersLoyaltyStats() {
-    const response = await fetch(
-        'https://purrform-apps-027e.onrender.com/controlPanel'
-    );
-    const data = (await response.json()) as ControlPanelStats[];
+export default function OrdersLoyaltyStats() {
+    console.log('rendering OrdersLoyaltyStats');
+    const [data, setData] = useState<ControlPanelStats[]>([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch(
+                'https://purrform-apps-027e.onrender.com/controlPanel'
+            );
+            const data = (await response.json()) as ControlPanelStats[];
+
+            setData(data);
+        };
+        fetchData();
+    }, []);
+
+    if (data.length === 0) {
+        return <Loading />;
+    }
 
     const currentMonth = data[0];
     const currentMonthSalesValue = new Intl.NumberFormat('en-UK').format(
@@ -80,7 +98,7 @@ export default async function OrdersLoyaltyStats() {
     }));
 
     return (
-        <div className='flex min-h-screen w-full flex-col bg-muted/40'>
+        <div className='flex min-h-screen w-full flex-col bg-muted/40 mt-4'>
             <div className='flex flex-col sm:gap-4 sm:py-4 '>
                 <main className='grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-2'>
                     <div className='grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2'>

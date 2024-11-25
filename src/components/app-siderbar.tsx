@@ -16,17 +16,23 @@ import { BarChart, Beef } from 'lucide-react';
 const items = [
     {
         title: 'Sales & Loyalty Stats',
+        stateLabel: 'orders',
         url: '#',
         icon: BarChart,
     },
     {
         title: 'Traceability Ingredients',
+        stateLabel: 'traceability',
         url: '#',
         icon: Beef,
     },
 ];
 
-export default function AppSidebar() {
+interface AppSidebarProps {
+    setActiveWidget: (widget: string) => void;
+}
+
+export default function AppSidebar({ setActiveWidget }: AppSidebarProps) {
     return (
         <Sidebar collapsible='icon' className='mt-24 rounded'>
             {' '}
@@ -43,7 +49,11 @@ export default function AppSidebar() {
                             <SidebarSeparator />
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton>
+                                    <SidebarMenuButton
+                                        onClick={() =>
+                                            setActiveWidget(item.stateLabel)
+                                        }
+                                    >
                                         <item.icon />
                                         <span>{item.title}</span>
                                     </SidebarMenuButton>
