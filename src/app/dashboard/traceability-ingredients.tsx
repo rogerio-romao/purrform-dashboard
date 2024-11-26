@@ -11,9 +11,16 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -42,6 +49,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import createIngredient from '../actions/createIngredient';
 import deleteIngredient from '../actions/deleteIngredient';
+import updateIngredient from '../actions/updateIngredient';
 
 const formSchema = z.object({
     title: z
@@ -78,6 +86,8 @@ export default function TraceabilityIngredients() {
         TraceabilityIngredientsFeature[]
     >([]);
 
+    const [editingId, setEditingId] = useState<number | undefined>(undefined);
+
     useEffect(() => {
         const fetchData = async () => {
             const response = await fetch(
@@ -103,6 +113,16 @@ export default function TraceabilityIngredients() {
     }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: '',
+            location: '',
+            longitude: 0,
+            latitude: 0,
+        },
+    });
+
+    const updateForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: '',
@@ -195,7 +215,82 @@ export default function TraceabilityIngredients() {
         });
     }
 
-    const handleGetCoordinates = async (location: string) => {
+    function onUpdate(values: z.infer<typeof formSchema>) {
+        const validated = formSchema.safeParse(values);
+
+        if (!validated.success) {
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description: validated.error.errors[0].message,
+            });
+            return;
+        }
+
+        const updatedIngredient = {
+            type: 'Feature' as const,
+            properties: {
+                id: editingId!,
+                title: validated.data.title,
+                location: validated.data.location,
+            },
+            geometry: {
+                type: 'Point' as const,
+                coordinates: [
+                    validated.data.longitude,
+                    validated.data.latitude,
+                ] as [number, number],
+            },
+        };
+
+        updateIngredient({
+            id: editingId!,
+            title: validated.data.title,
+            location: validated.data.location,
+            longitude: validated.data.longitude,
+            latitude: validated.data.latitude,
+        }).then((response) => {
+            if ('error' in response) {
+                toast({
+                    variant: 'destructive',
+                    title: 'ERROR',
+                    description: response.error,
+                });
+                return;
+            }
+        });
+
+        setIngredients((prevIngredients) =>
+            prevIngredients.map((ingredient) =>
+                ingredient.properties.id === editingId
+                    ? updatedIngredient
+                    : ingredient
+            )
+        );
+
+        setEditingId(undefined);
+        // Close the dialog
+        const closeButton = document.querySelector(
+            '[role="dialog"] > button'
+        ) as HTMLButtonElement;
+        closeButton?.click();
+
+        toast({
+            variant: 'default',
+            title: 'SUCCESS',
+            description: 'Ingredient updated successfully.',
+        });
+    }
+
+    function setEditingIngredient(ingredient: TraceabilityIngredientsFeature) {
+        setEditingId(ingredient.properties.id);
+        updateForm.setValue('title', ingredient.properties.title);
+        updateForm.setValue('location', ingredient.properties.location);
+        updateForm.setValue('longitude', ingredient.geometry.coordinates[0]);
+        updateForm.setValue('latitude', ingredient.geometry.coordinates[1]);
+    }
+
+    const handleGetCoordinates = async (location: string, updating = false) => {
         if (!location) {
             toast({
                 variant: 'destructive',
@@ -215,6 +310,12 @@ export default function TraceabilityIngredients() {
                 description:
                     'Sorry, an error occurred while fetching the coordinates.',
             });
+            return;
+        }
+
+        if (updating) {
+            updateForm.setValue('longitude', coordinatesData.data!.longitude);
+            updateForm.setValue('latitude', coordinatesData.data!.latitude);
             return;
         }
 
@@ -409,13 +510,152 @@ export default function TraceabilityIngredients() {
                                                         <div className='flex items-center gap-2'>
                                                             <TooltipProvider>
                                                                 <Tooltip>
-                                                                    <TooltipTrigger
-                                                                        asChild
-                                                                    >
-                                                                        <button>
-                                                                            <Pencil className='w-4 h-4' />
-                                                                        </button>
-                                                                    </TooltipTrigger>
+                                                                    <Dialog>
+                                                                        <DialogTrigger>
+                                                                            <TooltipTrigger
+                                                                                asChild
+                                                                            >
+                                                                                <button
+                                                                                    onClick={() =>
+                                                                                        setEditingIngredient(
+                                                                                            ingredient
+                                                                                        )
+                                                                                    }
+                                                                                >
+                                                                                    <Pencil className='w-4 h-4' />
+                                                                                </button>
+                                                                            </TooltipTrigger>
+                                                                        </DialogTrigger>
+                                                                        <DialogContent>
+                                                                            <DialogHeader>
+                                                                                <DialogTitle>
+                                                                                    Edit
+                                                                                    Ingredient
+                                                                                </DialogTitle>
+                                                                                <DialogDescription>
+                                                                                    <Form
+                                                                                        {...updateForm}
+                                                                                    >
+                                                                                        <form
+                                                                                            onSubmit={updateForm.handleSubmit(
+                                                                                                onUpdate
+                                                                                            )}
+                                                                                            className='space-y-8'
+                                                                                        >
+                                                                                            <div className='flex flex-col justify-center gap-4'>
+                                                                                                <FormField
+                                                                                                    control={
+                                                                                                        updateForm.control
+                                                                                                    }
+                                                                                                    name='title'
+                                                                                                    render={({
+                                                                                                        field,
+                                                                                                    }) => (
+                                                                                                        <FormItem>
+                                                                                                            <FormLabel>
+                                                                                                                Title
+                                                                                                            </FormLabel>
+                                                                                                            <FormControl>
+                                                                                                                <Input
+                                                                                                                    {...field}
+                                                                                                                />
+                                                                                                            </FormControl>
+                                                                                                            <FormMessage />
+                                                                                                        </FormItem>
+                                                                                                    )}
+                                                                                                />
+                                                                                                <FormField
+                                                                                                    control={
+                                                                                                        updateForm.control
+                                                                                                    }
+                                                                                                    name='location'
+                                                                                                    render={({
+                                                                                                        field,
+                                                                                                    }) => (
+                                                                                                        <FormItem>
+                                                                                                            <FormLabel>
+                                                                                                                Location
+                                                                                                            </FormLabel>
+                                                                                                            <FormControl>
+                                                                                                                <Input
+                                                                                                                    {...field}
+                                                                                                                />
+                                                                                                            </FormControl>
+                                                                                                            <FormMessage />
+                                                                                                        </FormItem>
+                                                                                                    )}
+                                                                                                />
+                                                                                                <FormField
+                                                                                                    control={
+                                                                                                        updateForm.control
+                                                                                                    }
+                                                                                                    name='longitude'
+                                                                                                    render={({
+                                                                                                        field,
+                                                                                                    }) => (
+                                                                                                        <FormItem>
+                                                                                                            <FormLabel>
+                                                                                                                Longitude
+                                                                                                            </FormLabel>
+                                                                                                            <FormControl>
+                                                                                                                <Input
+                                                                                                                    type='number'
+                                                                                                                    {...field}
+                                                                                                                />
+                                                                                                            </FormControl>
+                                                                                                            <FormMessage />
+                                                                                                        </FormItem>
+                                                                                                    )}
+                                                                                                />
+                                                                                                <FormField
+                                                                                                    control={
+                                                                                                        updateForm.control
+                                                                                                    }
+                                                                                                    name='latitude'
+                                                                                                    render={({
+                                                                                                        field,
+                                                                                                    }) => (
+                                                                                                        <FormItem>
+                                                                                                            <FormLabel>
+                                                                                                                Latitude
+                                                                                                            </FormLabel>
+                                                                                                            <FormControl>
+                                                                                                                <Input
+                                                                                                                    type='number'
+                                                                                                                    {...field}
+                                                                                                                />
+                                                                                                            </FormControl>
+                                                                                                            <FormMessage />
+                                                                                                        </FormItem>
+                                                                                                    )}
+                                                                                                />
+                                                                                            </div>
+                                                                                            <div className='flex gap-2'>
+                                                                                                <Button
+                                                                                                    type='button'
+                                                                                                    variant='link'
+                                                                                                    onClick={() =>
+                                                                                                        handleGetCoordinates(
+                                                                                                            updateForm.getValues()
+                                                                                                                .location,
+                                                                                                            true
+                                                                                                        )
+                                                                                                    }
+                                                                                                >
+                                                                                                    Get
+                                                                                                    Coordinates
+                                                                                                </Button>
+                                                                                                <Button type='submit'>
+                                                                                                    Submit
+                                                                                                </Button>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    </Form>
+                                                                                </DialogDescription>
+                                                                            </DialogHeader>
+                                                                        </DialogContent>
+                                                                    </Dialog>
+
                                                                     <TooltipContent
                                                                         side='top'
                                                                         align='center'
