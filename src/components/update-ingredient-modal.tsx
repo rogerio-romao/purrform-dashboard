@@ -41,10 +41,10 @@ export default function UpdateIngredientModal({
     const updateForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: '',
-            location: '',
-            longitude: 0,
-            latitude: 0,
+            title: ingredient.properties.title,
+            location: ingredient.properties.location,
+            longitude: ingredient.geometry.coordinates[0],
+            latitude: ingredient.geometry.coordinates[1],
         },
     });
 
