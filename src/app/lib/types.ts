@@ -1,3 +1,5 @@
+import { UseFormReturn } from 'react-hook-form';
+
 export interface TraceabilityIngredientsFeature {
     type: 'Feature';
     geometry: {
@@ -13,4 +15,26 @@ export interface TraceabilityIngredientsFeature {
 export interface TraceabilityIngredientsGeodata {
     type: 'FeatureCollection';
     features: TraceabilityIngredientsFeature[];
+}
+
+export type SetIngredients = React.Dispatch<
+    React.SetStateAction<TraceabilityIngredientsFeature[]>
+>;
+
+export interface IngredientsProps {
+    ingredients: TraceabilityIngredientsFeature[];
+    setIngredients: SetIngredients;
+    handleGetCoordinates: (
+        location: string,
+        form: UseFormReturn<
+            {
+                title: string;
+                location: string;
+                longitude: number;
+                latitude: number;
+            },
+            any,
+            undefined
+        >
+    ) => void;
 }

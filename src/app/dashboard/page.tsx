@@ -1,7 +1,6 @@
 'use client';
 
 import AppSidebar from '@/components/app-siderbar';
-import Loading from '@/components/loading';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { useState } from 'react';
 import OrdersLoyaltyStats from './orders-loyalty-stats';
