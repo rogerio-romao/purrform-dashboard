@@ -1,6 +1,6 @@
 'use server';
 
-import { TraceabilityIngredientsGeodata } from '@/app/dashboard/traceability-ingredients';
+import type { TraceabilityIngredientsGeodata } from '@/app/lib/types';
 
 export default async function getCoordinates(location: string) {
     try {
