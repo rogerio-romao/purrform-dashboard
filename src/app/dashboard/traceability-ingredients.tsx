@@ -508,11 +508,13 @@ export default function TraceabilityIngredients() {
                                                     </TableCell>
                                                     <TableCell>
                                                         <div className='flex items-center gap-2'>
-                                                            <TooltipProvider>
-                                                                <Tooltip>
-                                                                    <Dialog>
-                                                                        <DialogTrigger>
-                                                                            <TooltipTrigger
+                                                            <Dialog>
+                                                                <TooltipProvider>
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger
+                                                                            asChild
+                                                                        >
+                                                                            <DialogTrigger
                                                                                 asChild
                                                                             >
                                                                                 <button
@@ -524,15 +526,18 @@ export default function TraceabilityIngredients() {
                                                                                 >
                                                                                     <Pencil className='w-4 h-4' />
                                                                                 </button>
-                                                                            </TooltipTrigger>
-                                                                        </DialogTrigger>
+                                                                            </DialogTrigger>
+                                                                        </TooltipTrigger>
                                                                         <DialogContent>
                                                                             <DialogHeader>
                                                                                 <DialogTitle>
                                                                                     Edit
                                                                                     Ingredient
                                                                                 </DialogTitle>
-                                                                                <DialogDescription>
+
+                                                                                <DialogDescription
+                                                                                    asChild
+                                                                                >
                                                                                     <Form
                                                                                         {...updateForm}
                                                                                     >
@@ -654,16 +659,16 @@ export default function TraceabilityIngredients() {
                                                                                 </DialogDescription>
                                                                             </DialogHeader>
                                                                         </DialogContent>
-                                                                    </Dialog>
 
-                                                                    <TooltipContent
-                                                                        side='top'
-                                                                        align='center'
-                                                                    >
-                                                                        Edit
-                                                                    </TooltipContent>
-                                                                </Tooltip>
-                                                            </TooltipProvider>
+                                                                        <TooltipContent
+                                                                            side='top'
+                                                                            align='center'
+                                                                        >
+                                                                            Edit
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                </TooltipProvider>
+                                                            </Dialog>
                                                             <TooltipProvider>
                                                                 <Tooltip>
                                                                     <TooltipTrigger
