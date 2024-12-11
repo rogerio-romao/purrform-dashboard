@@ -1,9 +1,10 @@
 'use server';
-import { FormState, LoginFormSchema } from '@/app/lib/definitions';
+
+import { LoginFormSchema, LoginFormState } from '@/app/lib/definitions';
 import { createSession, deleteSession } from '@/app/lib/session';
 import { redirect } from 'next/navigation';
 
-export async function login(state: FormState, formData: FormData) {
+export async function login(state: LoginFormState, formData: FormData) {
     // Validate form fields
     const validatedFields = LoginFormSchema.safeParse({
         email: formData.get('email'),
