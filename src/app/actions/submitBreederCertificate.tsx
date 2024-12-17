@@ -23,8 +23,19 @@ export default async function submitBreederCertificate(
         };
     }
 
-    const { email, certificate } = validatedFields.data;
-
-    console.log('email', email);
-    console.log('certificate', certificate);
+    // Submit form data to the server
+    fetch(
+        'https://4268-2a01-4b00-805d-b800-adf5-37f9-a9f5-e235.ngrok-free.app/uploadBreederCertificate',
+        {
+            method: 'POST',
+            body: formData,
+        }
+    )
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
