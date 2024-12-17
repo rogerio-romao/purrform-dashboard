@@ -23,19 +23,26 @@ export default async function submitBreederCertificate(
         };
     }
 
-    // Submit form data to the server
-    fetch(
-        'https://4268-2a01-4b00-805d-b800-adf5-37f9-a9f5-e235.ngrok-free.app/uploadBreederCertificate',
-        {
-            method: 'POST',
-            body: formData,
+    try {
+        const response = await fetch(
+            'https://4268-2a01-4b00-805d-b800-adf5-37f9-a9f5-e235.ngrok-free.app/uploadBreederCertificate',
+            {
+                method: 'POST',
+                body: formData,
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-    )
-        .then((response) => response.json())
-        .then((data) => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+
+        const data = await response.json();
+        return { success: true, message: 'Certificate uploaded successfully' };
+    } catch (error) {
+        console.error('Error:', error);
+        return {
+            success: false,
+            message: 'An error occurred while submitting the form'
+        };
+    }
 }

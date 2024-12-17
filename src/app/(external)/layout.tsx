@@ -1,7 +1,6 @@
 import { cn } from '@/app/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '../globals.css';
@@ -43,7 +42,6 @@ export default function RootLayout({
                         </header>
                         {children}
                     </main>
-                    <Toaster />
                 </ThemeProvider>
             </body>
         </html>
