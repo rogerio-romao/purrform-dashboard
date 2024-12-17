@@ -56,7 +56,8 @@ export default function BreederCertificateForm() {
                         <CardDescription>
                             Your certificate has been uploaded successfully. Our
                             staff will review it and you will receive an email
-                            once it has been approved.
+                            once it has been approved. You can close this window
+                            now.
                         </CardDescription>
                     </CardContent>
                 </Card>
