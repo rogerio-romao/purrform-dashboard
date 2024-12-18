@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/table';
 
 import type { BreederCertificate } from '@/app/lib/types';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 export default function BreederCertificates() {
     const [data, setData] = useState<BreederCertificate[]>([]);
@@ -85,89 +87,201 @@ export default function BreederCertificates() {
                                     Certificates for Approval
                                 </CardTitle>
                                 <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>
-                                                    Breeder Email
-                                                </TableHead>
-                                                <TableHead>
-                                                    Certificate
-                                                </TableHead>
-                                                <TableHead>Actions</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {pendingCertificates.map(
-                                                (certificate) => (
-                                                    <TableRow
-                                                        key={certificate.id}
-                                                    >
-                                                        <TableCell>
-                                                            {
-                                                                certificate.breeder_email
-                                                            }
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            {
-                                                                certificate.upload_path
-                                                            }
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <div className='flex items-center gap-2'>
-                                                                <button>
-                                                                    Approve
-                                                                </button>
-                                                                <button>
-                                                                    Reject
-                                                                </button>
-                                                            </div>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            )}
-                                        </TableBody>
-                                    </Table>
+                                    {pendingCertificates.length === 0 ? (
+                                        <div className='text-muted-foreground mt-2'>
+                                            No pending certificates to display.
+                                        </div>
+                                    ) : (
+                                        <Table className='rounded'>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className='w-1/4'>
+                                                        Breeder Email
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        Certificate
+                                                    </TableHead>
+                                                    <TableHead className='text-right'>
+                                                        Actions
+                                                    </TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {pendingCertificates.map(
+                                                    (certificate) => (
+                                                        <TableRow
+                                                            key={certificate.id}
+                                                        >
+                                                            <TableCell>
+                                                                {
+                                                                    certificate.breeder_email
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Button
+                                                                    className='mr-4'
+                                                                    variant={
+                                                                        'secondary'
+                                                                    }
+                                                                >
+                                                                    Download
+                                                                </Button>
+                                                                {
+                                                                    certificate.upload_path
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <div className='flex justify-end gap-2'>
+                                                                    <Button>
+                                                                        Approve
+                                                                    </Button>
+                                                                    <Button variant='destructive'>
+                                                                        Reject
+                                                                    </Button>
+                                                                </div>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    )}
                                 </CardContent>
                             </CardHeader>
-                            <CardHeader className='pb-3'>
+                            <Separator />
+                            <CardHeader className='pb-3 bg-green-100/15'>
                                 <CardTitle className='text-lg'>
                                     Approved Certificates
                                 </CardTitle>
                                 <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>
-                                                    Breeder Email
-                                                </TableHead>
-                                                <TableHead>
-                                                    Certificate
-                                                </TableHead>
-                                                <TableHead>Actions</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                    </Table>
+                                    {approvedCertificates.length === 0 ? (
+                                        <div className='text-muted-foreground mt-2'>
+                                            No approved certificates to display.
+                                        </div>
+                                    ) : (
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className='w-1/4'>
+                                                        Breeder Email
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        Certificate
+                                                    </TableHead>
+                                                    <TableHead className='text-right'>
+                                                        Actions
+                                                    </TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+
+                                            <TableBody>
+                                                {approvedCertificates.map(
+                                                    (certificate) => (
+                                                        <TableRow
+                                                            key={certificate.id}
+                                                        >
+                                                            <TableCell>
+                                                                {
+                                                                    certificate.breeder_email
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Button
+                                                                    className='mr-4'
+                                                                    variant={
+                                                                        'secondary'
+                                                                    }
+                                                                >
+                                                                    Download
+                                                                </Button>
+                                                                {
+                                                                    certificate.upload_path
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <div className='flex justify-end gap-2'>
+                                                                    <Button>
+                                                                        Approve
+                                                                    </Button>
+                                                                    <Button variant='destructive'>
+                                                                        Reject
+                                                                    </Button>
+                                                                </div>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    )}
                                 </CardContent>
                             </CardHeader>
-                            <CardHeader className='pb-3'>
+                            <Separator />
+                            <CardHeader className='pb-3 bg-red-100/15'>
                                 <CardTitle className='text-lg'>
                                     Rejected Certificates
                                 </CardTitle>
                                 <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>
-                                                    Breeder Email
-                                                </TableHead>
-                                                <TableHead>
-                                                    Certificate
-                                                </TableHead>
-                                                <TableHead>Actions</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                    </Table>
+                                    {rejectedCertificates.length === 0 ? (
+                                        <div className='text-muted-foreground mt-2'>
+                                            No rejected certificates to display.
+                                        </div>
+                                    ) : (
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className='w-1/4'>
+                                                        Breeder Email
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        Certificate
+                                                    </TableHead>
+                                                    <TableHead className='text-right'>
+                                                        Actions
+                                                    </TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+
+                                            <TableBody>
+                                                {rejectedCertificates.map(
+                                                    (certificate) => (
+                                                        <TableRow
+                                                            key={certificate.id}
+                                                        >
+                                                            <TableCell>
+                                                                {
+                                                                    certificate.breeder_email
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Button
+                                                                    className='mr-4'
+                                                                    variant={
+                                                                        'secondary'
+                                                                    }
+                                                                >
+                                                                    Download
+                                                                </Button>
+                                                                {
+                                                                    certificate.upload_path
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <div className='flex justify-end gap-2'>
+                                                                    <Button>
+                                                                        Approve
+                                                                    </Button>
+                                                                    <Button variant='destructive'>
+                                                                        Reject
+                                                                    </Button>
+                                                                </div>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    )}
                                 </CardContent>
                             </CardHeader>
                         </Card>
