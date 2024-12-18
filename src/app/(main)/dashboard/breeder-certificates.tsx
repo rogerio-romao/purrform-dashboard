@@ -2,23 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
     Card,
-    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 
 import CertificatesTableSection from '@/components/certificates-table-section';
 
@@ -42,7 +32,6 @@ export default function BreederCertificates() {
                 'https://4268-2a01-4b00-805d-b800-adf5-37f9-a9f5-e235.ngrok-free.app/getBreederCertificates'
             );
             const data = (await response.json()) as BreederCertificate[];
-            console.log(data);
 
             setData(data);
         };
@@ -85,18 +74,19 @@ export default function BreederCertificates() {
                             x-chunk='dashboard-05-chunk-0'
                         >
                             <CertificatesTableSection
+                                setData={setData}
                                 certificates={pendingCertificates}
                                 type='pending'
                             />
                             <Separator />
                             <CertificatesTableSection
-                                certificates={approvedCertificates}
-                                type='approved'
+                                certificates={rejectedCertificates}
+                                type='rejected'
                             />
                             <Separator />
                             <CertificatesTableSection
-                                certificates={rejectedCertificates}
-                                type='rejected'
+                                certificates={approvedCertificates}
+                                type='approved'
                             />
                         </Card>
                     </div>
