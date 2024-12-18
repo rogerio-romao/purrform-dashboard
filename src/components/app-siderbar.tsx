@@ -16,7 +16,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { BarChart, Beef } from 'lucide-react';
+import { BarChart, Beef, ShieldCheck } from 'lucide-react';
 
 // Menu items.
 const items = [
@@ -31,6 +31,12 @@ const items = [
         stateLabel: 'traceability',
         url: '#',
         icon: Beef,
+    },
+    {
+        title: 'Breeder Certificates',
+        stateLabel: 'certificates',
+        url: '#',
+        icon: ShieldCheck,
     },
 ];
 

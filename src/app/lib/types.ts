@@ -38,3 +38,10 @@ export interface IngredientsProps {
         >
     ) => void;
 }
+
+export interface BreederCertificate {
+    id: number;
+    breeder_email: string;
+    upload_path: string;
+    status: 'pending' | 'approved' | 'rejected';
+}
