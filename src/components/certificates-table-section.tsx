@@ -1,3 +1,6 @@
+import { createClient } from '@supabase/supabase-js';
+import { Dispatch, SetStateAction } from 'react';
+
 import { Button } from './ui/button';
 import { CardContent, CardHeader, CardTitle } from './ui/card';
 import {
@@ -13,8 +16,6 @@ import rejectBreederCertificate from '@/app/actions/rejectBreederCertificate';
 import { useToast } from '@/hooks/use-toast';
 
 import type { BreederCertificate } from '@/app/lib/types';
-import Link from 'next/link';
-import { Dispatch, SetStateAction } from 'react';
 
 interface CertificatesTableSectionProps {
     setData?: Dispatch<SetStateAction<BreederCertificate[]>>;
@@ -72,6 +73,46 @@ export default function CertificatesTableSection({
         }
     }
 
+    async function handleDownloadCertificate(uploadPath: string) {
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
+        );
+
+        const { data, error } = await supabase.storage
+            .from('breeder-certificates')
+            .download(uploadPath);
+
+        if (error) {
+            console.error('Error downloading file: ', error.message);
+            toast({
+                title: 'Error',
+                description:
+                    'Failed to download certificate. Please try again.',
+                variant: 'destructive',
+            });
+            return;
+        }
+
+        const url = URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', uploadPath);
+        document.body.appendChild(link);
+        link.click();
+
+        URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+
+        toast({
+            title: 'Success',
+            description: 'Certificate downloaded successfully.',
+            variant: 'default',
+        });
+
+        return;
+    }
+
     return (
         <CardHeader className='pb-3'>
             <CardTitle className='text-base font-semibold mb-4'>
@@ -106,6 +147,11 @@ export default function CertificatesTableSection({
                                         <Button
                                             className='mr-4'
                                             variant={'outline'}
+                                            onClick={() =>
+                                                handleDownloadCertificate(
+                                                    certificate.upload_path
+                                                )
+                                            }
                                         >
                                             Download
                                         </Button>
