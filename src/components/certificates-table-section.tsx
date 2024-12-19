@@ -131,7 +131,10 @@ export default function CertificatesTableSection({
                                                 </>
                                             )}
                                             {type === 'rejected' && (
-                                                <Button asChild variant='link'>
+                                                <Button
+                                                    asChild
+                                                    variant='outline'
+                                                >
                                                     <a
                                                         href={`mailto:${certificate.breeder_email}?subject=Your%20certificate%20was%20not%20approved`}
                                                     >
