@@ -12,6 +12,7 @@ import {
     TableRow,
 } from './ui/table';
 
+import acceptBreederCertificate from '@/app/actions/acceptBreederCertificate';
 import rejectBreederCertificate from '@/app/actions/rejectBreederCertificate';
 import { useToast } from '@/hooks/use-toast';
 
@@ -40,6 +41,43 @@ export default function CertificatesTableSection({
     };
 
     const { toast } = useToast();
+
+    async function handleAcceptCertificate(id: number, email: string) {
+        const result = await acceptBreederCertificate(id, email);
+
+        if (!result.ok) {
+            toast({
+                title: 'Error',
+                description: 'Failed to accept certificate. Please try again.',
+                variant: 'destructive',
+            });
+
+            return;
+        }
+
+        toast({
+            title: 'Success',
+            description: 'Certificate accepted successfully.',
+            variant: 'default',
+        });
+
+        if (setData) {
+            setData((prevData) => {
+                const certificateIndex = prevData.findIndex(
+                    (certificate) => certificate.id === id
+                );
+
+                if (certificateIndex === -1) {
+                    return prevData;
+                }
+
+                const updatedData = [...prevData];
+                updatedData[certificateIndex].status = 'approved';
+
+                return updatedData;
+            });
+        }
+    }
 
     async function handleRejectCertificate(id: number) {
         const result = await rejectBreederCertificate(id);
@@ -163,7 +201,16 @@ export default function CertificatesTableSection({
                                         <div className='flex justify-end gap-2'>
                                             {type === 'pending' && (
                                                 <>
-                                                    <Button>Approve</Button>
+                                                    <Button
+                                                        onClick={() => {
+                                                            handleAcceptCertificate(
+                                                                certificate.id,
+                                                                certificate.breeder_email
+                                                            );
+                                                        }}
+                                                    >
+                                                        Approve
+                                                    </Button>
                                                     <Button
                                                         variant='destructive'
                                                         onClick={() =>
