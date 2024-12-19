@@ -17,6 +17,11 @@ import { useToast } from '@/hooks/use-toast';
 
 import type { BreederCertificate } from '@/app/lib/types';
 
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
+);
+
 interface CertificatesTableSectionProps {
     setData?: Dispatch<SetStateAction<BreederCertificate[]>>;
     certificates: BreederCertificate[];
@@ -74,11 +79,6 @@ export default function CertificatesTableSection({
     }
 
     async function handleDownloadCertificate(uploadPath: string) {
-        const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
-        );
-
         const { data, error } = await supabase.storage
             .from('breeder-certificates')
             .download(uploadPath);
