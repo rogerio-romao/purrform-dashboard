@@ -23,9 +23,8 @@ export default async function submitBreederCertificate(
     }
 
     try {
-        // TODO: change the URL to the correct endpoint
         const response = await fetch(
-            'https://4268-2a01-4b00-805d-b800-adf5-37f9-a9f5-e235.ngrok-free.app/uploadBreederCertificate',
+            'https://purrform-apps-027e.onrender.com/uploadBreederCertificate',
             {
                 method: 'POST',
                 body: formData,

@@ -29,7 +29,7 @@ export default function BreederCertificates() {
     useEffect(() => {
         const fetchData = async () => {
             const response = await fetch(
-                'https://4268-2a01-4b00-805d-b800-adf5-37f9-a9f5-e235.ngrok-free.app/getBreederCertificates'
+                'https://purrform-apps-027e.onrender.com/getBreederCertificates'
             );
             const data = (await response.json()) as BreederCertificate[];
 
