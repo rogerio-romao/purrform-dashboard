@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // 1. Specify protected and public routes
 const protectedRoutes = ['/dashboard'];
-const publicRoutes = ['/login', '/'];
+const publicRoutes = ['/login', '/', '/breeder-certificate'];
 
 export default async function middleware(req: NextRequest) {
     // 2. Check if the current route is protected or public
@@ -22,7 +22,12 @@ export default async function middleware(req: NextRequest) {
     }
 
     // 5. Redirect to dashboard if session is valid
-    if (isPublicRoute && session?.role && !path.includes('dashboard')) {
+    if (
+        isPublicRoute &&
+        session?.role &&
+        !path.includes('dashboard') &&
+        !path.includes('breeder-certificate')
+    ) {
         return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
     }
 

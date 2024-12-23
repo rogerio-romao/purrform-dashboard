@@ -16,7 +16,7 @@ export const LoginFormSchema = z.object({
     password: z.enum([PASSWORD!], { message: 'Invalid password' }),
 });
 
-export type FormState =
+export type LoginFormState =
     | {
           errors?: {
               email?: string[];
@@ -30,3 +30,25 @@ export type SessionPayload = {
     role: 'admin' | 'user';
     expiresAt: Date;
 };
+
+export const SubmitBreederCertificateSchema = z.object({
+    email: z
+        .string({
+            required_error: 'Email is required',
+            invalid_type_error: 'Expected to receive a string',
+        })
+        .email({ message: 'Invalid email' }),
+    certificate: z.instanceof(File, {
+        message: 'Expected to receive a file',
+    }),
+});
+
+export type SubmitBreederCertificateState =
+    | {
+          errors?: {
+              email?: string[];
+              certificate?: string[];
+          };
+          message?: string;
+      }
+    | undefined;
