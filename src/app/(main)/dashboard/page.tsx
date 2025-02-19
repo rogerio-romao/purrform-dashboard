@@ -5,6 +5,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { useState } from 'react';
 import BreederCertificates from './breeder-certificates';
 import OrdersLoyaltyStats from './orders-loyalty-stats';
+import RecallProducts from './recall-products';
 import TraceabilityIngredients from './traceability-ingredients';
 
 export default function Page() {
@@ -15,6 +16,7 @@ export default function Page() {
             {activeWidget === 'orders' && <OrdersLoyaltyStats />}
             {activeWidget === 'traceability' && <TraceabilityIngredients />}
             {activeWidget === 'certificates' && <BreederCertificates />}
+            {activeWidget === 'recall' && <RecallProducts />}
         </SidebarProvider>
     );
 }

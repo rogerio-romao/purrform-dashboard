@@ -1,4 +1,4 @@
-import { formSchema } from '@/app/lib/utils';
+import { createIngredientsFormSchema } from '@/app/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, UseFormReturn } from 'react-hook-form';
@@ -45,8 +45,8 @@ export default function CreateIngredient({
 }: CreateIngredientProps) {
     const { toast } = useToast();
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof createIngredientsFormSchema>>({
+        resolver: zodResolver(createIngredientsFormSchema),
         defaultValues: {
             title: '',
             location: '',
@@ -55,8 +55,8 @@ export default function CreateIngredient({
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        const validated = formSchema.safeParse(values);
+    function onSubmit(values: z.infer<typeof createIngredientsFormSchema>) {
+        const validated = createIngredientsFormSchema.safeParse(values);
 
         if (!validated.success) {
             toast({

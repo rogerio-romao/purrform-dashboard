@@ -25,7 +25,7 @@ import type {
     IngredientsProps,
     TraceabilityIngredientsFeature,
 } from '@/app/lib/types';
-import { formSchema } from '@/app/lib/utils';
+import { createIngredientsFormSchema } from '@/app/lib/utils';
 
 type UpdateIngredientModalProps = Omit<IngredientsProps, 'ingredients'> & {
     ingredient: TraceabilityIngredientsFeature;
@@ -38,8 +38,8 @@ export default function UpdateIngredientModal({
 }: UpdateIngredientModalProps) {
     const { toast } = useToast();
 
-    const updateForm = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const updateForm = useForm<z.infer<typeof createIngredientsFormSchema>>({
+        resolver: zodResolver(createIngredientsFormSchema),
         defaultValues: {
             title: ingredient.properties.title,
             location: ingredient.properties.location,
@@ -48,8 +48,8 @@ export default function UpdateIngredientModal({
         },
     });
 
-    function onUpdate(values: z.infer<typeof formSchema>) {
-        const validated = formSchema.safeParse(values);
+    function onUpdate(values: z.infer<typeof createIngredientsFormSchema>) {
+        const validated = createIngredientsFormSchema.safeParse(values);
 
         if (!validated.success) {
             toast({

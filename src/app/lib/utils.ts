@@ -32,7 +32,7 @@ export const months = [
     'December',
 ];
 
-export const formSchema = z.object({
+export const createIngredientsFormSchema = z.object({
     title: z
         .string({ required_error: 'Title is required' })
         .min(3, 'Title must be at least 3 characters'),
@@ -41,4 +41,10 @@ export const formSchema = z.object({
         .min(3, 'Location must be at least 3 characters'),
     longitude: z.number({ required_error: 'Longitude is required' }),
     latitude: z.number({ required_error: 'Latitude is required' }),
+});
+
+export const recallProductsFormSchema = z.object({
+    selectedProduct: z.string({ required_error: 'Product is required' }),
+    startDate: z.string({ required_error: 'Start date is required' }).date(),
+    endDate: z.string({ required_error: 'End date is required' }).date(),
 });
