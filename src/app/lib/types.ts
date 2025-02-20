@@ -45,3 +45,21 @@ export interface BreederCertificate {
     upload_path: string;
     status: 'pending' | 'approved' | 'rejected';
 }
+
+export interface BcProduct {
+    id: number;
+    name: string;
+    price: string;
+    sku: string;
+    custom_url: {
+        url: string;
+    };
+    categories: number[];
+    images: Array<{
+        is_thumbnail: boolean;
+        sort_order: number;
+        url_standard: string;
+        image_file: string;
+    }>;
+    custom_fields: Array<{ name: string; value: string }>;
+}

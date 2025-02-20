@@ -44,7 +44,8 @@ export const createIngredientsFormSchema = z.object({
 });
 
 export const recallProductsFormSchema = z.object({
-    selectedProduct: z.string({ required_error: 'Product is required' }),
+    selectedProductName: z.string({ required_error: 'Product is required' }),
+    selectedProductId: z.number({ required_error: 'Product ID is required' }),
     startDate: z.string({ required_error: 'Start date is required' }).date(),
     endDate: z.string({ required_error: 'End date is required' }).date(),
 });

@@ -1,12 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { use, useEffect, useRef } from 'react';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { recallProductsFormSchema } from '@/app/lib/utils';
+import type { BcProduct } from '@/app/lib/types';
+import { cn, recallProductsFormSchema } from '@/app/lib/utils';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from '@/components/ui/command';
 import {
     Form,
     FormControl,
@@ -16,13 +26,24 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import RecallProductsSearchbox from './recall-products-searchbox';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 
-export default function RecallProductsSearch() {
+interface RecallProductsSearchProps {
+    products: BcProduct[];
+}
+
+export default function RecallProductsSearch({
+    products,
+}: RecallProductsSearchProps) {
     const form = useForm<z.infer<typeof recallProductsFormSchema>>({
         resolver: zodResolver(recallProductsFormSchema),
         defaultValues: {
-            selectedProduct: '',
+            selectedProductName: '',
+            selectedProductId: undefined,
             startDate: '',
             endDate: '',
         },
@@ -60,26 +81,116 @@ export default function RecallProductsSearch() {
                     Search for product to recall
                 </CardTitle>
                 <CardContent>
-                    <RecallProductsSearchbox />
                     <Form {...form}>
                         <form
                             onSubmit={form.handleSubmit(onSubmit)}
-                            className='space-y-8'
+                            className='space-y-8 my-6'
                         >
+                            <FormField
+                                control={form.control}
+                                name='selectedProductId'
+                                render={({ field }) => (
+                                    <FormItem className='hidden'>
+                                        <FormControl>
+                                            <Input
+                                                type='hidden'
+                                                {...field}
+                                                value={
+                                                    products.find(
+                                                        (product) =>
+                                                            product.name ===
+                                                            form.getValues(
+                                                                'selectedProductName'
+                                                            )
+                                                    )?.id || 0
+                                                }
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
                             <div className='flex flex-col justify-center gap-4'>
                                 <FormField
                                     control={form.control}
-                                    name='selectedProduct'
+                                    name='selectedProductName'
                                     render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem className='flex flex-col'>
                                             <FormLabel>Product</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder='Ox Heart Treats'
-                                                    {...field}
-                                                    required
-                                                />
-                                            </FormControl>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant='outline'
+                                                            role='combobox'
+                                                            className={cn(
+                                                                'w-[200px] justify-between',
+                                                                !field.value &&
+                                                                    'text-muted-foreground'
+                                                            )}
+                                                        >
+                                                            {field.value
+                                                                ? products.find(
+                                                                      (
+                                                                          product
+                                                                      ) =>
+                                                                          product.name ===
+                                                                          field.value
+                                                                  )?.name
+                                                                : 'Select product'}
+                                                            <ChevronsUpDown className='opacity-50' />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className='w-[200px] p-0'>
+                                                    <Command>
+                                                        <CommandInput
+                                                            placeholder='Search product...'
+                                                            className='h-9'
+                                                        />
+                                                        <CommandList>
+                                                            <CommandEmpty>
+                                                                No product
+                                                                found.
+                                                            </CommandEmpty>
+                                                            <CommandGroup>
+                                                                {products.map(
+                                                                    (
+                                                                        product
+                                                                    ) => (
+                                                                        <CommandItem
+                                                                            value={
+                                                                                product.name
+                                                                            }
+                                                                            key={
+                                                                                product.id
+                                                                            }
+                                                                            onSelect={() => {
+                                                                                form.setValue(
+                                                                                    'selectedProductName',
+                                                                                    product.name
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                product.name
+                                                                            }
+                                                                            <Check
+                                                                                className={cn(
+                                                                                    'ml-auto',
+                                                                                    product.name ===
+                                                                                        field.value
+                                                                                        ? 'opacity-100'
+                                                                                        : 'opacity-0'
+                                                                                )}
+                                                                            />
+                                                                        </CommandItem>
+                                                                    )
+                                                                )}
+                                                            </CommandGroup>
+                                                        </CommandList>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -124,7 +235,7 @@ export default function RecallProductsSearch() {
                                 </div>
                             </div>
                             <div className='flex gap-2'>
-                                <Button type='submit'>Search</Button>
+                                <Button type='submit'>Search orders</Button>
                             </div>
                         </form>
                     </Form>
