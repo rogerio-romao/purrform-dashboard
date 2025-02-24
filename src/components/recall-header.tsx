@@ -7,10 +7,10 @@ export default function RecallHeader() {
                 <CardTitle>Recall Products</CardTitle>
                 <CardDescription className='leading-relaxed'>
                     Search for a product to recall, with the start and end
-                    dates. Search by product name or sku. The system will then
-                    search all orders between the dates and display all the
-                    emails of customers that purchased the product during that
-                    time. You can then write and send an email to all customers.
+                    dates. The system will then search all orders between the
+                    dates and display all the emails of customers that purchased
+                    the product during that time. You can then write and send an
+                    email to all customers.
                 </CardDescription>
             </CardHeader>
         </Card>

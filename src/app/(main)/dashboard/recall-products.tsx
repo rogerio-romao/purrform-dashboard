@@ -6,6 +6,7 @@ import type { BcProduct, RecallProductsResponse } from '@/app/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 import Loading from '@/components/loading';
+import RecallData from '@/components/recall-data';
 import RecallHeader from '@/components/recall-header';
 import RecallProductsSearch from '@/components/recall-products-search';
 
@@ -16,8 +17,9 @@ export default function RecallProducts() {
     const [products, setProducts] = useState<BcProduct[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [recallLoading, setRecallLoading] = useState<boolean>(false);
-    const [recallProducts, setRecallProducts] =
-        useState<RecallProductsResponse | null>(null);
+    const [recallData, setRecallData] = useState<RecallProductsResponse | null>(
+        null
+    );
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -57,7 +59,15 @@ export default function RecallProducts() {
                 <main className='grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-2'>
                     <div className='grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-3'>
                         <RecallHeader />
-                        <RecallProductsSearch products={products} />
+                        <RecallProductsSearch
+                            products={products}
+                            setRecallLoading={setRecallLoading}
+                            setRecallData={setRecallData}
+                        />
+                        <RecallData
+                            recallData={recallData}
+                            recallLoading={recallLoading}
+                        />
                     </div>
                 </main>
             </div>

@@ -35,10 +35,14 @@ import {
 
 interface RecallProductsSearchProps {
     products: BcProduct[];
+    setRecallLoading: (loading: boolean) => void;
+    setRecallData: (data: RecallProductsResponse | null) => void;
 }
 
 export default function RecallProductsSearch({
     products,
+    setRecallLoading,
+    setRecallData,
 }: RecallProductsSearchProps) {
     const { toast } = useToast();
 
@@ -82,9 +86,13 @@ export default function RecallProductsSearch({
         const { selectedProductName, selectedProductId, startDate, endDate } =
             validated.data;
 
+        setRecallLoading(true);
+
         // Call API to search for orders
         const response = await fetch(
-            `http://localhost:5555/recallProducts?productName=${selectedProductName}&productId=${selectedProductId}&startDate=${startDate}&endDate=${endDate}`
+            `http://localhost:5555/recallProducts?productName=${encodeURIComponent(
+                selectedProductName
+            )}&productId=${selectedProductId}&startDate=${startDate}&endDate=${endDate}`
         );
 
         if (!response.ok) {
@@ -98,7 +106,9 @@ export default function RecallProductsSearch({
         }
 
         const recallData = (await response.json()) as RecallProductsResponse;
-        console.log('Recall data:', recallData);
+
+        setRecallData(recallData);
+        setRecallLoading(false);
     }
 
     return (
@@ -260,7 +270,15 @@ export default function RecallProductsSearch({
                             </div>
                         </div>
                         <div className='flex gap-2'>
-                            <Button type='submit'>Search orders</Button>
+                            <Button
+                                type='submit'
+                                disabled={
+                                    !form.formState.isValid ||
+                                    form.formState.isSubmitting
+                                }
+                            >
+                                Search orders
+                            </Button>
                         </div>
                     </form>
                 </Form>
