@@ -63,3 +63,10 @@ export interface BcProduct {
     }>;
     custom_fields: Array<{ name: string; value: string }>;
 }
+
+export interface RecallProductsResponse {
+    productName: string;
+    customerEmails: string[];
+    totalOrders: number;
+    affectedOrders: number;
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import type { BcProduct } from '@/app/lib/types';
+import type { BcProduct, RecallProductsResponse } from '@/app/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 import Loading from '@/components/loading';
@@ -12,9 +12,12 @@ import RecallProductsSearch from '@/components/recall-products-search';
 export const revalidate = 3600 * 24; // invalidate every 24 hours
 
 export default function RecallProducts() {
+    const { toast } = useToast();
     const [products, setProducts] = useState<BcProduct[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const { toast } = useToast();
+    const [recallLoading, setRecallLoading] = useState<boolean>(false);
+    const [recallProducts, setRecallProducts] =
+        useState<RecallProductsResponse | null>(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
