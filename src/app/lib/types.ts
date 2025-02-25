@@ -68,5 +68,5 @@ export interface RecallProductsResponse {
     productName: string;
     customerEmails: string[];
     totalOrders: number;
-    affectedOrders: number;
+    orderNumbers: number[];
 }
