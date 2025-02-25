@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -45,6 +45,7 @@ export default function RecallProductsSearch({
     setRecallData,
 }: RecallProductsSearchProps) {
     const { toast } = useToast();
+    const [popoverOpen, setPopoverOpen] = useState(false);
 
     const form = useForm<z.infer<typeof recallProductsFormSchema>>({
         resolver: zodResolver(recallProductsFormSchema),
@@ -79,20 +80,27 @@ export default function RecallProductsSearch({
 
         if (!validated.success) {
             console.error('Validation error:', validated.error.errors);
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description: validated.error.errors[0].message,
+            });
             return;
         }
 
-        console.log('Search data:', validated.data);
         const { selectedProductName, selectedProductId, startDate, endDate } =
             validated.data;
 
         setRecallLoading(true);
 
+        const startDateWithTime = `${startDate}T00:00:00`;
+        const endDateWithTime = `${endDate}T23:59:59`;
+
         // Call API to search for orders
         const response = await fetch(
-            `http://localhost:5555/recallProducts?productName=${encodeURIComponent(
+            `https://purrform-apps-027e.onrender.com/recallProducts?productName=${encodeURIComponent(
                 selectedProductName
-            )}&productId=${selectedProductId}&startDate=${startDate}&endDate=${endDate}`
+            )}&productId=${selectedProductId}&startDate=${startDateWithTime}&endDate=${endDateWithTime}`
         );
 
         if (!response.ok) {
@@ -154,7 +162,10 @@ export default function RecallProductsSearch({
                                 render={({ field }) => (
                                     <FormItem className='flex flex-col'>
                                         <FormLabel>Product</FormLabel>
-                                        <Popover>
+                                        <Popover
+                                            open={popoverOpen}
+                                            onOpenChange={setPopoverOpen}
+                                        >
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
@@ -206,6 +217,9 @@ export default function RecallProductsSearch({
                                                                                 'selectedProductId',
                                                                                 product.id
                                                                             );
+                                                                            setPopoverOpen(
+                                                                                false
+                                                                            );
                                                                         }}
                                                                     >
                                                                         {
@@ -238,7 +252,12 @@ export default function RecallProductsSearch({
                                     name='startDate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Start Date</FormLabel>
+                                            <FormLabel>
+                                                Start Date{' '}
+                                                <span className='text-xs text-muted-foreground ml-1'>
+                                                    from 00:00H
+                                                </span>
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='date'
@@ -255,7 +274,12 @@ export default function RecallProductsSearch({
                                     name='endDate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>End Date</FormLabel>
+                                            <FormLabel>
+                                                End Date{' '}
+                                                <span className='text-xs text-muted-foreground ml-1'>
+                                                    to 23:59H
+                                                </span>
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='date'
