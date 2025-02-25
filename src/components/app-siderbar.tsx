@@ -16,27 +16,29 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { BarChart, Beef, ShieldCheck } from 'lucide-react';
+import { ArrowLeftFromLine, BarChart, Beef, ShieldCheck } from 'lucide-react';
 
 // Menu items.
 const items = [
     {
         title: 'Sales & Loyalty Stats',
         stateLabel: 'orders',
-        url: '#',
         icon: BarChart,
     },
     {
         title: 'Traceability Ingredients',
         stateLabel: 'traceability',
-        url: '#',
         icon: Beef,
     },
     {
         title: 'Breeder Certificates',
         stateLabel: 'certificates',
-        url: '#',
         icon: ShieldCheck,
+    },
+    {
+        title: 'Recall Products',
+        stateLabel: 'recall',
+        icon: ArrowLeftFromLine,
     },
 ];
 
