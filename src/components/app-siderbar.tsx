@@ -16,7 +16,13 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { ArrowLeftFromLine, BarChart, Beef, ShieldCheck } from 'lucide-react';
+import {
+    ArrowLeftFromLine,
+    BarChart,
+    Beef,
+    CreditCard,
+    ShieldCheck,
+} from 'lucide-react';
 
 // Menu items.
 const items = [
@@ -39,6 +45,11 @@ const items = [
         title: 'Recall Products',
         stateLabel: 'recall',
         icon: ArrowLeftFromLine,
+    },
+    {
+        title: 'Trader Credit',
+        stateLabel: 'credit',
+        icon: CreditCard,
     },
 ];
 

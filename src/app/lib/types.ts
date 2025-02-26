@@ -70,3 +70,11 @@ export interface RecallProductsResponse {
     totalOrders: number;
     orderNumbers: number[];
 }
+
+export interface BcCustomer {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+    company: string;
+}
