@@ -36,6 +36,9 @@ export default function RecallData({
             <Card className='sm:col-span-3'>
                 <CardHeader className='pb-3'>
                     <Loading />
+                    <p className='text-center'>
+                        The search can take up to several minutes...
+                    </p>
                 </CardHeader>
             </Card>
         );
