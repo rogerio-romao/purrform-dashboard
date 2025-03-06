@@ -50,7 +50,13 @@ export const recallProductsFormSchema = z.object({
     endDate: z.string({ required_error: 'End date is required' }).date(),
 });
 
-export const traderCreditFormSchema = z.object({
+export const traderOnCreditFormSchema = z.object({
+    selectedTraderId: z.number().min(1, 'Please select a trader'), // Make sure it requires a value > 0
+    selectedTraderCompany: z.string().min(1, 'Please select a trader company'),
+    selectedTraderEmail: z.string().email('Invalid email format'),
+});
+
+export const addTraderToCreditFormSchema = z.object({
     selectedTraderId: z.number().min(1, 'Please select a trader'), // Make sure it requires a value > 0
     selectedTraderCompany: z.string().min(1, 'Please select a trader company'),
     selectedTraderEmail: z.string().email('Invalid email format'),

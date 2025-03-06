@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { cn, traderCreditFormSchema } from '@/app/lib/utils';
+import { cn, traderOnCreditFormSchema } from '@/app/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -42,8 +42,8 @@ export default function TraderCreditForm({
     const { toast } = useToast();
     const [popoverOpen, setPopoverOpen] = useState(false);
 
-    const form = useForm<z.infer<typeof traderCreditFormSchema>>({
-        resolver: zodResolver(traderCreditFormSchema),
+    const form = useForm<z.infer<typeof traderOnCreditFormSchema>>({
+        resolver: zodResolver(traderOnCreditFormSchema),
         defaultValues: {
             selectedTraderId: 0,
             selectedTraderCompany: '',
@@ -51,8 +51,8 @@ export default function TraderCreditForm({
         },
     });
 
-    function onSubmit(data: z.infer<typeof traderCreditFormSchema>) {
-        const validated = traderCreditFormSchema.safeParse(data);
+    function onSubmit(data: z.infer<typeof traderOnCreditFormSchema>) {
+        const validated = traderOnCreditFormSchema.safeParse(data);
 
         if (!validated.success) {
             console.error(validated.error.format());

@@ -5,16 +5,10 @@ import { z } from 'zod';
 
 import { useToast } from '@/hooks/use-toast';
 
-import { cn, traderCreditFormSchema } from '@/app/lib/utils';
+import { addTraderToCreditFormSchema, cn } from '@/app/lib/utils';
 import { Check, ChevronsUpDown, PoundSterling } from 'lucide-react';
 import { Button } from './ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import {
     Command,
     CommandEmpty,
@@ -46,11 +40,13 @@ export default function TraderCreditAddTrader({
     mappedTraders,
 }: TraderCreditFormProps) {
     const [popoverOpen, setPopoverOpen] = useState(false);
-    const [creditAmount, setCreditAmount] = useState<number>(0);
+    const [creditAmount, setCreditAmount] = useState<number | undefined>(
+        undefined
+    );
     const { toast } = useToast();
 
-    const form = useForm<z.infer<typeof traderCreditFormSchema>>({
-        resolver: zodResolver(traderCreditFormSchema),
+    const form = useForm<z.infer<typeof addTraderToCreditFormSchema>>({
+        resolver: zodResolver(addTraderToCreditFormSchema),
         defaultValues: {
             selectedTraderId: 0,
             selectedTraderCompany: '',
@@ -59,9 +55,9 @@ export default function TraderCreditAddTrader({
         },
     });
 
-    function onSubmit(data: z.infer<typeof traderCreditFormSchema>) {
+    function onSubmit(data: z.infer<typeof addTraderToCreditFormSchema>) {
         console.log(data);
-        const validated = traderCreditFormSchema.safeParse(data);
+        const validated = addTraderToCreditFormSchema.safeParse(data);
 
         if (!validated.success) {
             console.error(validated.error.format());
@@ -78,9 +74,6 @@ export default function TraderCreditAddTrader({
         <Card className='sm:col-span-3'>
             <CardHeader>
                 <CardTitle className='text-lg'>Add Trader</CardTitle>
-                <CardDescription>
-                    Add a trader to the credit system.
-                </CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -288,7 +281,6 @@ export default function TraderCreditAddTrader({
                         <div className='flex gap-2'>
                             <Button
                                 type='submit'
-                                variant='secondary'
                                 disabled={
                                     !form.formState.isValid ||
                                     form.formState.isSubmitting
