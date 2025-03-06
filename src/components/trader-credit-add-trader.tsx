@@ -40,9 +40,6 @@ export default function TraderCreditAddTrader({
     mappedTraders,
 }: TraderCreditFormProps) {
     const [popoverOpen, setPopoverOpen] = useState(false);
-    const [creditAmount, setCreditAmount] = useState<number | undefined>(
-        undefined
-    );
     const { toast } = useToast();
 
     const form = useForm<z.infer<typeof addTraderToCreditFormSchema>>({
@@ -51,7 +48,7 @@ export default function TraderCreditAddTrader({
             selectedTraderId: 0,
             selectedTraderCompany: '',
             selectedTraderEmail: '',
-            creditAmount: creditAmount,
+            creditAmount: 0,
         },
     });
 
@@ -246,20 +243,13 @@ export default function TraderCreditAddTrader({
                                             <FormControl>
                                                 <div className='relative w-full'>
                                                     <PoundSterling className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-
                                                     <Input
                                                         type='number'
                                                         className='pl-8'
+                                                        placeholder='Credit amount'
                                                         {...field}
-                                                        value={creditAmount}
+                                                        value={undefined}
                                                         onChange={(e) => {
-                                                            setCreditAmount(
-                                                                parseInt(
-                                                                    e.target
-                                                                        .value,
-                                                                    10
-                                                                )
-                                                            );
                                                             form.setValue(
                                                                 'creditAmount',
                                                                 parseInt(
