@@ -85,7 +85,6 @@ export interface CreditSystemTrader {
     bc_customer_company: string;
     bc_customer_first_name: string;
     bc_customer_last_name: string;
-    credit_eligible: boolean;
-    credit_limit: number;
+    credit_ceiling: number;
     current_balance: number;
 }

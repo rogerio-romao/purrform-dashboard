@@ -34,10 +34,12 @@ interface TraderCreditFormProps {
         company: string;
         email: string;
     }[];
+    setSelectedTraderId: (traderId: number | null) => void;
 }
 
 export default function TraderCreditForm({
     mappedTraders,
+    setSelectedTraderId,
 }: TraderCreditFormProps) {
     const { toast } = useToast();
     const [popoverOpen, setPopoverOpen] = useState(false);
@@ -63,6 +65,8 @@ export default function TraderCreditForm({
             });
             return;
         }
+
+        setSelectedTraderId(data.selectedTraderId);
     }
 
     return (

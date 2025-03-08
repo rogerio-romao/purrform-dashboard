@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 
 import TraderCreditAddTrader from '@/components/trader-credit-add-trader';
 import TraderCreditForm from '@/components/trader-credit-form';
+import TraderCreditTraderData from '@/components/trader-credit-trader-data';
 
 import {
     Card,
@@ -18,7 +19,14 @@ export default function TraderCredit() {
     const [creditTraders, setCreditTraders] = useState<CreditSystemTrader[]>(
         []
     );
+    const [selectedTraderId, setSelectedTraderId] = useState<number | null>(
+        null
+    );
     const [allTraders, setAllTraders] = useState<BcCustomer[]>([]);
+
+    const selectedTrader = creditTraders.find(
+        (trader) => trader.bc_customer_id === selectedTraderId
+    );
 
     useEffect(() => {
         const fetchCreditTraders = async () => {
@@ -71,7 +79,6 @@ export default function TraderCredit() {
     }, [toast]);
 
     const mappedCreditTraders = creditTraders
-        .filter((trader) => trader.credit_eligible)
         .map((trader) => ({
             id: trader.bc_customer_id,
             email: trader.bc_customer_email,
@@ -114,7 +121,12 @@ export default function TraderCredit() {
                             </CardHeader>
                         </Card>
 
-                        <TraderCreditForm mappedTraders={mappedCreditTraders} />
+                        <TraderCreditForm
+                            mappedTraders={mappedCreditTraders}
+                            setSelectedTraderId={setSelectedTraderId}
+                        />
+
+                        <TraderCreditTraderData trader={selectedTrader} />
 
                         <TraderCreditAddTrader
                             mappedTraders={mappedAllTraders}
