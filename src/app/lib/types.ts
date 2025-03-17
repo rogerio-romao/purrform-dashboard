@@ -80,6 +80,7 @@ export interface BcCustomer {
 }
 
 export interface CreditSystemTrader {
+    id: number;
     bc_customer_id: number;
     bc_customer_email: string;
     bc_customer_company: string;
@@ -87,4 +88,6 @@ export interface CreditSystemTrader {
     bc_customer_last_name: string;
     credit_ceiling: number;
     current_balance: number;
+    created_at: string;
+    updated_at: string;
 }

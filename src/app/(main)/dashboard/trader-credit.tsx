@@ -98,6 +98,8 @@ export default function TraderCredit() {
         .map((trader) => ({
             id: trader.id,
             email: trader.email,
+            first_name: trader.first_name,
+            last_name: trader.last_name,
             company: trader.company
                 ? trader.company
                 : `${trader.first_name} ${trader.last_name}`,
@@ -130,6 +132,7 @@ export default function TraderCredit() {
 
                         <TraderCreditAddTrader
                             mappedTraders={mappedAllTraders}
+                            setCreditTraders={setCreditTraders}
                         />
                     </div>
                 </main>

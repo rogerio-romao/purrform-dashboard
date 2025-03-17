@@ -66,11 +66,10 @@ export default function TraderCreditTraderData({
                                 </p>
                             </div>
                         </div>
-
                         <div className='flex flex-col'>
                             <div>
                                 <CardDescription>Credit Limit:</CardDescription>
-                                <p className='ml-1 text-2xl font-bold'>
+                                <p className='ml-1 text-xl font-bold'>
                                     £ {trader.credit_ceiling}
                                 </p>
                             </div>
@@ -78,19 +77,18 @@ export default function TraderCreditTraderData({
                                 <CardDescription>
                                     Current Balance:
                                 </CardDescription>
-                                <p className='ml-1 text-2xl font-bold'>
+                                <p className='ml-1 text-xl font-bold'>
                                     £ {trader.current_balance}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <Separator className='mt-4' />
-                <div className='flex mt-4'>
-                    <Button variant='secondary'>Edit Credit Limit</Button>
-                    <Button variant='secondary' className='ml-4'>
-                        View Orders
-                    </Button>
+                <Separator className='my-8' />
+                <div className='flex space-x-4'>
+                    <Button variant='secondary'>View Pending Payments</Button>
+                    <Button variant='secondary'>View Order History</Button>
+                    <Button variant='secondary'>Change Company Credit</Button>
                 </div>
             </CardContent>
         </Card>

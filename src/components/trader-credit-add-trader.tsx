@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, ChevronsUpDown, PoundSterling } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import type { CreditSystemTrader } from '@/app/lib/types';
+import { addTraderToCreditFormSchema, cn } from '@/app/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
-import { addTraderToCreditFormSchema, cn } from '@/app/lib/utils';
-import { Check, ChevronsUpDown, PoundSterling } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import {
@@ -31,13 +32,20 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 interface TraderCreditFormProps {
     mappedTraders: {
         id: number;
+        first_name: string;
+        last_name: string;
         company: string;
         email: string;
     }[];
+
+    setCreditTraders: React.Dispatch<
+        React.SetStateAction<CreditSystemTrader[]>
+    >;
 }
 
 export default function TraderCreditAddTrader({
     mappedTraders,
+    setCreditTraders,
 }: TraderCreditFormProps) {
     const [popoverOpen, setPopoverOpen] = useState(false);
     const { toast } = useToast();
@@ -52,7 +60,7 @@ export default function TraderCreditAddTrader({
         },
     });
 
-    function onSubmit(data: z.infer<typeof addTraderToCreditFormSchema>) {
+    async function onSubmit(data: z.infer<typeof addTraderToCreditFormSchema>) {
         console.log(data);
         const validated = addTraderToCreditFormSchema.safeParse(data);
 
@@ -65,6 +73,64 @@ export default function TraderCreditAddTrader({
             });
             return;
         }
+
+        const { selectedTraderId, selectedTraderCompany, creditAmount } = data;
+        const trader = mappedTraders.find(
+            (trader) => trader.company === selectedTraderCompany
+        );
+
+        if (!trader) {
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description: 'An error occurred while submitting the form.',
+            });
+            return;
+        }
+
+        const traderToAdd: Omit<
+            CreditSystemTrader,
+            'id' | 'created_at' | 'updated_at'
+        > = {
+            bc_customer_id: trader.id,
+            bc_customer_email: encodeURIComponent(trader.email),
+            bc_customer_company: encodeURIComponent(trader.company),
+            bc_customer_first_name: encodeURIComponent(trader.first_name),
+            bc_customer_last_name: encodeURIComponent(trader.last_name),
+            credit_ceiling: creditAmount!,
+            current_balance: creditAmount!,
+        };
+
+        await fetch(
+            `http://localhost:5555/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        ).then(async (response) => {
+            if (!response.ok) {
+                const { error } = (await response.json()) as { error: string };
+                toast({
+                    variant: 'destructive',
+                    title: 'ERROR',
+                    description: error,
+                });
+                return;
+            }
+
+            const data = (await response.json()) as CreditSystemTrader;
+
+            setCreditTraders((prev) => [...prev, data]);
+            form.reset();
+
+            toast({
+                variant: 'default',
+                title: 'SUCCESS',
+                description: 'Trader added to credit system successfully.',
+            });
+        });
     }
 
     return (
