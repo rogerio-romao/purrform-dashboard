@@ -61,7 +61,6 @@ export default function TraderCreditAddTrader({
     });
 
     async function onSubmit(data: z.infer<typeof addTraderToCreditFormSchema>) {
-        console.log(data);
         const validated = addTraderToCreditFormSchema.safeParse(data);
 
         if (!validated.success) {

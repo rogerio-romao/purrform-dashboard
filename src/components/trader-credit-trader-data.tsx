@@ -1,5 +1,17 @@
 import type { CreditSystemTrader } from '@/app/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from './ui/button';
 import {
     Card,
@@ -12,11 +24,19 @@ import { Separator } from './ui/separator';
 
 interface TraderCreditTraderDataProps {
     trader: CreditSystemTrader | undefined;
+    setSelectedTraderId: React.Dispatch<React.SetStateAction<number | null>>;
+    setCreditTraders: React.Dispatch<
+        React.SetStateAction<CreditSystemTrader[]>
+    >;
 }
 
 export default function TraderCreditTraderData({
     trader,
+    setSelectedTraderId,
+    setCreditTraders,
 }: TraderCreditTraderDataProps) {
+    const { toast } = useToast();
+
     if (!trader) {
         return null;
     }
@@ -24,6 +44,36 @@ export default function TraderCreditTraderData({
     const companyName = trader.bc_customer_company
         ? trader.bc_customer_company
         : `${trader.bc_customer_first_name} ${trader.bc_customer_last_name}`;
+
+    async function handleRemoveTrader() {
+        if (!trader) {
+            return;
+        }
+
+        const response = await fetch(
+            `http://localhost:5555/removeTraderFromCreditSystem?traderId=${trader.id}`
+        );
+
+        if (response.ok) {
+            toast({
+                variant: 'default',
+                title: 'Trader Removed',
+                description: `${companyName} has been removed from the credit system.`,
+            });
+
+            setSelectedTraderId(null);
+            setCreditTraders((prevTraders) =>
+                prevTraders.filter((t) => t.id !== trader.id)
+            );
+        } else {
+            const message = await response.text();
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: `Failed to remove trader: ${message}`,
+            });
+        }
+    }
 
     return (
         <Card className='sm:col-span-3'>
@@ -86,9 +136,35 @@ export default function TraderCreditTraderData({
                 </div>
                 <Separator className='my-8' />
                 <div className='flex space-x-4'>
-                    <Button variant='secondary'>View Pending Payments</Button>
-                    <Button variant='secondary'>View Order History</Button>
-                    <Button variant='secondary'>Change Company Credit</Button>
+                    <Button variant='outline'>View Pending Payments</Button>
+                    <Button variant='outline'>View Order History</Button>
+                    <Button variant='outline'>Change Company Credit</Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant='outline'>Remove Trader</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will remove{' '}
+                                    <strong>{companyName}</strong> (
+                                    {trader.bc_customer_email}) from the credit
+                                    system.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>
+                                    Cancel Removal
+                                </AlertDialogCancel>
+                                <AlertDialogAction onClick={handleRemoveTrader}>
+                                    Confirm Removal
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </CardContent>
         </Card>

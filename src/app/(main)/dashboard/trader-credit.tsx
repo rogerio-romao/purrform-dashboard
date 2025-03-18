@@ -128,7 +128,11 @@ export default function TraderCredit() {
                             setSelectedTraderId={setSelectedTraderId}
                         />
 
-                        <TraderCreditTraderData trader={selectedTrader} />
+                        <TraderCreditTraderData
+                            trader={selectedTrader}
+                            setSelectedTraderId={setSelectedTraderId}
+                            setCreditTraders={setCreditTraders}
+                        />
 
                         <TraderCreditAddTrader
                             mappedTraders={mappedAllTraders}
