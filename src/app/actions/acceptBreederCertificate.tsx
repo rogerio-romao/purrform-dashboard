@@ -6,7 +6,9 @@ export default async function acceptBreederCertificate(
 ): Promise<{ ok: false; error: string } | { ok: true }> {
     try {
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/acceptBreederCertificate?id=${certificateId}&breeder_email=${email}`
+            `https://purrform-apps-027e.onrender.com/acceptBreederCertificate?id=${certificateId}&breeder_email=${encodeURIComponent(
+                email
+            )}`
         );
 
         if (!response.ok) {
