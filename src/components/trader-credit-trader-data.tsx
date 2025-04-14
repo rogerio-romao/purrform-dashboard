@@ -61,10 +61,10 @@ export default function TraderCreditTraderData({
                 description: `${companyName} has been removed from the credit system.`,
             });
 
-            setSelectedTraderId(null);
             setCreditTraders((prevTraders) =>
                 prevTraders.filter((t) => t.id !== trader.id)
             );
+            setSelectedTraderId(null);
         } else {
             const message = await response.text();
             toast({
