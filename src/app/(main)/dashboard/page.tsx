@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import AppSidebar from '@/components/app-siderbar';
+import AppSidebar from '@/components/layout/app-siderbar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import BreederCertificates from './breeder-certificates';
 import OrdersLoyaltyStats from './orders-loyalty-stats';

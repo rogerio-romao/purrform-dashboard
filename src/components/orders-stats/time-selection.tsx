@@ -1,5 +1,4 @@
-import { CardContent } from './ui/card';
-
+import { CardContent } from '@/components/ui/card';
 import DaySelection from './day-selection';
 import MonthSelection from './month-selection';
 import WeekSelection from './week-selection';

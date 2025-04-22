@@ -1,11 +1,14 @@
 'use client';
 
+import { TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import Loading from '@/components/loading';
-import OrdersNumberBarChart from '@/components/orders-number-bar-chart';
-import OrdersValueBarChart from '@/components/orders-value-bar-chart';
-import PeriodComparison from '@/components/period-comparison';
+import { months } from '@/app/lib/utils';
+
+import Loading from '@/components/common/loading';
+import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
+import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
+import PeriodComparison from '@/components/orders-stats/period-comparison';
 import {
     Card,
     CardContent,
@@ -15,9 +18,6 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp } from 'lucide-react';
-
-import { months } from '@/app/lib/utils';
 
 export const revalidate = 7200; // invalidate every 2 hours
 

@@ -91,3 +91,16 @@ export interface CreditSystemTrader {
     created_at: string;
     updated_at: string;
 }
+
+export interface CreditSystemOrder {
+    id: number;
+    order_nr: number;
+    order_date: string;
+    payment_due: string;
+    order_total: number;
+    order_status: 'pending' | 'paid' | 'overdue' | 'other';
+    order_notes?: string;
+    trader_id: number;
+}
+
+export type SupabaseError = { error: string };

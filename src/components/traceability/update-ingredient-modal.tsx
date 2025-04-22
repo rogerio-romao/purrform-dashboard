@@ -1,13 +1,18 @@
-import { createIngredientsFormSchema } from '@/app/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import createIngredient from '@/app/actions/createIngredient';
+import updateIngredient from '@/app/actions/updateIngredient';
+import { createIngredientsFormSchema } from '@/app/lib/utils';
 
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from '@/components/ui/button';
+import {
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import {
     Form,
     FormControl,
@@ -15,47 +20,36 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
-import type { TraceabilityIngredientsFeature } from '@/app/lib/types';
+import type {
+    IngredientsProps,
+    TraceabilityIngredientsFeature,
+} from '@/app/lib/types';
 
-interface CreateIngredientProps {
-    setIngredients: React.Dispatch<
-        React.SetStateAction<TraceabilityIngredientsFeature[]>
-    >;
-    handleGetCoordinates: (
-        location: string,
-        form: UseFormReturn<
-            {
-                title: string;
-                location: string;
-                longitude: number;
-                latitude: number;
-            },
-            any,
-            undefined
-        >
-    ) => void;
-}
+type UpdateIngredientModalProps = Omit<IngredientsProps, 'ingredients'> & {
+    ingredient: TraceabilityIngredientsFeature;
+};
 
-export default function CreateIngredient({
+export default function UpdateIngredientModal({
     setIngredients,
     handleGetCoordinates,
-}: CreateIngredientProps) {
+    ingredient,
+}: UpdateIngredientModalProps) {
     const { toast } = useToast();
 
-    const form = useForm<z.infer<typeof createIngredientsFormSchema>>({
+    const updateForm = useForm<z.infer<typeof createIngredientsFormSchema>>({
         resolver: zodResolver(createIngredientsFormSchema),
         defaultValues: {
-            title: '',
-            location: '',
-            longitude: 0,
-            latitude: 0,
+            title: ingredient.properties.title,
+            location: ingredient.properties.location,
+            longitude: ingredient.geometry.coordinates[0],
+            latitude: ingredient.geometry.coordinates[1],
         },
     });
 
-    function onSubmit(values: z.infer<typeof createIngredientsFormSchema>) {
+    function onUpdate(values: z.infer<typeof createIngredientsFormSchema>) {
         const validated = createIngredientsFormSchema.safeParse(values);
 
         if (!validated.success) {
@@ -67,7 +61,29 @@ export default function CreateIngredient({
             return;
         }
 
-        createIngredient(validated.data).then((response) => {
+        const updatedIngredient = {
+            type: 'Feature' as const,
+            properties: {
+                id: ingredient.properties.id,
+                title: validated.data.title,
+                location: validated.data.location,
+            },
+            geometry: {
+                type: 'Point' as const,
+                coordinates: [
+                    validated.data.longitude,
+                    validated.data.latitude,
+                ] as [number, number],
+            },
+        };
+
+        updateIngredient({
+            id: ingredient.properties.id,
+            title: validated.data.title,
+            location: validated.data.location,
+            longitude: validated.data.longitude,
+            latitude: validated.data.latitude,
+        }).then((response) => {
             if ('error' in response) {
                 toast({
                     variant: 'destructive',
@@ -76,88 +92,69 @@ export default function CreateIngredient({
                 });
                 return;
             }
+        });
 
-            form.reset();
-            setIngredients((prevIngredients) => {
-                const newIngredients = [
-                    {
-                        type: 'Feature' as const,
-                        geometry: {
-                            type: 'Point' as const,
-                            coordinates: [
-                                response.longitude,
-                                response.latitude,
-                            ] as [number, number],
-                        },
-                        properties: {
-                            id: response.id,
-                            title: response.title,
-                            location: response.location,
-                        },
-                    },
-                    ...prevIngredients,
-                ];
+        setIngredients((prevIngredients) =>
+            prevIngredients.map((prevIngredient) =>
+                prevIngredient.properties.id === ingredient.properties.id
+                    ? updatedIngredient
+                    : prevIngredient
+            )
+        );
 
-                newIngredients.sort((a, b) =>
-                    a.properties.title.localeCompare(b.properties.title)
-                );
+        // Close the dialog
+        const closeButton = document.querySelector(
+            '[role="dialog"] > button'
+        ) as HTMLButtonElement;
+        closeButton?.click();
 
-                return newIngredients;
-            });
-
-            toast({
-                variant: 'default',
-                title: 'SUCCESS',
-                description: 'Ingredient added successfully.',
-            });
+        toast({
+            variant: 'default',
+            title: 'SUCCESS',
+            description: 'Ingredient updated successfully.',
         });
     }
 
     return (
-        <Card className='sm:col-span-2 w-full'>
-            <CardHeader className='pb-3'>
-                <CardTitle className='text-lg'>Add an Ingredient</CardTitle>
-                <CardContent>
-                    <Form {...form}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Edit Ingredient</DialogTitle>
+
+                <DialogDescription asChild>
+                    <Form {...updateForm}>
                         <form
-                            onSubmit={form.handleSubmit(onSubmit)}
+                            onSubmit={updateForm.handleSubmit(onUpdate)}
                             className='space-y-8'
                         >
                             <div className='flex flex-col justify-center gap-4'>
                                 <FormField
-                                    control={form.control}
+                                    control={updateForm.control}
                                     name='title'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Title</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Rabbit Legs'
-                                                    {...field}
-                                                />
+                                                <Input {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                                 <FormField
-                                    control={form.control}
+                                    control={updateForm.control}
                                     name='location'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Location</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Paris France'
-                                                    {...field}
-                                                />
+                                                <Input {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                                 <FormField
-                                    control={form.control}
+                                    control={updateForm.control}
                                     name='longitude'
                                     render={({ field }) => (
                                         <FormItem>
@@ -173,7 +170,7 @@ export default function CreateIngredient({
                                     )}
                                 />
                                 <FormField
-                                    control={form.control}
+                                    control={updateForm.control}
                                     name='latitude'
                                     render={({ field }) => (
                                         <FormItem>
@@ -195,8 +192,8 @@ export default function CreateIngredient({
                                     variant='link'
                                     onClick={() =>
                                         handleGetCoordinates(
-                                            form.getValues().location,
-                                            form
+                                            updateForm.getValues().location,
+                                            updateForm
                                         )
                                     }
                                 >
@@ -206,8 +203,8 @@ export default function CreateIngredient({
                             </div>
                         </form>
                     </Form>
-                </CardContent>
-            </CardHeader>
-        </Card>
+                </DialogDescription>
+            </DialogHeader>
+        </DialogContent>
     );
 }

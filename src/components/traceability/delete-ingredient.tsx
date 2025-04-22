@@ -1,15 +1,16 @@
 import { useToast } from '@/hooks/use-toast';
 import { Trash2 } from 'lucide-react';
 
+import deleteIngredient from '@/app/actions/deleteIngredient';
+
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from './ui/tooltip';
+} from '@/components/ui/tooltip';
 
-import deleteIngredient from '@/app/actions/deleteIngredient';
-import { SetIngredients } from '@/app/lib/types';
+import type { SetIngredients } from '@/app/lib/types';
 
 interface DeleteIngredientProps {
     setIngredients: SetIngredients;

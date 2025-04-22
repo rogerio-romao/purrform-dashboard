@@ -3,10 +3,9 @@ import { useEffect, useState } from 'react';
 import type { BcCustomer, CreditSystemTrader } from '@/app/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-import TraderCreditAddTrader from '@/components/trader-credit-add-trader';
-import TraderCreditForm from '@/components/trader-credit-form';
-import TraderCreditTraderData from '@/components/trader-credit-trader-data';
-
+import TraderCreditAddTrader from '@/components/trader-credit/trader-credit-add-trader';
+import TraderCreditForm from '@/components/trader-credit/trader-credit-form';
+import TraderCreditTraderData from '@/components/trader-credit/trader-credit-trader-data';
 import {
     Card,
     CardDescription,

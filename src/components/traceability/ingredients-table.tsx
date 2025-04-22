@@ -1,14 +1,14 @@
 import { Pencil } from 'lucide-react';
 
-import DeleteIngredient from './delete-ingredient';
-import { Dialog, DialogTrigger } from './ui/dialog';
-import { TableBody, TableCell, TableRow } from './ui/table';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { TableBody, TableCell, TableRow } from '@/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from './ui/tooltip';
+} from '@/components/ui/tooltip';
+import DeleteIngredient from './delete-ingredient';
 import UpdateIngredientModal from './update-ingredient-modal';
 
 import type { IngredientsProps } from '@/app/lib/types';

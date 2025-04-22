@@ -1,6 +1,6 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import IngredientsTable from './ingredients-table';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Table, TableHead, TableHeader, TableRow } from './ui/table';
 
 import type { IngredientsProps } from '@/app/lib/types';
 

@@ -8,8 +8,8 @@ import type { CreditSystemTrader } from '@/app/lib/types';
 import { addTraderToCreditFormSchema, cn } from '@/app/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Command,
     CommandEmpty,
@@ -17,7 +17,7 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from './ui/command';
+} from '@/components/ui/command';
 import {
     Form,
     FormControl,
@@ -25,9 +25,13 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 
 interface TraderCreditFormProps {
     mappedTraders: {

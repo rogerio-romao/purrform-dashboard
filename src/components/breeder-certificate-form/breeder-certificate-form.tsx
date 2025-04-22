@@ -1,10 +1,11 @@
 'use client';
 
-import { Toaster } from '@/components/ui/toaster';
-import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 
+import { useToast } from '@/hooks/use-toast';
+
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -15,8 +16,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from './ui/button';
-import { Separator } from './ui/separator';
+import { Separator } from '@/components/ui/separator';
+import { Toaster } from '@/components/ui/toaster';
 
 import submitBreederCertificate from '@/app/actions/submitBreederCertificate';
 

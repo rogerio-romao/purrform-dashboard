@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import { Dispatch, SetStateAction } from 'react';
 
-import { Button } from './ui/button';
-import { CardContent, CardHeader, CardTitle } from './ui/card';
+import acceptBreederCertificate from '@/app/actions/acceptBreederCertificate';
+import rejectBreederCertificate from '@/app/actions/rejectBreederCertificate';
+import { useToast } from '@/hooks/use-toast';
+
+import { Button } from '@/components/ui/button';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -10,11 +14,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from './ui/table';
-
-import acceptBreederCertificate from '@/app/actions/acceptBreederCertificate';
-import rejectBreederCertificate from '@/app/actions/rejectBreederCertificate';
-import { useToast } from '@/hooks/use-toast';
+} from '@/components/ui/table';
 
 import type { BreederCertificate } from '@/app/lib/types';
 

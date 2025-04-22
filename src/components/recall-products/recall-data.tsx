@@ -1,10 +1,10 @@
 import type { RecallProductsResponse } from '@/app/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-import Loading from '@/components/loading';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Separator } from './ui/separator';
+import Loading from '@/components/common/loading';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 interface RecallDataProps {
     recallData: RecallProductsResponse | null;
