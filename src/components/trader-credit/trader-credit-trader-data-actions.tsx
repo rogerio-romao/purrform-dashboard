@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 interface TraderCreditTraderDataActionsProps {
     trader: CreditSystemTrader;
     handleViewPendingPayments: () => void;
+    handleViewOrderHistory: () => void;
     handleRemoveTrader: () => void;
     companyName: string;
 }
@@ -24,6 +25,7 @@ interface TraderCreditTraderDataActionsProps {
 export default function TraderCreditTraderDataActions({
     trader,
     handleViewPendingPayments,
+    handleViewOrderHistory,
     handleRemoveTrader,
     companyName,
 }: TraderCreditTraderDataActionsProps) {
@@ -33,7 +35,9 @@ export default function TraderCreditTraderDataActions({
                 <Button variant='outline' onClick={handleViewPendingPayments}>
                     View Pending Payments
                 </Button>
-                <Button variant='outline'>View Order History</Button>
+                <Button variant='outline' onClick={handleViewOrderHistory}>
+                    View Order History
+                </Button>
                 <Button variant='outline'>Change Company Credit</Button>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>

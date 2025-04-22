@@ -1,24 +1,20 @@
 import { useState } from 'react';
 
+import { useToast } from '@/hooks/use-toast';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+
+import OrderHistoryForTrader from './order-history-for-trader';
+import PendingOrdersForTrader from './pending-orders-for-trader';
+import TraderCreditTraderDataActions from './trader-credit-trader-data-actions';
+import TraderCreditTraderDataHeader from './trader-credit-trader-data-header';
+
 import type {
     CreditSystemOrder,
     CreditSystemTrader,
     SupabaseError,
 } from '@/app/lib/types';
-import { useToast } from '@/hooks/use-toast';
-
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-
-import PendingOrdersForTrader from './pending-orders-for-trader';
-import TraderCreditTraderDataActions from './trader-credit-trader-data-actions';
-import TraderCreditTraderDataHeader from './trader-credit-trader-data-header';
 
 interface TraderCreditTraderDataProps {
     trader: CreditSystemTrader | undefined;
@@ -38,6 +34,11 @@ export default function TraderCreditTraderData({
         CreditSystemOrder[]
     >([]);
     const [showPendingOrdersForTrader, setShowPendingOrdersForTrader] =
+        useState<boolean>(false);
+    const [orderHistoryForTrader, setOrderHistoryForTrader] = useState<
+        CreditSystemOrder[]
+    >([]);
+    const [showOrderHistoryForTrader, setShowOrderHistoryForTrader] =
         useState<boolean>(false);
 
     if (!trader) {
@@ -78,7 +79,7 @@ export default function TraderCreditTraderData({
         }
     }
 
-    async function handleViewPendingPayments() {
+    async function handleViewPendingPaymentsForTrader() {
         if (!trader) {
             return;
         }
@@ -91,6 +92,7 @@ export default function TraderCreditTraderData({
             const data = (await response.json()) as
                 | CreditSystemOrder[]
                 | SupabaseError;
+
             if ('error' in data) {
                 toast({
                     variant: 'destructive',
@@ -111,6 +113,40 @@ export default function TraderCreditTraderData({
         }
     }
 
+    async function handleViewOrderHistoryForTrader() {
+        if (!trader) {
+            return;
+        }
+
+        const response = await fetch(
+            `http://localhost:5555/getOrderHistoryForTrader?traderId=${trader.id}`
+        );
+
+        if (response.ok) {
+            const data = (await response.json()) as
+                | CreditSystemOrder[]
+                | SupabaseError;
+
+            if ('error' in data) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: `Failed to fetch order history: ${data.error}`,
+                });
+                return;
+            }
+
+            setOrderHistoryForTrader(data);
+            setShowOrderHistoryForTrader(true);
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: `Failed to fetch order history, please try again.`,
+            });
+        }
+    }
+
     return (
         <Card className='sm:col-span-3'>
             <TraderCreditTraderDataHeader
@@ -122,7 +158,8 @@ export default function TraderCreditTraderData({
 
             <TraderCreditTraderDataActions
                 trader={trader}
-                handleViewPendingPayments={handleViewPendingPayments}
+                handleViewPendingPayments={handleViewPendingPaymentsForTrader}
+                handleViewOrderHistory={handleViewOrderHistoryForTrader}
                 handleRemoveTrader={handleRemoveTrader}
                 companyName={companyName}
             />
@@ -135,6 +172,15 @@ export default function TraderCreditTraderData({
                     setShowPendingOrdersForTrader={
                         setShowPendingOrdersForTrader
                     }
+                />
+            </CardContent>
+
+            <CardContent>
+                <OrderHistoryForTrader
+                    companyName={companyName}
+                    orderHistoryForTrader={orderHistoryForTrader}
+                    showOrderHistoryForTrader={showOrderHistoryForTrader}
+                    setShowOrderHistoryForTrader={setShowOrderHistoryForTrader}
                 />
             </CardContent>
         </Card>

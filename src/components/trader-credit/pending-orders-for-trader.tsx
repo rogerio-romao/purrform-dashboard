@@ -1,7 +1,6 @@
-import { X } from 'lucide-react';
-
 import { CreditSystemOrder } from '@/app/lib/types';
 
+import ClosePanel from '@/components/common/close-panel';
 import {
     Card,
     CardDescription,
@@ -30,15 +29,7 @@ export default function PendingOrdersForTrader({
 
     return (
         <Card className='mt-6 relative'>
-            <div
-                className='absolute right-4 top-4 cursor-pointer text-gray-500 flex items-center gap-1 group transition-colors'
-                onClick={() => setShowPendingOrdersForTrader(false)}
-            >
-                <span className='text-xs group-hover:text-gray-600'>
-                    Close Panel
-                </span>
-                <X className='text-gray-400 group-hover:text-gray-500' />
-            </div>
+            <ClosePanel setClosePanel={setShowPendingOrdersForTrader} />
             <CardHeader>
                 <CardTitle className='text-lg'>
                     Pending Orders for {companyName}
