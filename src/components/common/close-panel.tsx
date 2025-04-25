@@ -10,11 +10,9 @@ export default function ClosePanel({ setClosePanel }: ClosePanelProps) {
             className='absolute right-4 top-4 cursor-pointer text-gray-500 flex items-center gap-1 group transition-colors'
             onClick={() => setClosePanel(false)}
         >
-            <span className='text-xs group-hover:text-gray-600'>
-                Close Panel
-            </span>
+            <span className='text-xs group-hover:text-gray-600'>Close</span>
             <X
-                size={'24'}
+                size={'22'}
                 className='text-gray-400 group-hover:text-gray-500'
             />
         </div>

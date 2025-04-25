@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import supabase from '@/app/lib/supabase';
 import type { BcCustomer, CreditSystemTrader } from '@/app/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -104,6 +105,46 @@ export default function TraderCredit() {
                 : `${trader.first_name} ${trader.last_name}`,
         }))
         .sort((a, b) => a.company.localeCompare(b.company));
+
+    useEffect(() => {
+        const changes = supabase
+            .channel('credit-trader-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'credit_system_traders',
+                },
+                (payload) => {
+                    if (payload.eventType === 'DELETE') {
+                        setCreditTraders((prevTraders) =>
+                            prevTraders.filter(
+                                (trader) => trader.id !== payload.old.id
+                            )
+                        );
+                    } else if (payload.eventType === 'INSERT') {
+                        setCreditTraders((prevTraders) => [
+                            ...prevTraders,
+                            payload.new as CreditSystemTrader,
+                        ]);
+                    } else if (payload.eventType === 'UPDATE') {
+                        setCreditTraders((prevTraders) =>
+                            prevTraders.map((trader) =>
+                                trader.id === payload.new.id
+                                    ? (payload.new as CreditSystemTrader)
+                                    : trader
+                            )
+                        );
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            changes.unsubscribe();
+        };
+    }, []);
 
     return (
         <div className='flex min-h-screen w-full flex-col bg-muted/40 mt-4'>

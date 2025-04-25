@@ -1,5 +1,3 @@
-import { CreditSystemOrder } from '@/app/lib/types';
-
 import ClosePanel from '@/components/common/close-panel';
 import {
     Card,
@@ -7,6 +5,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import OrdersTable from './orders-table';
+
+import { CreditSystemOrder } from '@/app/lib/types';
 
 interface PendingOrdersForTraderProps {
     companyName: string;
@@ -39,14 +40,7 @@ export default function PendingOrdersForTrader({
                 )}
             </CardHeader>
             {pendingOrdersForTrader.length > 0 && (
-                <ul className='list-disc pl-5'>
-                    {pendingOrdersForTrader.map((order) => (
-                        <li key={order.id}>
-                            Order Number: {order.order_nr} -{' '}
-                            {order.order_status}
-                        </li>
-                    ))}
-                </ul>
+                <OrdersTable orders={pendingOrdersForTrader} />
             )}
         </Card>
     );

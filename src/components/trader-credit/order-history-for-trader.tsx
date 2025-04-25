@@ -1,5 +1,3 @@
-import { CreditSystemOrder } from '@/app/lib/types';
-
 import ClosePanel from '@/components/common/close-panel';
 import {
     Card,
@@ -7,6 +5,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import OrdersTable from './orders-table';
+
+import { CreditSystemOrder } from '@/app/lib/types';
 
 interface OrderHistoryForTraderProps {
     companyName: string;
@@ -37,14 +38,7 @@ export default function OrderHistoryForTrader({
                 )}
             </CardHeader>
             {orderHistoryForTrader.length > 0 && (
-                <ul className='list-disc pl-5'>
-                    {orderHistoryForTrader.map((order) => (
-                        <li key={order.id}>
-                            Order Number: {order.order_nr} -{' '}
-                            {order.order_status}
-                        </li>
-                    ))}
-                </ul>
+                <OrdersTable orders={orderHistoryForTrader} />
             )}
         </Card>
     );
