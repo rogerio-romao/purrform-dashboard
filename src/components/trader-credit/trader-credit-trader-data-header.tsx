@@ -16,6 +16,14 @@ export default function TraderCreditTraderDataHeader({
     companyName,
     trader,
 }: TraderCreditTraderDataHeaderProps) {
+    const { has_overdue, credit_ceiling, current_balance } = trader;
+
+    const remainingBalancePercent = (current_balance / credit_ceiling) * 100;
+    const remainingBalanceWarning = remainingBalancePercent < 25;
+    const remainingBalanceTextClass = remainingBalanceWarning
+        ? 'text-yellow-500'
+        : '';
+
     return (
         <>
             <CardHeader>
@@ -31,6 +39,11 @@ export default function TraderCreditTraderDataHeader({
                         <p className='text-muted-foreground mt-[0.15rem]'>
                             {trader.bc_customer_email}
                         </p>
+                        {trader.has_overdue && (
+                            <span className='text-sm text-red-500 font-semibold uppercase'>
+                                Overdue orders
+                            </span>
+                        )}
                     </div>
                     <div className='grid grid-cols-2 col-span-2 gap-4'>
                         <div>
@@ -68,8 +81,17 @@ export default function TraderCreditTraderDataHeader({
                                 <CardDescription>
                                     Current Balance:
                                 </CardDescription>
-                                <p className='ml-1 text-xl font-bold'>
-                                    £ {trader.current_balance}
+                                <p className='ml-1 inline-flex items-center font-bold'>
+                                    <span className='text-xl'>
+                                        £ {trader.current_balance}
+                                    </span>
+                                    {remainingBalanceWarning && (
+                                        <span
+                                            className={`text-xs ml-2 ${remainingBalanceTextClass} border border-yellow-500 px-1 rounded`}
+                                        >
+                                            &lt; 25%
+                                        </span>
+                                    )}
                                 </p>
                             </div>
                         </div>

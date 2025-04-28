@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import supabase from '@/app/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -40,6 +41,68 @@ export default function TraderCreditTraderData({
     >([]);
     const [showOrderHistoryForTrader, setShowOrderHistoryForTrader] =
         useState<boolean>(false);
+
+    useEffect(() => {
+        const changes = supabase
+            .channel('credit-system-order-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'credit_system_orders',
+                    filter: `trader_id=eq.${trader?.id}`,
+                },
+                (payload) => {
+                    if (payload.eventType === 'DELETE') {
+                        setPendingOrdersForTrader((prevOrders) =>
+                            prevOrders.filter(
+                                (order) => order.id !== payload.old.id
+                            )
+                        );
+                        setOrderHistoryForTrader((prevOrders) =>
+                            prevOrders.filter(
+                                (order) => order.id !== payload.old.id
+                            )
+                        );
+                    } else if (payload.eventType === 'INSERT') {
+                        if (
+                            payload.new.order_status === 'pending' ||
+                            payload.new.order_status === 'overdue'
+                        ) {
+                            setPendingOrdersForTrader((prevOrders) => [
+                                ...prevOrders,
+                                payload.new as CreditSystemOrder,
+                            ]);
+                        }
+                        setOrderHistoryForTrader((prevOrders) => [
+                            ...prevOrders,
+                            payload.new as CreditSystemOrder,
+                        ]);
+                    } else if (payload.eventType === 'UPDATE') {
+                        setPendingOrdersForTrader((prevOrders) =>
+                            prevOrders.map((order) =>
+                                order.id === payload.new.id
+                                    ? (payload.new as CreditSystemOrder)
+                                    : order
+                            )
+                        );
+                        setOrderHistoryForTrader((prevOrders) =>
+                            prevOrders.map((order) =>
+                                order.id === payload.new.id
+                                    ? (payload.new as CreditSystemOrder)
+                                    : order
+                            )
+                        );
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            changes.unsubscribe();
+        };
+    }, [trader?.id]);
 
     if (!trader) {
         return null;

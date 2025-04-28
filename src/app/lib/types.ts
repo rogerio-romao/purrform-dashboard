@@ -88,6 +88,7 @@ export interface CreditSystemTrader {
     bc_customer_last_name: string;
     credit_ceiling: number;
     current_balance: number;
+    has_overdue: boolean;
     created_at: string;
     updated_at: string;
 }

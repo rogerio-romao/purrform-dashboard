@@ -15,6 +15,20 @@ interface OrdersTableProps {
 }
 
 export default function OrdersTable({ orders }: OrdersTableProps) {
+    const statusTextColorClass = (status: string) => {
+        switch (status) {
+            case 'pending':
+                return 'text-yellow-500 font-bold';
+            case 'overdue':
+                return 'text-red-500 font-bold';
+            case 'paid':
+                return 'text-green-500 font-bold';
+            case 'other':
+                return 'text-gray-500 font-bold';
+            default:
+                return 'text-gray-500 font-bold';
+        }
+    };
     return (
         <Table>
             <TableHeader>
@@ -34,11 +48,18 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                         <TableCell>{order.order_date}</TableCell>
                         <TableCell>{order.payment_due}</TableCell>
                         <TableCell>£ {order.order_total}</TableCell>
-                        <TableCell>{order.order_status}</TableCell>
+                        <TableCell
+                            className={statusTextColorClass(order.order_status)}
+                        >
+                            {order.order_status}
+                        </TableCell>
                         <TableCell className='inline-flex gap-2'>
-                            <Button variant={'default'} size={'sm'}>
-                                Pay Now
-                            </Button>
+                            {(order.order_status === 'pending' ||
+                                order.order_status === 'overdue') && (
+                                <Button variant={'default'} size={'sm'}>
+                                    Pay Now
+                                </Button>
+                            )}
                             <Button variant={'outline'} size={'sm'}>
                                 Order Notes
                             </Button>
