@@ -18,15 +18,15 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
     const statusTextColorClass = (status: string) => {
         switch (status) {
             case 'pending':
-                return 'text-yellow-500 font-bold';
+                return 'text-yellow-500 font-semibold text-sm uppercase';
             case 'overdue':
-                return 'text-red-500 font-bold';
+                return 'text-red-500 font-semibold text-sm uppercase';
             case 'paid':
-                return 'text-green-500 font-bold';
+                return 'text-green-500 font-semibold text-sm uppercase';
             case 'other':
-                return 'text-gray-500 font-bold';
+                return 'text-gray-500 font-semibold text-sm uppercase';
             default:
-                return 'text-gray-500 font-bold';
+                return 'text-gray-500 font-semibold text-sm uppercase';
         }
     };
     return (
