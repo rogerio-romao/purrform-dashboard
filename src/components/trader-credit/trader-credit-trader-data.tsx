@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
+import ClosePanel from '../common/close-panel';
 import OrderHistoryForTrader from './order-history-for-trader';
 import PendingOrdersForTrader from './pending-orders-for-trader';
 import TraderCreditTraderDataActions from './trader-credit-trader-data-actions';
@@ -43,17 +44,21 @@ export default function TraderCreditTraderData({
         useState<boolean>(false);
 
     useEffect(() => {
+        if (!trader) {
+            return;
+        }
         const changes = supabase
-            .channel('credit-system-order-changes')
+            .channel('credit-order-changes-single-trader')
             .on(
                 'postgres_changes',
                 {
                     event: '*',
                     schema: 'public',
                     table: 'credit_system_orders',
-                    filter: `trader_id=eq.${trader?.id}`,
+                    filter: `trader_id=eq.${trader.id}`,
                 },
                 (payload) => {
+                    console.log('Change received!', payload);
                     if (payload.eventType === 'DELETE') {
                         setPendingOrdersForTrader((prevOrders) =>
                             prevOrders.filter(
@@ -102,7 +107,7 @@ export default function TraderCreditTraderData({
         return () => {
             changes.unsubscribe();
         };
-    }, [trader?.id]);
+    }, [trader]);
 
     if (!trader) {
         return null;
@@ -211,7 +216,8 @@ export default function TraderCreditTraderData({
     }
 
     return (
-        <Card className='sm:col-span-3'>
+        <Card className='sm:col-span-3 relative'>
+            <ClosePanel setClosePanel={() => setSelectedTraderId(null)} />
             <TraderCreditTraderDataHeader
                 companyName={companyName}
                 trader={trader}

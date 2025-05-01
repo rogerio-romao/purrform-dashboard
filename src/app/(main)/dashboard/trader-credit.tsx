@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import TraderCreditAddTrader from '@/components/trader-credit/trader-credit-add-trader';
 import TraderCreditForm from '@/components/trader-credit/trader-credit-form';
 import TraderCreditTraderData from '@/components/trader-credit/trader-credit-trader-data';
+import ViewAllPendingOrders from '@/components/trader-credit/view-all-pending-orders';
 import {
     Card,
     CardDescription,
@@ -80,7 +81,8 @@ export default function TraderCredit() {
 
     const mappedCreditTraders = creditTraders
         .map((trader) => ({
-            id: trader.bc_customer_id,
+            id: trader.id,
+            bc_id: trader.bc_customer_id,
             email: trader.bc_customer_email,
             company: trader.bc_customer_company
                 ? trader.bc_customer_company
@@ -92,7 +94,7 @@ export default function TraderCredit() {
         .filter(
             (trader) =>
                 !mappedCreditTraders.some(
-                    (creditTrader) => creditTrader.id === trader.id
+                    (creditTrader) => creditTrader.bc_id === trader.id
                 )
         )
         .map((trader) => ({
@@ -162,6 +164,8 @@ export default function TraderCredit() {
                                 </CardDescription>
                             </CardHeader>
                         </Card>
+
+                        <ViewAllPendingOrders traders={mappedCreditTraders} />
 
                         <TraderCreditForm
                             mappedTraders={mappedCreditTraders}

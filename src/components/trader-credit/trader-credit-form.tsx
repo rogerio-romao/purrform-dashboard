@@ -34,7 +34,7 @@ import {
 
 interface TraderCreditFormProps {
     mappedTraders: {
-        id: number;
+        bc_id: number;
         company: string;
         email: string;
     }[];
@@ -102,7 +102,7 @@ export default function TraderCreditForm({
                                                         form.getValues(
                                                             'selectedTraderCompany'
                                                         )
-                                                )?.id || 0
+                                                )?.bc_id || 0
                                             }
                                         />
                                     </FormControl>
@@ -191,7 +191,7 @@ export default function TraderCreditForm({
                                                                             trader.company
                                                                         }
                                                                         key={
-                                                                            trader.id
+                                                                            trader.bc_id
                                                                         }
                                                                         onSelect={() => {
                                                                             form.setValue(
@@ -200,7 +200,7 @@ export default function TraderCreditForm({
                                                                             );
                                                                             form.setValue(
                                                                                 'selectedTraderId',
-                                                                                trader.id
+                                                                                trader.bc_id
                                                                             );
                                                                             form.setValue(
                                                                                 'selectedTraderEmail',
