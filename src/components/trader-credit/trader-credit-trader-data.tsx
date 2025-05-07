@@ -59,18 +59,7 @@ export default function TraderCreditTraderData({
                 },
                 (payload) => {
                     console.log('Change received!', payload);
-                    if (payload.eventType === 'DELETE') {
-                        setPendingOrdersForTrader((prevOrders) =>
-                            prevOrders.filter(
-                                (order) => order.id !== payload.old.id
-                            )
-                        );
-                        setOrderHistoryForTrader((prevOrders) =>
-                            prevOrders.filter(
-                                (order) => order.id !== payload.old.id
-                            )
-                        );
-                    } else if (payload.eventType === 'INSERT') {
+                    if (payload.eventType === 'INSERT') {
                         if (
                             payload.new.order_status === 'pending' ||
                             payload.new.order_status === 'overdue'
@@ -100,6 +89,28 @@ export default function TraderCreditTraderData({
                             )
                         );
                     }
+                }
+            )
+            .on(
+                // postgres_changes event for DELETE is not filterable, so we need to handle it separately
+                'postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'credit_system_orders',
+                },
+                (payload) => {
+                    console.log('Change received!', payload);
+                    setPendingOrdersForTrader((prevOrders) =>
+                        prevOrders.filter(
+                            (order) => order.id !== payload.old.id
+                        )
+                    );
+                    setOrderHistoryForTrader((prevOrders) =>
+                        prevOrders.filter(
+                            (order) => order.id !== payload.old.id
+                        )
+                    );
                 }
             )
             .subscribe();
@@ -145,6 +156,14 @@ export default function TraderCreditTraderData({
                 description: `Failed to remove trader: ${message}`,
             });
         }
+    }
+
+    async function handleChangeCompanyCredit() {
+        if (!trader) {
+            return;
+        }
+
+        console.log('handleChangeCompanyCredit called');
     }
 
     async function handleViewPendingPaymentsForTrader() {
@@ -230,6 +249,7 @@ export default function TraderCreditTraderData({
                 handleViewPendingPayments={handleViewPendingPaymentsForTrader}
                 handleViewOrderHistory={handleViewOrderHistoryForTrader}
                 handleRemoveTrader={handleRemoveTrader}
+                handleChangeCompanyCredit={handleChangeCompanyCredit}
                 companyName={companyName}
             />
 
