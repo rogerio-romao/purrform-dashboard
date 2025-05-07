@@ -105,3 +105,5 @@ export interface CreditSystemOrder {
 }
 
 export type SupabaseError = { error: string };
+
+export type OkOrErrorResponse = { ok: true } | { ok: false; error: string };

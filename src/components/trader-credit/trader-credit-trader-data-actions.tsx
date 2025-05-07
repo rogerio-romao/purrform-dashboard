@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import type { CreditSystemTrader } from '@/app/lib/types';
+import type { CreditSystemTrader, OkOrErrorResponse } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
 
 import { CardContent } from '@/components//ui/card';
@@ -22,7 +22,6 @@ import { Button } from '@/components/ui/button';
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -35,7 +34,6 @@ interface TraderCreditTraderDataActionsProps {
     handleViewPendingPayments: () => void;
     handleViewOrderHistory: () => void;
     handleRemoveTrader: () => void;
-    handleChangeCompanyCredit: () => void;
     companyName: string;
 }
 
@@ -61,9 +59,10 @@ export default function TraderCreditTraderDataActions({
     handleViewPendingPayments,
     handleViewOrderHistory,
     handleRemoveTrader,
-    handleChangeCompanyCredit,
     companyName,
 }: TraderCreditTraderDataActionsProps) {
+    const [changeCompanyInfoDialogOpen, setChangeCompanyInfoDialogOpen] =
+        useState(false);
     const form = useForm<z.infer<typeof ChangeCreditFormSchema>>({
         resolver: zodResolver(ChangeCreditFormSchema),
         defaultValues: {
@@ -80,26 +79,96 @@ export default function TraderCreditTraderDataActions({
         });
     }, [trader, form]);
 
-    function onSubmit(data: z.infer<typeof ChangeCreditFormSchema>) {
+    async function onSubmit(data: z.infer<typeof ChangeCreditFormSchema>) {
         if (!trader) {
             return;
         }
 
-        console.log('Form submitted:', data);
+        const previousCompanyName = trader.bc_customer_company;
+        const newCompanyName = data.companyName;
+        const companyNameChanged = previousCompanyName !== newCompanyName;
+        const previousCreditLimit = trader.credit_ceiling;
+        const newCreditLimit = data.creditLimit;
+        const creditDifference = newCreditLimit - previousCreditLimit;
+        const creditLimitChanged = previousCreditLimit !== newCreditLimit;
 
-        // reset the form after submission
-        form.reset();
+        if (!companyNameChanged && !creditLimitChanged) {
+            toast({
+                title: 'No changes made',
+                description: 'Please change at least one field.',
+            });
+            return;
+        }
+
+        const previousBalance = trader.current_balance;
+        const newBalance = Number(
+            Math.max(
+                0,
+                Math.min(previousBalance + creditDifference, newCreditLimit)
+            ).toFixed(2)
+        );
+        const updateInfo = {
+            ...(companyNameChanged && {
+                'Previous Company Name': previousCompanyName,
+                'New Company Name': newCompanyName,
+            }),
+            ...(creditLimitChanged && {
+                'Previous Credit Limit': previousCreditLimit,
+                'New Credit Limit': newCreditLimit,
+            }),
+            ...(creditLimitChanged && {
+                'Previous Balance': previousBalance,
+                'New Balance': newBalance,
+            }),
+        };
+
+        try {
+            const response = await fetch(
+                `http://localhost:5555/changeCreditTraderInfo?traderId=${
+                    trader.id
+                }&companyName=${encodeURIComponent(
+                    newCompanyName ?? trader.bc_customer_company
+                )}&creditCeiling=${newCreditLimit}&newBalance=${newBalance}`
+            );
+
+            if (!response.ok) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description:
+                        'Failed to update trader info, please try again.',
+                });
+                return;
+            }
+
+            const data = (await response.json()) as OkOrErrorResponse;
+            if (!data.ok) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: data.error,
+                });
+                return;
+            }
+        } catch (error) {
+            console.error('Error updating trader info:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to update trader info, please try again.',
+            });
+            return;
+        }
 
         toast({
-            title: 'You submitted the following values:',
-            description: (
-                <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-                    <code className='text-white'>
-                        {JSON.stringify(data, null, 2)}
-                    </code>
-                </pre>
-            ),
+            title: 'Trader updated! You submitted the following changes:',
+            description: Object.entries(updateInfo).map(([key, value]) => {
+                return <p key={key}>{`${key}: ${value}`}</p>;
+            }),
         });
+
+        // close the alert dialog
+        setChangeCompanyInfoDialogOpen(false);
     }
 
     return (
@@ -111,9 +180,14 @@ export default function TraderCreditTraderDataActions({
                 <Button variant='outline' onClick={handleViewOrderHistory}>
                     View Order History
                 </Button>
-                <AlertDialog>
+                <AlertDialog open={changeCompanyInfoDialogOpen}>
                     <AlertDialogTrigger asChild>
-                        <Button variant='outline'>Change Company Credit</Button>
+                        <Button
+                            variant='outline'
+                            onClick={() => setChangeCompanyInfoDialogOpen(true)}
+                        >
+                            Change Company Credit / Name
+                        </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
@@ -169,7 +243,13 @@ export default function TraderCreditTraderDataActions({
                                 />
                                 <AlertDialogDescription></AlertDialogDescription>
                                 <AlertDialogFooter className='mt-6'>
-                                    <AlertDialogCancel>
+                                    <AlertDialogCancel
+                                        onClick={() =>
+                                            setChangeCompanyInfoDialogOpen(
+                                                false
+                                            )
+                                        }
+                                    >
                                         Cancel Changes
                                     </AlertDialogCancel>
                                     <Button type='submit'>

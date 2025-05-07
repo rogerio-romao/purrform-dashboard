@@ -158,14 +158,6 @@ export default function TraderCreditTraderData({
         }
     }
 
-    async function handleChangeCompanyCredit() {
-        if (!trader) {
-            return;
-        }
-
-        console.log('handleChangeCompanyCredit called');
-    }
-
     async function handleViewPendingPaymentsForTrader() {
         if (!trader) {
             return;
@@ -249,7 +241,6 @@ export default function TraderCreditTraderData({
                 handleViewPendingPayments={handleViewPendingPaymentsForTrader}
                 handleViewOrderHistory={handleViewOrderHistoryForTrader}
                 handleRemoveTrader={handleRemoveTrader}
-                handleChangeCompanyCredit={handleChangeCompanyCredit}
                 companyName={companyName}
             />
 
