@@ -20,6 +20,7 @@ import type {
 
 interface TraderCreditTraderDataProps {
     trader: CreditSystemTrader | undefined;
+    selectedTraderId: number | null;
     setSelectedTraderId: React.Dispatch<React.SetStateAction<number | null>>;
     setCreditTraders: React.Dispatch<
         React.SetStateAction<CreditSystemTrader[]>
@@ -28,6 +29,7 @@ interface TraderCreditTraderDataProps {
 
 export default function TraderCreditTraderData({
     trader,
+    selectedTraderId,
     setSelectedTraderId,
     setCreditTraders,
 }: TraderCreditTraderDataProps) {
@@ -44,9 +46,15 @@ export default function TraderCreditTraderData({
         useState<boolean>(false);
 
     useEffect(() => {
+        setShowOrderHistoryForTrader(false);
+        setShowPendingOrdersForTrader(false);
+    }, [selectedTraderId]);
+
+    useEffect(() => {
         if (!trader) {
             return;
         }
+
         const changes = supabase
             .channel('credit-order-changes-single-trader')
             .on(
@@ -58,7 +66,6 @@ export default function TraderCreditTraderData({
                     filter: `trader_id=eq.${trader.id}`,
                 },
                 (payload) => {
-                    console.log('Change received!', payload);
                     if (payload.eventType === 'INSERT') {
                         if (
                             payload.new.order_status === 'pending' ||
@@ -75,18 +82,37 @@ export default function TraderCreditTraderData({
                         ]);
                     } else if (payload.eventType === 'UPDATE') {
                         setPendingOrdersForTrader((prevOrders) =>
-                            prevOrders.map((order) =>
-                                order.id === payload.new.id
-                                    ? (payload.new as CreditSystemOrder)
-                                    : order
-                            )
+                            prevOrders
+                                .map((order) =>
+                                    order.id === payload.new.id
+                                        ? (payload.new as CreditSystemOrder)
+                                        : order
+                                )
+                                .filter(
+                                    (order) =>
+                                        order.order_status === 'pending' ||
+                                        order.order_status === 'overdue'
+                                )
                         );
                         setOrderHistoryForTrader((prevOrders) =>
-                            prevOrders.map((order) =>
-                                order.id === payload.new.id
-                                    ? (payload.new as CreditSystemOrder)
-                                    : order
-                            )
+                            prevOrders
+                                .map((order) =>
+                                    order.id === payload.new.id
+                                        ? (payload.new as CreditSystemOrder)
+                                        : order
+                                )
+                                .sort((a, b) => {
+                                    const sortOrder = [
+                                        'overdue',
+                                        'pending',
+                                        'other',
+                                        'paid',
+                                    ];
+                                    return (
+                                        sortOrder.indexOf(a.order_status) -
+                                        sortOrder.indexOf(b.order_status)
+                                    );
+                                })
                         );
                     }
                 }
@@ -100,7 +126,6 @@ export default function TraderCreditTraderData({
                     table: 'credit_system_orders',
                 },
                 (payload) => {
-                    console.log('Change received!', payload);
                     setPendingOrdersForTrader((prevOrders) =>
                         prevOrders.filter(
                             (order) => order.id !== payload.old.id

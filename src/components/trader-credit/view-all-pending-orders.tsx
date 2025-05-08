@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Card,
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import ClosePanel from '../common/close-panel';
 import OrdersTable from './orders-table';
 
+import supabase from '@/app/lib/supabase';
 import type { CreditSystemOrder } from '@/app/lib/types';
 
 interface ViewAllPendingOrdersProps {
@@ -25,6 +26,62 @@ export default function ViewAllPendingOrders({
     >([]);
     const [showAllPendingOrders, setShowAllPendingOrders] =
         useState<boolean>(false);
+
+    useEffect(() => {
+        const changes = supabase
+            .channel('view-all-pending-orders-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'credit_system_orders',
+                },
+                (payload) => {
+                    if (payload.eventType === 'INSERT') {
+                        if (
+                            payload.new.order_status === 'pending' ||
+                            payload.new.order_status === 'overdue'
+                        ) {
+                            setAllPendingOrders((prevOrders) => [
+                                ...prevOrders,
+                                payload.new as CreditSystemOrder,
+                            ]);
+                        }
+                    } else if (payload.eventType === 'UPDATE') {
+                        setAllPendingOrders((prevOrders) =>
+                            prevOrders
+                                .map((order) =>
+                                    order.id === payload.new.id
+                                        ? (payload.new as CreditSystemOrder)
+                                        : order
+                                )
+                                .filter(
+                                    (order) =>
+                                        order.order_status === 'pending' ||
+                                        order.order_status === 'overdue'
+                                )
+                        );
+                    } else if (payload.eventType === 'DELETE') {
+                        if (
+                            payload.old.order_status === 'pending' ||
+                            payload.old.order_status === 'overdue'
+                        ) {
+                            setAllPendingOrders((prevOrders) =>
+                                prevOrders.filter(
+                                    (order) => order.id !== payload.old.id
+                                )
+                            );
+                        }
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            changes.unsubscribe();
+        };
+    }, []);
 
     const handleFetchAllPendingOrders = async () => {
         try {
@@ -71,7 +128,7 @@ export default function ViewAllPendingOrders({
                 {showAllPendingOrders &&
                     (!allPendingOrders || allPendingOrders.length === 0) && (
                         <div className='mt-6 py-2 relative border'>
-                            <div className='text-gray-500 dark:text-gray-300 text-sm py-2'>
+                            <div className='text-gray-500 dark:text-gray-300 text-sm py-2 text-center'>
                                 No pending orders available.
                             </div>
                             <ClosePanel

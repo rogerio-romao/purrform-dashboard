@@ -174,6 +174,7 @@ export default function TraderCredit() {
 
                         <TraderCreditTraderData
                             trader={selectedTrader}
+                            selectedTraderId={selectedTraderId}
                             setSelectedTraderId={setSelectedTraderId}
                             setCreditTraders={setCreditTraders}
                         />

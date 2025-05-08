@@ -1,3 +1,4 @@
+import { NotebookPen } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import {
 } from '@/components/ui/table';
 
 import { CreditSystemOrder } from '@/app/lib/types';
+import { toast } from '@/hooks/use-toast';
 
 interface OrdersTableProps {
     orders: CreditSystemOrder[];
@@ -47,6 +49,38 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                 return 'text-gray-500 font-semibold text-sm uppercase';
         }
     };
+
+    const handlePayNow = async (
+        orderId: number,
+        traderId: number,
+        orderStatus: string,
+        orderTotal: number
+    ) => {
+        // Handle the payment logic here
+        try {
+            const response = await fetch(
+                `http://localhost:5555/markCreditSystemOrderAsPaid?orderId=${orderId}&traderId=${traderId}&orderStatus=${orderStatus}&orderTotal=${orderTotal}`
+            );
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            toast({
+                title: 'Payment Successful',
+                description: `Your payment of £${orderTotal} has been processed successfully.`,
+                variant: 'default',
+            });
+        } catch (error) {
+            console.error('Error processing payment:', error);
+            toast({
+                title: 'Payment Error',
+                description: 'There was an error processing your payment.',
+                variant: 'destructive',
+            });
+        }
+    };
+
     return (
         <>
             <Table>
@@ -77,12 +111,29 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                             <TableCell className='inline-flex gap-2'>
                                 {(order.order_status === 'pending' ||
                                     order.order_status === 'overdue') && (
-                                    <Button variant={'default'} size={'sm'}>
+                                    <Button
+                                        variant={'default'}
+                                        size={'sm'}
+                                        onClick={() =>
+                                            handlePayNow(
+                                                order.id,
+                                                order.trader_id,
+                                                order.order_status,
+                                                order.order_total
+                                            )
+                                        }
+                                    >
                                         Pay Now
                                     </Button>
                                 )}
                                 <Button variant={'outline'} size={'sm'}>
-                                    Order Notes
+                                    {order.order_notes && (
+                                        <NotebookPen
+                                            size={12}
+                                            className='mr-1'
+                                        />
+                                    )}
+                                    Edit Order
                                 </Button>
                             </TableCell>
                         </TableRow>
