@@ -1,7 +1,30 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { NotebookPen } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
     Table,
     TableBody,
@@ -10,6 +33,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 
 import { CreditSystemOrder } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
@@ -18,9 +42,26 @@ interface OrdersTableProps {
     orders: CreditSystemOrder[];
 }
 
+const EditOrderFormSchema = z.object({
+    orderNotes: z.string().optional(),
+    changeToOtherStatus: z.boolean(),
+    adjustAmount: z.number().min(0).max(10000).optional(),
+});
+
 export default function OrdersTable({ orders }: OrdersTableProps) {
+    const [showEditOrderDialog, setShowEditOrderDialog] = useState(false);
+    const [selectedOrder, setSelectedOrder] =
+        useState<CreditSystemOrder | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 16;
+
+    useEffect(() => {
+        form.reset({
+            orderNotes: selectedOrder?.order_notes ?? '',
+            changeToOtherStatus: false,
+            adjustAmount: selectedOrder?.order_total ?? undefined,
+        });
+    }, [selectedOrder]);
 
     // Calculate pagination values
     const indexOfLastOrder = currentPage * itemsPerPage;
@@ -48,6 +89,20 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
             default:
                 return 'text-gray-500 font-semibold text-sm uppercase';
         }
+    };
+
+    const form = useForm<z.infer<typeof EditOrderFormSchema>>({
+        resolver: zodResolver(EditOrderFormSchema),
+        defaultValues: {
+            orderNotes: '',
+            changeToOtherStatus: false,
+            adjustAmount: undefined,
+        },
+    });
+
+    const onSubmit = async (data: z.infer<typeof EditOrderFormSchema>) => {
+        // Handle form submission logic here
+        console.log('Form data:', data);
     };
 
     const handlePayNow = async (
@@ -126,15 +181,141 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                         Pay Now
                                     </Button>
                                 )}
-                                <Button variant={'outline'} size={'sm'}>
-                                    {order.order_notes && (
-                                        <NotebookPen
-                                            size={12}
-                                            className='mr-1'
-                                        />
-                                    )}
-                                    Edit Order
-                                </Button>
+                                <AlertDialog open={showEditOrderDialog}>
+                                    <AlertDialogTrigger asChild>
+                                        <Button
+                                            variant={'outline'}
+                                            size={'sm'}
+                                            onClick={() => {
+                                                setSelectedOrder(order);
+                                                setShowEditOrderDialog(true);
+                                            }}
+                                        >
+                                            {order.order_notes && (
+                                                <NotebookPen
+                                                    size={12}
+                                                    className='mr-1'
+                                                />
+                                            )}
+                                            Edit Order
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                Edit Order #
+                                                {selectedOrder?.order_nr}
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Add some notes to the order,
+                                                change it's status or adjust the
+                                                amount.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <Form {...form}>
+                                            <form
+                                                onSubmit={form.handleSubmit(
+                                                    onSubmit
+                                                )}
+                                            >
+                                                <FormField
+                                                    control={form.control}
+                                                    name='orderNotes'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>
+                                                                Order Notes
+                                                            </FormLabel>
+                                                            <FormControl>
+                                                                <Textarea
+                                                                    placeholder='Order Notes'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+
+                                                <FormField
+                                                    control={form.control}
+                                                    name='adjustAmount'
+                                                    render={({ field }) => (
+                                                        <FormItem className='mt-4'>
+                                                            <FormLabel>
+                                                                Adjust Order
+                                                                Total
+                                                            </FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                    type='number'
+                                                                    placeholder='Adjust Amount'
+                                                                    {...field}
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        field.onChange(
+                                                                            Number(
+                                                                                e
+                                                                                    .target
+                                                                                    .value
+                                                                            )
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                {selectedOrder?.order_status !==
+                                                    'other' && (
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='changeToOtherStatus'
+                                                        render={({ field }) => (
+                                                            <FormItem className='mt-4'>
+                                                                <div className='flex items-center space-x-2'>
+                                                                    <FormLabel>
+                                                                        Change
+                                                                        status
+                                                                        to
+                                                                        Other?
+                                                                    </FormLabel>
+                                                                    <FormControl>
+                                                                        <Checkbox
+                                                                            checked={
+                                                                                field.value
+                                                                            }
+                                                                            onCheckedChange={
+                                                                                field.onChange
+                                                                            }
+                                                                        />
+                                                                    </FormControl>
+                                                                </div>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                )}
+                                                <AlertDialogFooter className='mt-6'>
+                                                    <AlertDialogCancel
+                                                        onClick={() =>
+                                                            setShowEditOrderDialog(
+                                                                false
+                                                            )
+                                                        }
+                                                    >
+                                                        Cancel Changes
+                                                    </AlertDialogCancel>
+                                                    <Button type='submit'>
+                                                        Confirm Changes
+                                                    </Button>
+                                                </AlertDialogFooter>
+                                            </form>
+                                        </Form>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </TableCell>
                         </TableRow>
                     ))}
