@@ -289,23 +289,30 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                     control={form.control}
                                     name='adjustAmount'
                                     render={({ field }) => (
-                                        <FormItem className='mt-4'>
+                                        <FormItem className='mt-4 ml-4'>
                                             <FormLabel>
-                                                £ Adjust Order Total
+                                                Adjust Order Total
                                             </FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    type='number'
-                                                    placeholder='Adjust Amount'
-                                                    {...field}
-                                                    onChange={(e) =>
-                                                        field.onChange(
-                                                            Number(
-                                                                e.target.value
+                                                <div className='relative flex items-center'>
+                                                    <span className='absolute left-2 text-muted-foreground'>
+                                                        £
+                                                    </span>
+                                                    <Input
+                                                        type='number'
+                                                        className='pl-6'
+                                                        placeholder='Adjust Amount'
+                                                        {...field}
+                                                        onChange={(e) =>
+                                                            field.onChange(
+                                                                Number(
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                             )
-                                                        )
-                                                    }
-                                                />
+                                                        }
+                                                    />
+                                                </div>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
