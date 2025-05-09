@@ -37,6 +37,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { CreditSystemOrder } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
+import { set } from 'date-fns';
 
 interface OrdersTableProps {
     orders: CreditSystemOrder[];
@@ -54,15 +55,6 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         useState<CreditSystemOrder | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 16;
-
-    useEffect(() => {
-        form.reset({
-            orderNotes: selectedOrder?.order_notes ?? '',
-            changeToOtherStatus: false,
-            adjustAmount: selectedOrder?.order_total ?? undefined,
-        });
-        setShowEditOrderDialog(true);
-    }, [selectedOrder]);
 
     // Calculate pagination values
     const indexOfLastOrder = currentPage * itemsPerPage;
@@ -104,6 +96,45 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
     const onSubmit = async (data: z.infer<typeof EditOrderFormSchema>) => {
         // Handle form submission logic here
         console.log('Form data:', data);
+
+        // Access selectedOrder from state, not as an argument if it's not passed
+        toast({
+            title: 'Order Updated',
+            description: `Order #${selectedOrder?.order_nr} has been updated.`,
+            variant: 'default',
+        });
+        setShowEditOrderDialog(false); // Close the dialog after submission
+        setSelectedOrder(null); // Clear selectedOrder after submission
+    };
+
+    useEffect(() => {
+        if (selectedOrder) {
+            form.reset({
+                orderNotes: selectedOrder.order_notes ?? '',
+                // Consider if 'changeToOtherStatus' should be derived from selectedOrder.order_status
+                changeToOtherStatus: selectedOrder.order_status === 'other',
+                adjustAmount: selectedOrder.order_total ?? undefined,
+            });
+        } else {
+            // Reset form to defaults if selectedOrder is null (e.g., dialog closed)
+            form.reset({
+                orderNotes: '',
+                changeToOtherStatus: false,
+                adjustAmount: undefined,
+            });
+        }
+    }, [selectedOrder, form]);
+
+    const handleDialogStateChange = (isOpen: boolean) => {
+        setShowEditOrderDialog(isOpen);
+        if (!isOpen) {
+            setSelectedOrder(null); // Clear selectedOrder when dialog closes
+        }
+    };
+
+    const handleEditOrderClick = (order: CreditSystemOrder) => {
+        setSelectedOrder(order);
+        setShowEditOrderDialog(true); // Open the single dialog
     };
 
     const handlePayNow = async (
@@ -182,145 +213,144 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                         Pay Now
                                     </Button>
                                 )}
-                                <AlertDialog open={showEditOrderDialog}>
-                                    <AlertDialogTrigger asChild>
-                                        <Button
-                                            variant={'outline'}
-                                            size={'sm'}
-                                            onClick={() => {
-                                                setSelectedOrder(order);
-                                            }}
-                                        >
-                                            {order.order_notes && (
-                                                <NotebookPen
-                                                    size={12}
-                                                    className='mr-1'
-                                                />
-                                            )}
-                                            Edit Order
-                                        </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>
-                                                Edit Order #
-                                                {selectedOrder?.order_nr}
-                                            </AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                Add some notes to the order,
-                                                change it's status or adjust the
-                                                amount.
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <Form {...form}>
-                                            <form
-                                                onSubmit={form.handleSubmit(
-                                                    onSubmit
-                                                )}
-                                            >
-                                                <FormField
-                                                    control={form.control}
-                                                    name='orderNotes'
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>
-                                                                Order Notes
-                                                            </FormLabel>
-                                                            <FormControl>
-                                                                <Textarea
-                                                                    placeholder='Order Notes'
-                                                                    {...field}
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                <FormField
-                                                    control={form.control}
-                                                    name='adjustAmount'
-                                                    render={({ field }) => (
-                                                        <FormItem className='mt-4'>
-                                                            <FormLabel>
-                                                                Adjust Order
-                                                                Total
-                                                            </FormLabel>
-                                                            <FormControl>
-                                                                <Input
-                                                                    type='number'
-                                                                    placeholder='Adjust Amount'
-                                                                    {...field}
-                                                                    onChange={(
-                                                                        e
-                                                                    ) =>
-                                                                        field.onChange(
-                                                                            Number(
-                                                                                e
-                                                                                    .target
-                                                                                    .value
-                                                                            )
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                {selectedOrder?.order_status !==
-                                                    'other' && (
-                                                    <FormField
-                                                        control={form.control}
-                                                        name='changeToOtherStatus'
-                                                        render={({ field }) => (
-                                                            <FormItem className='mt-4'>
-                                                                <div className='flex items-center space-x-2'>
-                                                                    <FormLabel>
-                                                                        Change
-                                                                        status
-                                                                        to
-                                                                        Other?
-                                                                    </FormLabel>
-                                                                    <FormControl>
-                                                                        <Checkbox
-                                                                            checked={
-                                                                                field.value
-                                                                            }
-                                                                            onCheckedChange={
-                                                                                field.onChange
-                                                                            }
-                                                                        />
-                                                                    </FormControl>
-                                                                </div>
-                                                                <FormMessage />
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                )}
-                                                <AlertDialogFooter className='mt-6'>
-                                                    <AlertDialogCancel
-                                                        onClick={() =>
-                                                            setShowEditOrderDialog(
-                                                                false
-                                                            )
-                                                        }
-                                                    >
-                                                        Cancel Changes
-                                                    </AlertDialogCancel>
-                                                    <Button type='submit'>
-                                                        Confirm Changes
-                                                    </Button>
-                                                </AlertDialogFooter>
-                                            </form>
-                                        </Form>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                {/* Button to trigger the single dialog */}
+                                <Button
+                                    variant={'outline'}
+                                    size={'sm'}
+                                    onClick={() => handleEditOrderClick(order)}
+                                >
+                                    {order.order_notes && (
+                                        <NotebookPen
+                                            size={12}
+                                            className='mr-1'
+                                        />
+                                    )}
+                                    Edit Order
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
+
+            {/* Single AlertDialog, moved outside the map loop */}
+            {selectedOrder && ( // Conditionally render if an order is selected
+                <AlertDialog
+                    open={showEditOrderDialog}
+                    onOpenChange={handleDialogStateChange}
+                >
+                    {/* AlertDialogTrigger is not strictly needed here if Button above controls opening */}
+                    <AlertDialogContent
+                        onCloseAutoFocus={(e) => e.preventDefault()}
+                    >
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Edit Order
+                                {selectedOrder && (
+                                    <>
+                                        <span className='ml-1'>
+                                            #{selectedOrder.order_nr}
+                                        </span>
+                                        <span
+                                            className={`ml-2 ${statusTextColorClass(
+                                                selectedOrder.order_status
+                                            )}`}
+                                        >
+                                            {selectedOrder.order_status}
+                                        </span>
+                                    </>
+                                )}
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Add some notes to the order, change it's status
+                                or adjust the amount.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)}>
+                                <FormField
+                                    control={form.control}
+                                    name='orderNotes'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Order Notes</FormLabel>
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder='Order Notes'
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name='adjustAmount'
+                                    render={({ field }) => (
+                                        <FormItem className='mt-4'>
+                                            <FormLabel>
+                                                £ Adjust Order Total
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    placeholder='Adjust Amount'
+                                                    {...field}
+                                                    onChange={(e) =>
+                                                        field.onChange(
+                                                            Number(
+                                                                e.target.value
+                                                            )
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                {selectedOrder?.order_status !== 'other' && (
+                                    <FormField
+                                        control={form.control}
+                                        name='changeToOtherStatus'
+                                        render={({ field }) => (
+                                            <FormItem className='mt-4'>
+                                                <div className='flex items-center space-x-2'>
+                                                    <FormLabel>
+                                                        Change status to Other?
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={
+                                                                field.value
+                                                            }
+                                                            onCheckedChange={
+                                                                field.onChange
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                </div>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
+                                <AlertDialogFooter className='mt-6'>
+                                    <AlertDialogCancel>
+                                        Cancel Changes
+                                    </AlertDialogCancel>
+                                    <Button type='submit'>
+                                        Confirm Changes
+                                    </Button>
+                                </AlertDialogFooter>
+                            </form>
+                        </Form>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+
             {showPagination && (
                 <div className='flex items-center justify-between p-4'>
                     <div className='text-sm text-muted-foreground'>
