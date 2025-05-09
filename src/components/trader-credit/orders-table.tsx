@@ -61,6 +61,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
             changeToOtherStatus: false,
             adjustAmount: selectedOrder?.order_total ?? undefined,
         });
+        setShowEditOrderDialog(true);
     }, [selectedOrder]);
 
     // Calculate pagination values
@@ -188,7 +189,6 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                             size={'sm'}
                                             onClick={() => {
                                                 setSelectedOrder(order);
-                                                setShowEditOrderDialog(true);
                                             }}
                                         >
                                             {order.order_notes && (

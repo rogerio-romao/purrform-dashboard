@@ -241,7 +241,6 @@ export default function TraderCreditTraderDataActions({
                                         </FormItem>
                                     )}
                                 />
-                                <AlertDialogDescription></AlertDialogDescription>
                                 <AlertDialogFooter className='mt-6'>
                                     <AlertDialogCancel
                                         onClick={() =>
