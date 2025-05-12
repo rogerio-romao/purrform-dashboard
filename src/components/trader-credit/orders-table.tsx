@@ -37,7 +37,6 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { CreditSystemOrder } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
-import { set } from 'date-fns';
 
 interface OrdersTableProps {
     orders: CreditSystemOrder[];
@@ -46,7 +45,7 @@ interface OrdersTableProps {
 const EditOrderFormSchema = z.object({
     orderNotes: z.string().optional(),
     changeToOtherStatus: z.boolean(),
-    adjustAmount: z.number().min(0).max(10000).optional(),
+    adjustedOrderTotal: z.number().min(0).max(10000).optional(),
 });
 
 export default function OrdersTable({ orders }: OrdersTableProps) {
@@ -89,22 +88,98 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         defaultValues: {
             orderNotes: '',
             changeToOtherStatus: false,
-            adjustAmount: undefined,
+            adjustedOrderTotal: undefined,
         },
     });
 
     const onSubmit = async (data: z.infer<typeof EditOrderFormSchema>) => {
         // Handle form submission logic here
-        console.log('Form data:', data);
 
-        // Access selectedOrder from state, not as an argument if it's not passed
-        toast({
-            title: 'Order Updated',
-            description: `Order #${selectedOrder?.order_nr} has been updated.`,
-            variant: 'default',
+        if (!selectedOrder) {
+            toast({
+                title: 'No Order Selected',
+                description: 'Please select an order to edit.',
+                variant: 'destructive',
+            });
+            return;
+        }
+
+        const { orderNotes, changeToOtherStatus, adjustedOrderTotal } = data;
+        const orderId = selectedOrder.id; // Get the order ID from selectedOrder
+        const traderId = selectedOrder.trader_id; // Get the trader ID from selectedOrder
+        const encodedOrderNotes = encodeURIComponent(orderNotes ?? '');
+        const changeStatus =
+            changeToOtherStatus && selectedOrder.order_status === 'paid';
+        const adjustedTotal = adjustedOrderTotal ?? selectedOrder.order_total;
+
+        const hasNoteChanges = orderNotes !== (selectedOrder.order_notes ?? '');
+        const hasTotalChanges = adjustedTotal !== selectedOrder.order_total;
+        const hasChanges = hasNoteChanges || changeStatus || hasTotalChanges;
+
+        if (!hasChanges) {
+            toast({
+                title: 'No Changes Made',
+                description: 'Please make some changes before submitting.',
+                variant: 'destructive',
+            });
+            return;
+        }
+
+        let adjustedTotalMessage: string | undefined;
+        if (hasTotalChanges) {
+            const difference = adjustedTotal! - selectedOrder.order_total;
+            const isNegative = difference < 0;
+            const orderAction = isNegative ? 'reduced' : 'increased';
+            const balanceAction = isNegative ? 'increased' : 'reduced';
+            const absoluteDifference = Math.abs(difference).toFixed(2);
+            adjustedTotalMessage = `Order total has been ${orderAction} by £${absoluteDifference}. Customer balance has been ${balanceAction} by £${absoluteDifference}.`;
+        }
+
+        // Construct the URL with query parameters
+        const baseUrl = `http://localhost:5555/editCreditSystemOrder`;
+        const queryParams = new URLSearchParams({
+            orderId: String(orderId),
+            traderId: String(traderId),
         });
-        setShowEditOrderDialog(false); // Close the dialog after submission
-        setSelectedOrder(null); // Clear selectedOrder after submission
+        if (hasNoteChanges) {
+            queryParams.append('orderNotes', encodedOrderNotes);
+        }
+        if (changeStatus) {
+            queryParams.append('changeStatusToOther', 'true');
+        }
+        if (hasTotalChanges) {
+            queryParams.append('newTotal', String(adjustedTotal));
+            queryParams.append('oldTotal', String(selectedOrder.order_total));
+        }
+        const url = `${baseUrl}?${queryParams.toString()}`;
+
+        // Make the API call
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // Access selectedOrder from state, not as an argument if it's not passed
+            toast({
+                title: 'Order Updated',
+                description: `Order #${
+                    selectedOrder?.order_nr
+                } has been updated. ${adjustedTotalMessage ?? ''} ${
+                    changeStatus ? 'Order moved to "other" status.' : ''
+                }`,
+                variant: 'default',
+            });
+            setShowEditOrderDialog(false); // Close the dialog after submission
+            setSelectedOrder(null); // Clear selectedOrder after submission
+        } catch (error) {
+            console.error('Error updating order:', error);
+            toast({
+                title: 'Update Failed',
+                description: 'There was an error updating the order.',
+                variant: 'destructive',
+            });
+            return;
+        }
     };
 
     useEffect(() => {
@@ -113,14 +188,14 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                 orderNotes: selectedOrder.order_notes ?? '',
                 // Consider if 'changeToOtherStatus' should be derived from selectedOrder.order_status
                 changeToOtherStatus: selectedOrder.order_status === 'other',
-                adjustAmount: selectedOrder.order_total ?? undefined,
+                adjustedOrderTotal: selectedOrder.order_total ?? undefined,
             });
         } else {
             // Reset form to defaults if selectedOrder is null (e.g., dialog closed)
             form.reset({
                 orderNotes: '',
                 changeToOtherStatus: false,
-                adjustAmount: undefined,
+                adjustedOrderTotal: undefined,
             });
         }
     }, [selectedOrder, form]);
@@ -249,7 +324,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                 {selectedOrder && (
                                     <>
                                         <span className='ml-1'>
-                                            #{selectedOrder.order_nr}
+                                            {selectedOrder.order_nr}
                                         </span>
                                         <span
                                             className={`ml-2 ${statusTextColorClass(
@@ -262,7 +337,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                 )}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                                Add some notes to the order, change it's status
+                                Add some notes to the order, change its status
                                 or adjust the amount.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -285,40 +360,46 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                     )}
                                 />
 
-                                <FormField
-                                    control={form.control}
-                                    name='adjustAmount'
-                                    render={({ field }) => (
-                                        <FormItem className='mt-4 ml-4'>
-                                            <FormLabel>
-                                                Adjust Order Total
-                                            </FormLabel>
-                                            <FormControl>
-                                                <div className='relative flex items-center'>
-                                                    <span className='absolute left-2 text-muted-foreground'>
-                                                        £
-                                                    </span>
-                                                    <Input
-                                                        type='number'
-                                                        className='pl-6'
-                                                        placeholder='Adjust Amount'
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                Number(
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                {selectedOrder?.order_status !== 'other' && (
+                                {selectedOrder?.order_status === 'overdue' ||
+                                    (selectedOrder?.order_status ===
+                                        'pending' && (
+                                        <FormField
+                                            control={form.control}
+                                            name='adjustedOrderTotal'
+                                            render={({ field }) => (
+                                                <FormItem className='mt-4'>
+                                                    <FormLabel>
+                                                        Adjust Order Total
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <div className='relative flex items-center'>
+                                                            <span className='absolute left-2 text-muted-foreground'>
+                                                                £
+                                                            </span>
+                                                            <Input
+                                                                type='number'
+                                                                className='pl-6'
+                                                                placeholder='Adjust Amount'
+                                                                {...field}
+                                                                onChange={(e) =>
+                                                                    field.onChange(
+                                                                        Number(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    ))}
+
+                                {selectedOrder?.order_status === 'paid' && (
                                     <FormField
                                         control={form.control}
                                         name='changeToOtherStatus'
