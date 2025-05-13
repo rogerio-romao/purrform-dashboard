@@ -41,7 +41,9 @@ export default function TraderCreditTraderDataHeader({
                         </p>
                         {trader.invoice_email && (
                             <p className='text-muted-foreground mt-[0.15rem]'>
-                                <span className='text-white'>Invoices:</span>{' '}
+                                <span className='dark:text-white text-gray-800'>
+                                    Invoices:
+                                </span>{' '}
                                 {trader.invoice_email}
                             </p>
                         )}

@@ -361,43 +361,41 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                                 />
 
                                 {selectedOrder?.order_status === 'overdue' ||
-                                    (selectedOrder?.order_status ===
-                                        'pending' && (
-                                        <FormField
-                                            control={form.control}
-                                            name='adjustedOrderTotal'
-                                            render={({ field }) => (
-                                                <FormItem className='mt-4'>
-                                                    <FormLabel>
-                                                        Adjust Order Total
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <div className='relative flex items-center'>
-                                                            <span className='absolute left-2 text-muted-foreground'>
-                                                                £
-                                                            </span>
-                                                            <Input
-                                                                type='number'
-                                                                className='pl-6'
-                                                                placeholder='Adjust Amount'
-                                                                {...field}
-                                                                onChange={(e) =>
-                                                                    field.onChange(
-                                                                        Number(
-                                                                            e
-                                                                                .target
-                                                                                .value
-                                                                        )
+                                selectedOrder?.order_status === 'pending' ? (
+                                    <FormField
+                                        control={form.control}
+                                        name='adjustedOrderTotal'
+                                        render={({ field }) => (
+                                            <FormItem className='mt-4'>
+                                                <FormLabel>
+                                                    Adjust Order Total
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div className='relative flex items-center'>
+                                                        <span className='absolute left-2 text-muted-foreground'>
+                                                            £
+                                                        </span>
+                                                        <Input
+                                                            type='number'
+                                                            className='pl-6'
+                                                            placeholder='Adjust Amount'
+                                                            {...field}
+                                                            onChange={(e) =>
+                                                                field.onChange(
+                                                                    Number(
+                                                                        e.target
+                                                                            .value
                                                                     )
-                                                                }
-                                                            />
-                                                        </div>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    ))}
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                ) : null}
 
                                 {selectedOrder?.order_status === 'paid' && (
                                     <FormField
