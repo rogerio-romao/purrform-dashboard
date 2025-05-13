@@ -39,6 +39,12 @@ export default function TraderCreditTraderDataHeader({
                         <p className='text-muted-foreground mt-[0.15rem]'>
                             {trader.bc_customer_email}
                         </p>
+                        {trader.invoice_email && (
+                            <p className='text-muted-foreground mt-[0.15rem]'>
+                                <span className='text-white'>Invoices:</span>{' '}
+                                {trader.invoice_email}
+                            </p>
+                        )}
                         {trader.has_overdue && (
                             <span className='text-xs text-red-500 font-semibold uppercase tracking-wider'>
                                 Overdue orders

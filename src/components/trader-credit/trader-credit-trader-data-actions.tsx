@@ -52,6 +52,9 @@ const ChangeCreditFormSchema = z.object({
         .max(10_000, {
             message: 'Credit limit must be less than £10,000',
         }),
+    invoiceEmail: z
+        .union([z.string().email('Invalid email address'), z.literal('')])
+        .optional(),
 });
 
 export default function TraderCreditTraderDataActions({
@@ -68,6 +71,7 @@ export default function TraderCreditTraderDataActions({
         defaultValues: {
             companyName: trader.bc_customer_company,
             creditLimit: trader.credit_ceiling,
+            invoiceEmail: trader.invoice_email ?? '',
         },
     });
 
@@ -76,6 +80,7 @@ export default function TraderCreditTraderDataActions({
         form.reset({
             companyName: trader.bc_customer_company,
             creditLimit: trader.credit_ceiling,
+            invoiceEmail: trader.invoice_email ?? '',
         });
     }, [trader, form]);
 
@@ -91,8 +96,17 @@ export default function TraderCreditTraderDataActions({
         const newCreditLimit = data.creditLimit;
         const creditDifference = newCreditLimit - previousCreditLimit;
         const creditLimitChanged = previousCreditLimit !== newCreditLimit;
+        const newInvoiceEmail = data.invoiceEmail;
+        const invoiceEmailChanged =
+            (trader.invoice_email !== null &&
+                newInvoiceEmail !== trader.invoice_email) ||
+            (trader.invoice_email === null && newInvoiceEmail !== '');
 
-        if (!companyNameChanged && !creditLimitChanged) {
+        if (
+            !companyNameChanged &&
+            !creditLimitChanged &&
+            !invoiceEmailChanged
+        ) {
             toast({
                 title: 'No changes made',
                 description: 'Please change at least one field.',
@@ -120,6 +134,10 @@ export default function TraderCreditTraderDataActions({
                 'Previous Balance': previousBalance,
                 'New Balance': newBalance,
             }),
+            ...(invoiceEmailChanged && {
+                'Previous Invoice Email': trader.invoice_email || 'N/A',
+                'New Invoice Email': newInvoiceEmail || 'N/A',
+            }),
         };
 
         try {
@@ -128,7 +146,9 @@ export default function TraderCreditTraderDataActions({
                     trader.id
                 }&companyName=${encodeURIComponent(
                     newCompanyName ?? trader.bc_customer_company
-                )}&creditCeiling=${newCreditLimit}&newBalance=${newBalance}`
+                )}&creditCeiling=${newCreditLimit}&newBalance=${newBalance}&invoiceEmail=${encodeURIComponent(
+                    newInvoiceEmail ?? trader.invoice_email ?? ''
+                )}`
             );
 
             if (!response.ok) {
@@ -186,7 +206,7 @@ export default function TraderCreditTraderDataActions({
                             variant='outline'
                             onClick={() => setChangeCompanyInfoDialogOpen(true)}
                         >
-                            Change Company Credit / Name
+                            Edit Company Info
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
@@ -235,6 +255,23 @@ export default function TraderCreditTraderDataActions({
                                                             )
                                                         )
                                                     }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name='invoiceEmail'
+                                    render={({ field }) => (
+                                        <FormItem className='mt-4'>
+                                            <FormLabel>Invoice Email</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='email'
+                                                    placeholder='Invoice Email'
+                                                    {...field}
                                                 />
                                             </FormControl>
                                             <FormMessage />
