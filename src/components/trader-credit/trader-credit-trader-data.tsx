@@ -159,7 +159,7 @@ export default function TraderCreditTraderData({
         }
 
         const response = await fetch(
-            `http://localhost:5555/removeTraderFromCreditSystem?traderId=${trader.id}`
+            `https://purrform-apps-027e.onrender.com/removeTraderFromCreditSystem?traderId=${trader.id}`
         );
 
         if (response.ok) {
@@ -189,7 +189,7 @@ export default function TraderCreditTraderData({
         }
 
         const response = await fetch(
-            `http://localhost:5555/getPendingOrdersForTrader?traderId=${trader.id}`
+            `https://purrform-apps-027e.onrender.com/getPendingOrdersForTrader?traderId=${trader.id}`
         );
 
         if (response.ok) {
@@ -223,7 +223,7 @@ export default function TraderCreditTraderData({
         }
 
         const response = await fetch(
-            `http://localhost:5555/getOrderHistoryForTrader?traderId=${trader.id}`
+            `https://purrform-apps-027e.onrender.com/getOrderHistoryForTrader?traderId=${trader.id}`
         );
 
         if (response.ok) {

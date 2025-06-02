@@ -33,7 +33,7 @@ export default function TraderCredit() {
         const fetchCreditTraders = async () => {
             try {
                 const response = await fetch(
-                    'http://localhost:5555/getCreditSystemTraders'
+                    'https://purrform-apps-027e.onrender.com/getCreditSystemTraders'
                 );
 
                 if (!response.ok) {
@@ -56,7 +56,7 @@ export default function TraderCredit() {
         const fetchAllTraders = async () => {
             try {
                 const response = await fetch(
-                    'http://localhost:5555/getAllBcTradeCustomers'
+                    'https://purrform-apps-027e.onrender.com/getAllBcTradeCustomers'
                 );
 
                 if (!response.ok) {
@@ -155,7 +155,12 @@ export default function TraderCredit() {
                     <div className='grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-3'>
                         <Card className='sm:col-span-3'>
                             <CardHeader className='pb-3'>
-                                <CardTitle>Trader Credit System</CardTitle>
+                                <CardTitle>
+                                    Trader Credit System{' '}
+                                    <span className='text-amber-500 text-base'>
+                                        (Beta Testing)
+                                    </span>
+                                </CardTitle>
                                 <CardDescription className='leading-relaxed'>
                                     Manage Trade group customers. See and adjust
                                     their credit limits, view current balance

@@ -61,6 +61,7 @@ export default function TraderCreditAddTrader({
             selectedTraderCompany: '',
             selectedTraderEmail: '',
             creditAmount: 0,
+            invoiceEmail: null,
         },
     });
 
@@ -93,7 +94,7 @@ export default function TraderCreditAddTrader({
 
         const traderToAdd: Omit<
             CreditSystemTrader,
-            'id' | 'created_at' | 'updated_at'
+            'id' | 'created_at' | 'updated_at' | 'has_overdue'
         > = {
             bc_customer_id: trader.id,
             bc_customer_email: encodeURIComponent(trader.email),
@@ -102,10 +103,13 @@ export default function TraderCreditAddTrader({
             bc_customer_last_name: encodeURIComponent(trader.last_name),
             credit_ceiling: creditAmount!,
             current_balance: creditAmount!,
+            invoice_email: data.invoiceEmail
+                ? encodeURIComponent(data.invoiceEmail)
+                : null,
         };
 
         await fetch(
-            `http://localhost:5555/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}`,
+            `https://purrform-apps-027e.onrender.com/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}&invoiceEmail=${traderToAdd.invoice_email}`,
             {
                 method: 'GET',
                 headers: {
@@ -123,9 +127,6 @@ export default function TraderCreditAddTrader({
                 return;
             }
 
-            const data = (await response.json()) as CreditSystemTrader;
-
-            setCreditTraders((prev) => [...prev, data]);
             form.reset();
 
             toast({
@@ -302,39 +303,78 @@ export default function TraderCreditAddTrader({
                             />
                         </div>
                         {form.getValues('selectedTraderCompany') && (
-                            <div className='max-w-xs'>
-                                <FormField
-                                    control={form.control}
-                                    name='creditAmount'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Credit amount</FormLabel>
-                                            <FormControl>
-                                                <div className='relative w-full'>
-                                                    <PoundSterling className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                            <div className='flex gap-8'>
+                                <div className='max-w-xs'>
+                                    <FormField
+                                        control={form.control}
+                                        name='creditAmount'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Credit amount
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div className='relative w-full'>
+                                                        <PoundSterling className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                                                        <Input
+                                                            type='number'
+                                                            className='pl-8'
+                                                            placeholder='Credit amount'
+                                                            {...field}
+                                                            value={undefined}
+                                                            onChange={(e) => {
+                                                                form.setValue(
+                                                                    'creditAmount',
+                                                                    parseInt(
+                                                                        e.target
+                                                                            .value,
+                                                                        10
+                                                                    )
+                                                                );
+                                                                form.trigger();
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className='min-w-lg'>
+                                    <FormField
+                                        control={form.control}
+                                        name='invoiceEmail'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Invoice Email{' '}
+                                                    <span className='text-muted-foreground text-xs'>
+                                                        (optional)
+                                                    </span>
+                                                </FormLabel>
+                                                <FormControl>
                                                     <Input
-                                                        type='number'
-                                                        className='pl-8'
-                                                        placeholder='Credit amount'
+                                                        className='w-72'
+                                                        type='email'
+                                                        placeholder='Invoice Email'
                                                         {...field}
                                                         value={undefined}
                                                         onChange={(e) => {
                                                             form.setValue(
-                                                                'creditAmount',
-                                                                parseInt(
-                                                                    e.target
-                                                                        .value,
-                                                                    10
-                                                                )
+                                                                'invoiceEmail',
+                                                                e.target.value
+                                                                    ? e.target
+                                                                          .value
+                                                                    : null
                                                             );
                                                             form.trigger();
                                                         }}
                                                     />
-                                                </div>
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                             </div>
                         )}
                         <div className='flex gap-2'>

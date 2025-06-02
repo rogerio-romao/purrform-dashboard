@@ -86,7 +86,7 @@ export default function ViewAllPendingOrders({
     const handleFetchAllPendingOrders = async () => {
         try {
             const response = await fetch(
-                'http://localhost:5555/getAllTraderPendingOrders'
+                'https://purrform-apps-027e.onrender.com/getAllTraderPendingOrders'
             );
 
             if (!response.ok) {

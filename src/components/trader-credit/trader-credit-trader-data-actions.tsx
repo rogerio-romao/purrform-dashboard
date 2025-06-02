@@ -142,7 +142,7 @@ export default function TraderCreditTraderDataActions({
 
         try {
             const response = await fetch(
-                `http://localhost:5555/changeCreditTraderInfo?traderId=${
+                `https://purrform-apps-027e.onrender.com/changeCreditTraderInfo?traderId=${
                     trader.id
                 }&companyName=${encodeURIComponent(
                     newCompanyName ?? trader.bc_customer_company

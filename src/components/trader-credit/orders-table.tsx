@@ -136,7 +136,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         }
 
         // Construct the URL with query parameters
-        const baseUrl = `http://localhost:5555/editCreditSystemOrder`;
+        const baseUrl = `https://purrform-apps-027e.onrender.com/editCreditSystemOrder`;
         const queryParams = new URLSearchParams({
             orderId: String(orderId),
             traderId: String(traderId),
@@ -221,7 +221,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         // Handle the payment logic here
         try {
             const response = await fetch(
-                `http://localhost:5555/markCreditSystemOrderAsPaid?orderId=${orderId}&traderId=${traderId}&orderStatus=${orderStatus}&orderTotal=${orderTotal}`
+                `https://purrform-apps-027e.onrender.com/markCreditSystemOrderAsPaid?orderId=${orderId}&traderId=${traderId}&orderStatus=${orderStatus}&orderTotal=${orderTotal}`
             );
 
             if (!response.ok) {
