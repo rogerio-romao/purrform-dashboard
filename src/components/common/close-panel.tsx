@@ -11,10 +11,7 @@ export default function ClosePanel({ setClosePanel }: ClosePanelProps) {
             onClick={() => setClosePanel(false)}
         >
             <span className='text-xs group-hover:text-gray-600'>Close</span>
-            <X
-                size={'22'}
-                className='text-gray-400 group-hover:text-gray-500'
-            />
+            <X size={22} className='text-gray-400 group-hover:text-gray-500' />
         </div>
     );
 }
