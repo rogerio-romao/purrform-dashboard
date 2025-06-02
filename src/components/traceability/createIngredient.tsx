@@ -1,15 +1,13 @@
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Button } from './ui/button';
-import {
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from './ui/dialog';
+import createIngredient from '@/app/actions/createIngredient';
+import { createIngredientsFormSchema } from '@/app/lib/utils';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Form,
     FormControl,
@@ -17,38 +15,47 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
-import updateIngredient from '@/app/actions/updateIngredient';
-import type {
-    IngredientsProps,
-    TraceabilityIngredientsFeature,
-} from '@/app/lib/types';
-import { createIngredientsFormSchema } from '@/app/lib/utils';
+import type { TraceabilityIngredientsFeature } from '@/app/lib/types';
 
-type UpdateIngredientModalProps = Omit<IngredientsProps, 'ingredients'> & {
-    ingredient: TraceabilityIngredientsFeature;
-};
+interface CreateIngredientProps {
+    setIngredients: React.Dispatch<
+        React.SetStateAction<TraceabilityIngredientsFeature[]>
+    >;
+    handleGetCoordinates: (
+        location: string,
+        form: UseFormReturn<
+            {
+                title: string;
+                location: string;
+                longitude: number;
+                latitude: number;
+            },
+            any,
+            undefined
+        >
+    ) => void;
+}
 
-export default function UpdateIngredientModal({
+export default function CreateIngredient({
     setIngredients,
     handleGetCoordinates,
-    ingredient,
-}: UpdateIngredientModalProps) {
+}: CreateIngredientProps) {
     const { toast } = useToast();
 
-    const updateForm = useForm<z.infer<typeof createIngredientsFormSchema>>({
+    const form = useForm<z.infer<typeof createIngredientsFormSchema>>({
         resolver: zodResolver(createIngredientsFormSchema),
         defaultValues: {
-            title: ingredient.properties.title,
-            location: ingredient.properties.location,
-            longitude: ingredient.geometry.coordinates[0],
-            latitude: ingredient.geometry.coordinates[1],
+            title: '',
+            location: '',
+            longitude: 0,
+            latitude: 0,
         },
     });
 
-    function onUpdate(values: z.infer<typeof createIngredientsFormSchema>) {
+    function onSubmit(values: z.infer<typeof createIngredientsFormSchema>) {
         const validated = createIngredientsFormSchema.safeParse(values);
 
         if (!validated.success) {
@@ -60,29 +67,7 @@ export default function UpdateIngredientModal({
             return;
         }
 
-        const updatedIngredient = {
-            type: 'Feature' as const,
-            properties: {
-                id: ingredient.properties.id,
-                title: validated.data.title,
-                location: validated.data.location,
-            },
-            geometry: {
-                type: 'Point' as const,
-                coordinates: [
-                    validated.data.longitude,
-                    validated.data.latitude,
-                ] as [number, number],
-            },
-        };
-
-        updateIngredient({
-            id: ingredient.properties.id,
-            title: validated.data.title,
-            location: validated.data.location,
-            longitude: validated.data.longitude,
-            latitude: validated.data.latitude,
-        }).then((response) => {
+        createIngredient(validated.data).then((response) => {
             if ('error' in response) {
                 toast({
                     variant: 'destructive',
@@ -91,69 +76,88 @@ export default function UpdateIngredientModal({
                 });
                 return;
             }
-        });
 
-        setIngredients((prevIngredients) =>
-            prevIngredients.map((prevIngredient) =>
-                prevIngredient.properties.id === ingredient.properties.id
-                    ? updatedIngredient
-                    : prevIngredient
-            )
-        );
+            form.reset();
+            setIngredients((prevIngredients) => {
+                const newIngredients = [
+                    {
+                        type: 'Feature' as const,
+                        geometry: {
+                            type: 'Point' as const,
+                            coordinates: [
+                                response.longitude,
+                                response.latitude,
+                            ] as [number, number],
+                        },
+                        properties: {
+                            id: response.id,
+                            title: response.title,
+                            location: response.location,
+                        },
+                    },
+                    ...prevIngredients,
+                ];
 
-        // Close the dialog
-        const closeButton = document.querySelector(
-            '[role="dialog"] > button'
-        ) as HTMLButtonElement;
-        closeButton?.click();
+                newIngredients.sort((a, b) =>
+                    a.properties.title.localeCompare(b.properties.title)
+                );
 
-        toast({
-            variant: 'default',
-            title: 'SUCCESS',
-            description: 'Ingredient updated successfully.',
+                return newIngredients;
+            });
+
+            toast({
+                variant: 'default',
+                title: 'SUCCESS',
+                description: 'Ingredient added successfully.',
+            });
         });
     }
 
     return (
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>Edit Ingredient</DialogTitle>
-
-                <DialogDescription asChild>
-                    <Form {...updateForm}>
+        <Card className='sm:col-span-2 w-full'>
+            <CardHeader className='pb-3'>
+                <CardTitle className='text-lg'>Add an Ingredient</CardTitle>
+                <CardContent>
+                    <Form {...form}>
                         <form
-                            onSubmit={updateForm.handleSubmit(onUpdate)}
+                            onSubmit={form.handleSubmit(onSubmit)}
                             className='space-y-8'
                         >
                             <div className='flex flex-col justify-center gap-4'>
                                 <FormField
-                                    control={updateForm.control}
+                                    control={form.control}
                                     name='title'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Title</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    placeholder='Rabbit Legs'
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                                 <FormField
-                                    control={updateForm.control}
+                                    control={form.control}
                                     name='location'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Location</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    placeholder='Paris France'
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                                 <FormField
-                                    control={updateForm.control}
+                                    control={form.control}
                                     name='longitude'
                                     render={({ field }) => (
                                         <FormItem>
@@ -169,7 +173,7 @@ export default function UpdateIngredientModal({
                                     )}
                                 />
                                 <FormField
-                                    control={updateForm.control}
+                                    control={form.control}
                                     name='latitude'
                                     render={({ field }) => (
                                         <FormItem>
@@ -191,8 +195,8 @@ export default function UpdateIngredientModal({
                                     variant='link'
                                     onClick={() =>
                                         handleGetCoordinates(
-                                            updateForm.getValues().location,
-                                            updateForm
+                                            form.getValues().location,
+                                            form
                                         )
                                     }
                                 >
@@ -202,8 +206,8 @@ export default function UpdateIngredientModal({
                             </div>
                         </form>
                     </Form>
-                </DialogDescription>
-            </DialogHeader>
-        </DialogContent>
+                </CardContent>
+            </CardHeader>
+        </Card>
     );
 }

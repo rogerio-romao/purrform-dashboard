@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import type { BcProduct, RecallProductsResponse } from '@/app/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-import Loading from '@/components/loading';
-import RecallData from '@/components/recall-data';
-import RecallHeader from '@/components/recall-header';
-import RecallProductsSearch from '@/components/recall-products-search';
+import Loading from '@/components/common/loading';
+import RecallData from '@/components/recall-products/recall-data';
+import RecallHeader from '@/components/recall-products/recall-header';
+import RecallProductsSearch from '@/components/recall-products/recall-products-search';
 
 export const revalidate = 3600 * 24; // invalidate every 24 hours
 

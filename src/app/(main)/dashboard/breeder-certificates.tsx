@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import CertificatesTableSection from '@/components/breeder-certificates/certificates-table-section';
 import {
     Card,
     CardDescription,
@@ -9,8 +10,6 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-
-import CertificatesTableSection from '@/components/certificates-table-section';
 
 import type { BreederCertificate } from '@/app/lib/types';
 

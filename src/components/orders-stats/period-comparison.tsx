@@ -1,6 +1,9 @@
 'use client';
 
+import { useState } from 'react';
+
 import getComparisonData from '@/app/actions/getComparisonData';
+
 import ComparisonCharts from './comparison-charts';
 import TimeSelection from './time-selection';
 
@@ -19,7 +22,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
 
 type OrdersNumberBarChartProps = {
     month: string;

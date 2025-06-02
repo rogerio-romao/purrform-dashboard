@@ -1,15 +1,16 @@
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import CreateIngredient from '@/components/createIngredient';
-import CurrentIngredients from '@/components/current-ingredients';
-import Loading from '@/components/loading';
-import TraceabilityHeader from '@/components/traceability-header';
-
 import getCoordinates from '@/app/actions/getCoordinates';
+import { useToast } from '@/hooks/use-toast';
+
+import Loading from '@/components/common/loading';
+import CreateIngredient from '@/components/traceability/createIngredient';
+import CurrentIngredients from '@/components/traceability/current-ingredients';
+import TraceabilityHeader from '@/components/traceability/traceability-header';
+
 import type {
     TraceabilityIngredientsFeature,
     TraceabilityIngredientsGeodata,

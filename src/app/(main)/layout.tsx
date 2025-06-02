@@ -1,10 +1,13 @@
-import { cn } from '@/app/lib/utils';
-import LogoutButton from '@/components/logout-button';
-import { ThemeProvider } from '@/components/theme-provider';
-import { ModeToggle } from '@/components/ui/mode-toggle';
-import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+
+import { cn } from '@/app/lib/utils';
+
+import LogoutButton from '@/components/layout/logout-button';
+import { ThemeProvider } from '@/components/layout/theme-provider';
+import { ModeToggle } from '@/components/ui/mode-toggle';
+import { Toaster } from '@/components/ui/toaster';
+
 import '../globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });

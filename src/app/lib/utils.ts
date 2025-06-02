@@ -49,3 +49,20 @@ export const recallProductsFormSchema = z.object({
     startDate: z.string({ required_error: 'Start date is required' }).date(),
     endDate: z.string({ required_error: 'End date is required' }).date(),
 });
+
+export const traderOnCreditFormSchema = z.object({
+    selectedTraderId: z.number().min(1, 'Please select a trader'), // Make sure it requires a value > 0
+    selectedTraderCompany: z.string().min(1, 'Please select a trader company'),
+    selectedTraderEmail: z.string().email('Invalid email format'),
+});
+
+export const addTraderToCreditFormSchema = z.object({
+    selectedTraderId: z.number().min(1, 'Please select a trader'), // Make sure it requires a value > 0
+    selectedTraderCompany: z.string().min(1, 'Please select a trader company'),
+    selectedTraderEmail: z.string().email('Invalid email format'),
+    creditAmount: z
+        .number()
+        .min(1, 'Credit amount must be at least 1')
+        .nullable(),
+    invoiceEmail: z.string().email('Invalid email format').nullable(),
+});

@@ -70,3 +70,41 @@ export interface RecallProductsResponse {
     totalOrders: number;
     orderNumbers: number[];
 }
+
+export interface BcCustomer {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+    company: string;
+}
+
+export interface CreditSystemTrader {
+    id: number;
+    bc_customer_id: number;
+    bc_customer_email: string;
+    bc_customer_company: string;
+    bc_customer_first_name: string;
+    bc_customer_last_name: string;
+    credit_ceiling: number;
+    current_balance: number;
+    has_overdue: boolean;
+    created_at: string;
+    invoice_email: string | null;
+    updated_at: string;
+}
+
+export interface CreditSystemOrder {
+    id: number;
+    order_nr: number;
+    order_date: string;
+    payment_due: string;
+    order_total: number;
+    order_status: 'pending' | 'paid' | 'overdue' | 'other';
+    order_notes?: string;
+    trader_id: number;
+}
+
+export type SupabaseError = { error: string };
+
+export type OkOrErrorResponse = { ok: true } | { ok: false; error: string };

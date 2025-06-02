@@ -1,4 +1,4 @@
-import BreederCertificateForm from '@/components/breeder-certificate-form';
+import BreederCertificateForm from '@/components/breeder-certificate-form/breeder-certificate-form';
 
 export default function BreederCertificate() {
     return (

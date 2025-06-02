@@ -1,10 +1,10 @@
 import type { RecallProductsResponse } from '@/app/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-import Loading from '@/components/loading';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Separator } from './ui/separator';
+import Loading from '@/components/common/loading';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 interface RecallDataProps {
     recallData: RecallProductsResponse | null;
@@ -36,6 +36,9 @@ export default function RecallData({
             <Card className='sm:col-span-3'>
                 <CardHeader className='pb-3'>
                     <Loading />
+                    <p className='text-center'>
+                        The search can take up to several minutes...
+                    </p>
                 </CardHeader>
             </Card>
         );
