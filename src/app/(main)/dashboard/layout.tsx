@@ -10,7 +10,7 @@ export default function DashboardLayout({
         <SidebarProvider>
             <div className='flex flex-1'>
                 <SidebarRoleLoader />
-                <main className='flex-1 w-full'>{children}</main>
+                <div className='w-full'>{children}</div>
             </div>
         </SidebarProvider>
     );
