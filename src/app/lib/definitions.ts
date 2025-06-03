@@ -1,6 +1,9 @@
 import { z } from 'zod';
+import type { UserRole } from './types';
 
 const PASSWORD = process.env.PASSWORD;
+
+export const BOOKKEEPER_EMAIL = 'bookkeeper@test.com';
 
 export const LoginFormSchema = z.object({
     email: z.enum(
@@ -10,6 +13,7 @@ export const LoginFormSchema = z.object({
             'support@purrform.co.uk',
             'djgroovy@gmail.com',
             'rogerio.romao@hotmail.com',
+            BOOKKEEPER_EMAIL,
         ],
         { message: 'Invalid email' }
     ),
@@ -27,7 +31,7 @@ export type LoginFormState =
     | undefined;
 
 export type SessionPayload = {
-    role: 'admin' | 'user';
+    role: UserRole;
     expiresAt: Date;
 };
 

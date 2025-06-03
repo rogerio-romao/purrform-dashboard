@@ -108,3 +108,12 @@ export interface CreditSystemOrder {
 export type SupabaseError = { error: string };
 
 export type OkOrErrorResponse = { ok: true } | { ok: false; error: string };
+
+export type UserRole = 'admin' | 'bookkeeper';
+
+export interface NavItem {
+    to: string;
+    title: string;
+    icon: React.ElementType;
+    allowedRoles: UserRole[];
+}

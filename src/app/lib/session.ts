@@ -60,3 +60,15 @@ export async function updateSession() {
 export function deleteSession() {
     cookies().delete('session');
 }
+
+export async function getSessionRole(): Promise<SessionPayload['role'] | null> {
+    const cookie = cookies().get('session')?.value;
+    if (!cookie) {
+        return null;
+    }
+    const session = await decrypt(cookie);
+
+    // Check if role is a valid value (admin, bookkeeper) before returning it
+    const role = session?.role;
+    return role === 'admin' || role === 'bookkeeper' ? role : null;
+}

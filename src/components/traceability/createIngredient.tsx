@@ -114,7 +114,7 @@ export default function CreateIngredient({
     }
 
     return (
-        <Card className='sm:col-span-2 w-full'>
+        <Card className='sm:col-span-2'>
             <CardHeader className='pb-3'>
                 <CardTitle className='text-lg'>Add an Ingredient</CardTitle>
                 <CardContent>

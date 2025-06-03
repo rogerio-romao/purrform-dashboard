@@ -1,3 +1,8 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import {
     ArrowLeftFromLine,
     BarChart,
@@ -25,40 +30,53 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import type { NavItem, UserRole } from '@/app/lib/types';
+
 // Menu items.
-const items = [
+const items: NavItem[] = [
     {
         title: 'Sales & Loyalty Stats',
-        stateLabel: 'orders',
+        to: 'orders-loyalty-stats',
         icon: BarChart,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Traceability Ingredients',
-        stateLabel: 'traceability',
+        to: 'traceability-ingredients',
         icon: Beef,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Breeder Certificates',
-        stateLabel: 'certificates',
+        to: 'breeder-certificates',
         icon: ShieldCheck,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Recall Products',
-        stateLabel: 'recall',
+        to: 'recall-products',
         icon: ArrowLeftFromLine,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Trader Credit',
-        stateLabel: 'credit',
+        to: 'trader-credit',
         icon: CreditCard,
+        allowedRoles: ['admin', 'bookkeeper'],
     },
 ];
 
 interface AppSidebarProps {
-    setActiveWidget: (widget: string) => void;
+    currentRole: UserRole | null;
 }
 
-export default function AppSidebar({ setActiveWidget }: AppSidebarProps) {
+export default function AppSidebar({ currentRole }: AppSidebarProps) {
+    const pathname = usePathname();
+    // Filter items based on the current role
+    const filteredItems = items.filter(
+        (item) => currentRole && item.allowedRoles.includes(currentRole)
+    );
+
     return (
         <Sidebar collapsible='icon' className='mt-24 rounded'>
             {' '}
@@ -73,20 +91,20 @@ export default function AppSidebar({ setActiveWidget }: AppSidebarProps) {
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarSeparator />
-                            {items.map((item) => (
+                            {filteredItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <SidebarMenuButton
-                                                    onClick={() =>
-                                                        setActiveWidget(
-                                                            item.stateLabel
-                                                        )
-                                                    }
-                                                >
-                                                    <item.icon />
-                                                    <span>{item.title}</span>
+                                                <SidebarMenuButton asChild>
+                                                    <Link
+                                                        href={`/dashboard/${item.to}`}
+                                                    >
+                                                        <item.icon />
+                                                        <span>
+                                                            {item.title}
+                                                        </span>
+                                                    </Link>
                                                 </SidebarMenuButton>
                                             </TooltipTrigger>
                                             <TooltipContent

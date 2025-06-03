@@ -1,25 +1,10 @@
-'use client';
-
-import { useState } from 'react';
-
-import AppSidebar from '@/components/layout/app-sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import BreederCertificates from './breeder-certificates';
-import OrdersLoyaltyStats from './orders-loyalty-stats';
-import RecallProducts from './recall-products';
-import TraceabilityIngredients from './traceability-ingredients';
-import TraderCredit from './trader-credit';
+import { MoveLeft } from 'lucide-react';
 
 export default function Page() {
-    const [activeWidget, setActiveWidget] = useState('orders');
     return (
-        <SidebarProvider>
-            <AppSidebar setActiveWidget={setActiveWidget} />
-            {activeWidget === 'orders' && <OrdersLoyaltyStats />}
-            {activeWidget === 'traceability' && <TraceabilityIngredients />}
-            {activeWidget === 'certificates' && <BreederCertificates />}
-            {activeWidget === 'recall' && <RecallProducts />}
-            {activeWidget === 'credit' && <TraderCredit />}
-        </SidebarProvider>
+        <div className='flex h-full w-full justify-center items-center -mt-[83px] text-lg'>
+            <MoveLeft className='mr-2 inline-block' />
+            Select an option from the sidebar to view the content.
+        </div>
     );
 }
