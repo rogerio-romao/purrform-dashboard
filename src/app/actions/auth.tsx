@@ -19,7 +19,13 @@ export async function login(state: LoginFormState, formData: FormData) {
     }
 
     // If access needed, we can access the validated fields
-    // const { email, password } = validatedFields.data;
+    const { email } = validatedFields.data;
+
+    if (email === 'bookkeeper@test.com') {
+        await createSession('bookkeeper');
+        // redirect to trader credit page
+        redirect('/dashboard/trader-credit');
+    }
 
     // Create session for user
     await createSession('admin');

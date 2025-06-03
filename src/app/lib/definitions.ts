@@ -10,6 +10,7 @@ export const LoginFormSchema = z.object({
             'support@purrform.co.uk',
             'djgroovy@gmail.com',
             'rogerio.romao@hotmail.com',
+            'bookkeeper@test.com',
         ],
         { message: 'Invalid email' }
     ),
@@ -27,7 +28,7 @@ export type LoginFormState =
     | undefined;
 
 export type SessionPayload = {
-    role: 'admin' | 'user';
+    role: 'admin' | 'bookkeeper';
     expiresAt: Date;
 };
 
