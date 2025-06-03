@@ -3,6 +3,8 @@ import type { UserRole } from './types';
 
 const PASSWORD = process.env.PASSWORD;
 
+export const BOOKKEEPER_EMAIL = 'bookkeeper@test.com';
+
 export const LoginFormSchema = z.object({
     email: z.enum(
         [
@@ -11,7 +13,7 @@ export const LoginFormSchema = z.object({
             'support@purrform.co.uk',
             'djgroovy@gmail.com',
             'rogerio.romao@hotmail.com',
-            'bookkeeper@test.com',
+            BOOKKEEPER_EMAIL,
         ],
         { message: 'Invalid email' }
     ),
