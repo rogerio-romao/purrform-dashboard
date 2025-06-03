@@ -10,7 +10,7 @@ export default function CurrentIngredients({
     handleGetCoordinates,
 }: IngredientsProps) {
     return (
-        <Card className='sm:col-span-2' x-chunk='dashboard-05-chunk-0'>
+        <Card className='sm:col-span-2'>
             <CardHeader className='pb-3'>
                 <CardTitle className='text-lg'>
                     Current Ingredients List

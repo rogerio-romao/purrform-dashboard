@@ -24,41 +24,38 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import Link from 'next/link';
 
 // Menu items.
 const items = [
     {
         title: 'Sales & Loyalty Stats',
-        stateLabel: 'orders',
+        to: 'orders-loyalty-stats',
         icon: BarChart,
     },
     {
         title: 'Traceability Ingredients',
-        stateLabel: 'traceability',
+        to: 'traceability-ingredients',
         icon: Beef,
     },
     {
         title: 'Breeder Certificates',
-        stateLabel: 'certificates',
+        to: 'breeder-certificates',
         icon: ShieldCheck,
     },
     {
         title: 'Recall Products',
-        stateLabel: 'recall',
+        to: 'recall-products',
         icon: ArrowLeftFromLine,
     },
     {
         title: 'Trader Credit',
-        stateLabel: 'credit',
+        to: 'trader-credit',
         icon: CreditCard,
     },
 ];
 
-interface AppSidebarProps {
-    setActiveWidget: (widget: string) => void;
-}
-
-export default function AppSidebar({ setActiveWidget }: AppSidebarProps) {
+export default function AppSidebar() {
     return (
         <Sidebar collapsible='icon' className='mt-24 rounded'>
             {' '}
@@ -78,15 +75,15 @@ export default function AppSidebar({ setActiveWidget }: AppSidebarProps) {
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <SidebarMenuButton
-                                                    onClick={() =>
-                                                        setActiveWidget(
-                                                            item.stateLabel
-                                                        )
-                                                    }
-                                                >
-                                                    <item.icon />
-                                                    <span>{item.title}</span>
+                                                <SidebarMenuButton asChild>
+                                                    <Link
+                                                        href={`/dashboard/${item.to}`}
+                                                    >
+                                                        <item.icon />
+                                                        <span>
+                                                            {item.title}
+                                                        </span>
+                                                    </Link>
                                                 </SidebarMenuButton>
                                             </TooltipTrigger>
                                             <TooltipContent
