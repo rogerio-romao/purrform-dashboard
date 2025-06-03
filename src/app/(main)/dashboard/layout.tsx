@@ -1,6 +1,4 @@
-'use client';
-
-import AppSidebar from '@/components/layout/app-sidebar';
+import SidebarRoleLoader from '@/components/layout/sidebar-role-loader';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 export default function DashboardLayout({
@@ -11,7 +9,7 @@ export default function DashboardLayout({
     return (
         <SidebarProvider>
             <div className='flex flex-1'>
-                <AppSidebar />
+                <SidebarRoleLoader />
                 <main className='flex-1 w-full'>{children}</main>
             </div>
         </SidebarProvider>

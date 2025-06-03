@@ -1,3 +1,8 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import {
     ArrowLeftFromLine,
     BarChart,
@@ -24,38 +29,54 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import Link from 'next/link';
+
+import type { NavItem, UserRole } from '@/app/lib/types';
 
 // Menu items.
-const items = [
+const items: NavItem[] = [
     {
         title: 'Sales & Loyalty Stats',
         to: 'orders-loyalty-stats',
         icon: BarChart,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Traceability Ingredients',
         to: 'traceability-ingredients',
         icon: Beef,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Breeder Certificates',
         to: 'breeder-certificates',
         icon: ShieldCheck,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Recall Products',
         to: 'recall-products',
         icon: ArrowLeftFromLine,
+        allowedRoles: ['admin'],
     },
     {
         title: 'Trader Credit',
         to: 'trader-credit',
         icon: CreditCard,
+        allowedRoles: ['admin', 'bookkeeper'],
     },
 ];
 
-export default function AppSidebar() {
+interface AppSidebarProps {
+    currentRole: UserRole | null;
+}
+
+export default function AppSidebar({ currentRole }: AppSidebarProps) {
+    const pathname = usePathname();
+    // Filter items based on the current role
+    const filteredItems = items.filter(
+        (item) => currentRole && item.allowedRoles.includes(currentRole)
+    );
+
     return (
         <Sidebar collapsible='icon' className='mt-24 rounded'>
             {' '}
@@ -70,7 +91,7 @@ export default function AppSidebar() {
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarSeparator />
-                            {items.map((item) => (
+                            {filteredItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <TooltipProvider>
                                         <Tooltip>

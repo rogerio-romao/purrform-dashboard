@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { UserRole } from './types';
 
 const PASSWORD = process.env.PASSWORD;
 
@@ -28,7 +29,7 @@ export type LoginFormState =
     | undefined;
 
 export type SessionPayload = {
-    role: 'admin' | 'bookkeeper';
+    role: UserRole;
     expiresAt: Date;
 };
 
