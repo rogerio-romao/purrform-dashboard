@@ -157,12 +157,7 @@ export default function TraderCredit() {
                     <div className='grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-3'>
                         <Card className='sm:col-span-3'>
                             <CardHeader className='pb-3'>
-                                <CardTitle>
-                                    Trader Credit System{' '}
-                                    <span className='text-amber-500 text-base'>
-                                        (Beta Testing)
-                                    </span>
-                                </CardTitle>
+                                <CardTitle>Trader Credit System</CardTitle>
                                 <CardDescription className='leading-relaxed'>
                                     Manage Trade group customers. See and adjust
                                     their credit limits, view current balance
