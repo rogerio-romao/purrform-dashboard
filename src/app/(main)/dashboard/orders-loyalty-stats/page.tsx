@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { months } from '@/app/lib/utils';
 
 import Loading from '@/components/common/loading';
+import CouponTypes from '@/components/orders-stats/coupon-types';
 import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
 import PeriodComparison from '@/components/orders-stats/period-comparison';
@@ -106,13 +107,12 @@ export default function OrdersLoyaltyStats() {
                                 x-chunk='dashboard-05-chunk-0'
                             >
                                 <CardHeader className='pb-3'>
-                                    <CardTitle>
-                                        Orders & Loyalty Points
-                                    </CardTitle>
+                                    <CardTitle>Orders Statistics</CardTitle>
                                     <CardDescription className='max-w-lg text-balance leading-relaxed'>
                                         Reporting number of orders, value of
-                                        orders, and loyalty points usage value
-                                        and percentage of total orders.
+                                        orders, coupon codes usage and loyalty
+                                        points usage value and percentage of
+                                        total orders.
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -183,6 +183,9 @@ export default function OrdersLoyaltyStats() {
                                 </CardFooter>
                             </Card>
                         </div>
+
+                        <CouponTypes />
+
                         <Card>
                             <CardHeader className='px-7'>
                                 <CardTitle>Orders & Loyalty Points</CardTitle>
