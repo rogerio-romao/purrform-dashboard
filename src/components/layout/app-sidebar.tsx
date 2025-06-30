@@ -7,6 +7,7 @@ import {
     ArrowLeftFromLine,
     BarChart,
     Beef,
+    CirclePercent,
     CreditCard,
     ShieldCheck,
 } from 'lucide-react';
@@ -63,6 +64,12 @@ const items: NavItem[] = [
         to: 'trader-credit',
         icon: CreditCard,
         allowedRoles: ['admin', 'bookkeeper'],
+    },
+    {
+        title: 'Coupon Code Types',
+        to: 'coupon-code-types',
+        icon: CirclePercent,
+        allowedRoles: ['admin'],
     },
 ];
 

@@ -1,11 +1,13 @@
 'use client';
+
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CirclePlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import Loading from '@/components/common/loading';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -38,7 +40,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
-
 import { createCouponTypeFormSchema } from '@/app/lib/utils';
 
 interface CouponType {
@@ -49,16 +50,31 @@ interface CouponType {
     details: string;
 }
 
-export default function CouponTypes() {
+export default function RecallProducts() {
     const { toast } = useToast();
-
     const [couponTypes, setCouponTypes] = useState<CouponType[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchCouponTypes = async () => {
-            const response = await fetch(`${BACKEND_BASE_URL}/getCouponTypes`);
-            const data = (await response.json()) as CouponType[];
-            setCouponTypes(data);
+            setLoading(true);
+            try {
+                const response = await fetch(
+                    `${BACKEND_BASE_URL}/getCouponTypes`
+                );
+                const data = (await response.json()) as CouponType[];
+                setCouponTypes(data);
+            } catch (error) {
+                console.error('Error fetching coupon types:', error);
+                toast({
+                    variant: 'destructive',
+                    title: 'ERROR',
+                    description:
+                        'An error occurred while fetching the coupon types.',
+                });
+            } finally {
+                setLoading(false);
+            }
         };
         fetchCouponTypes();
     }, []);
@@ -88,17 +104,17 @@ export default function CouponTypes() {
         // If validation passes, you can proceed with the API call
     }
 
-    if (couponTypes.length === 0) {
-        return null;
+    if (loading) {
+        return <Loading />;
     }
 
     return (
-        <Card>
+        <Card className='mt-4'>
             <CardHeader>
                 <CardTitle>Coupon Code Types</CardTitle>
                 <CardDescription>
                     List of the different types of coupon codes and their
-                    prefixes.
+                    prefixes. You can create new coupon types here.
                 </CardDescription>
             </CardHeader>
             <CardContent className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
@@ -125,42 +141,41 @@ export default function CouponTypes() {
 
                 {/* Add New Coupon Type */}
                 <Dialog>
-                    <Form {...form}>
-                        <form
-                            className='flex'
-                            onSubmit={form.handleSubmit(handleSubmit)}
-                        >
-                            <DialogTrigger asChild>
-                                <Card className='flex flex-col cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors group'>
-                                    <CardHeader>
-                                        <CardTitle className='text-lg'>
-                                            New Coupon Type
-                                        </CardTitle>
-                                        <CardDescription>
-                                            Create a new type of coupon code.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className='flex-1'>
-                                        <div className='flex items-center justify-center h-full'>
-                                            <CirclePlus
-                                                height={36}
-                                                width={36}
-                                                className='group-hover:text-green-600'
-                                            />
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </DialogTrigger>
-                            <DialogContent className='sm:max-w-[425px] lg:max-w-[650px]'>
-                                <DialogHeader>
-                                    <DialogTitle>
-                                        Create new Coupon Type
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        Define the coupon type here. Click save
-                                        when you&apos;re done.
-                                    </DialogDescription>
-                                </DialogHeader>
+                    <DialogTrigger asChild>
+                        <Card className='flex flex-col cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors group'>
+                            <CardHeader>
+                                <CardTitle className='text-lg'>
+                                    New Coupon Type
+                                </CardTitle>
+                                <CardDescription>
+                                    Create a new type of coupon code.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className='flex-1'>
+                                <div className='flex items-center justify-center h-full'>
+                                    <CirclePlus
+                                        height={36}
+                                        width={36}
+                                        className='group-hover:text-green-600'
+                                    />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </DialogTrigger>
+                    <DialogContent className='sm:max-w-[425px] lg:max-w-[650px]'>
+                        <DialogHeader>
+                            <DialogTitle>Create new Coupon Type</DialogTitle>
+                            <DialogDescription>
+                                Define the coupon type here. Click save when
+                                you&apos;re done.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(handleSubmit)}
+                                className='space-y-4'
+                            >
                                 <div className='grid gap-4'>
                                     <FormField
                                         control={form.control}
@@ -229,17 +244,18 @@ export default function CouponTypes() {
                                         )}
                                     />
                                 </div>
+
                                 <DialogFooter>
                                     <DialogClose asChild>
-                                        <Button variant='outline'>
+                                        <Button variant='outline' type='button'>
                                             Cancel
                                         </Button>
                                     </DialogClose>
                                     <Button type='submit'>Save changes</Button>
                                 </DialogFooter>
-                            </DialogContent>
-                        </form>
-                    </Form>
+                            </form>
+                        </Form>
+                    </DialogContent>
                 </Dialog>
             </CardContent>
         </Card>
