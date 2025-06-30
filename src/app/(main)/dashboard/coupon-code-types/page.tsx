@@ -39,6 +39,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
+import createCouponType from '@/app/actions/createCouponType';
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import { createCouponTypeFormSchema } from '@/app/lib/utils';
 
@@ -46,8 +47,8 @@ interface CouponType {
     id: number;
     name: string;
     prefix: string;
-    description: string;
-    details: string;
+    description?: string;
+    details?: string;
 }
 
 export default function RecallProducts() {
@@ -90,7 +91,6 @@ export default function RecallProducts() {
     });
 
     function handleSubmit(data: z.infer<typeof createCouponTypeFormSchema>) {
-        console.log('Form submitted', data);
         const validated = createCouponTypeFormSchema.safeParse(data);
         if (!validated.success) {
             toast({
@@ -101,7 +101,24 @@ export default function RecallProducts() {
             return;
         }
 
-        // If validation passes, you can proceed with the API call
+        createCouponType(validated.data).then((response) => {
+            if ('error' in response) {
+                toast({
+                    variant: 'destructive',
+                    title: 'ERROR',
+                    description: response.error,
+                });
+                return;
+            }
+
+            setCouponTypes((prev) => [...prev, response]);
+            form.reset();
+            toast({
+                variant: 'default',
+                title: 'Success',
+                description: 'Coupon type created successfully.',
+            });
+        });
     }
 
     if (loading) {
@@ -251,7 +268,15 @@ export default function RecallProducts() {
                                             Cancel
                                         </Button>
                                     </DialogClose>
-                                    <Button type='submit'>Save changes</Button>
+                                    <Button
+                                        type='submit'
+                                        disabled={
+                                            form.formState.isSubmitting ||
+                                            !form.formState.isValid
+                                        }
+                                    >
+                                        Save changes
+                                    </Button>
                                 </DialogFooter>
                             </form>
                         </Form>
