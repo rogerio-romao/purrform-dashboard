@@ -1,6 +1,12 @@
 'use client';
+import { useToast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CirclePlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -9,6 +15,31 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
+import { createCouponTypeFormSchema } from '@/app/lib/utils';
 
 interface CouponType {
     id: number;
@@ -19,18 +50,43 @@ interface CouponType {
 }
 
 export default function CouponTypes() {
+    const { toast } = useToast();
+
     const [couponTypes, setCouponTypes] = useState<CouponType[]>([]);
 
     useEffect(() => {
         const fetchCouponTypes = async () => {
-            const response = await fetch(
-                'https://ecb8-2a01-4b00-805d-b800-859-805d-88b9-e154.ngrok-free.app/getCouponTypes'
-            );
+            const response = await fetch(`${BACKEND_BASE_URL}/getCouponTypes`);
             const data = (await response.json()) as CouponType[];
             setCouponTypes(data);
         };
         fetchCouponTypes();
     }, []);
+
+    const form = useForm<z.infer<typeof createCouponTypeFormSchema>>({
+        resolver: zodResolver(createCouponTypeFormSchema),
+        defaultValues: {
+            name: '',
+            prefix: '',
+            description: '',
+            details: '',
+        },
+    });
+
+    function handleSubmit(data: z.infer<typeof createCouponTypeFormSchema>) {
+        console.log('Form submitted', data);
+        const validated = createCouponTypeFormSchema.safeParse(data);
+        if (!validated.success) {
+            toast({
+                variant: 'destructive',
+                title: 'ERROR',
+                description: validated.error.errors[0].message,
+            });
+            return;
+        }
+
+        // If validation passes, you can proceed with the API call
+    }
 
     if (couponTypes.length === 0) {
         return null;
@@ -66,6 +122,125 @@ export default function CouponTypes() {
                         </CardFooter>
                     </Card>
                 ))}
+
+                {/* Add New Coupon Type */}
+                <Dialog>
+                    <Form {...form}>
+                        <form
+                            className='flex'
+                            onSubmit={form.handleSubmit(handleSubmit)}
+                        >
+                            <DialogTrigger asChild>
+                                <Card className='flex flex-col cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors group'>
+                                    <CardHeader>
+                                        <CardTitle className='text-lg'>
+                                            New Coupon Type
+                                        </CardTitle>
+                                        <CardDescription>
+                                            Create a new type of coupon code.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className='flex-1'>
+                                        <div className='flex items-center justify-center h-full'>
+                                            <CirclePlus
+                                                height={36}
+                                                width={36}
+                                                className='group-hover:text-green-600'
+                                            />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </DialogTrigger>
+                            <DialogContent className='sm:max-w-[425px] lg:max-w-[650px]'>
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        Create new Coupon Type
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        Define the coupon type here. Click save
+                                        when you&apos;re done.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className='grid gap-4'>
+                                    <FormField
+                                        control={form.control}
+                                        name='name'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Name</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='e.g. New Product Launch'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='prefix'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Prefix</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='e.g. NPL'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='description'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Description
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder='e.g. This coupon is for the new product launch.'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='details'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Details</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder='e.g. 10% off on this new product.'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <DialogFooter>
+                                    <DialogClose asChild>
+                                        <Button variant='outline'>
+                                            Cancel
+                                        </Button>
+                                    </DialogClose>
+                                    <Button type='submit'>Save changes</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </form>
+                    </Form>
+                </Dialog>
             </CardContent>
         </Card>
     );
