@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 interface ControlPanelStats {
     id: number;
     month: number;
@@ -35,9 +37,7 @@ export default function OrdersLoyaltyStats() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch(
-                'https://purrform-apps-027e.onrender.com/controlPanel'
-            );
+            const response = await fetch(`${BACKEND_BASE_URL}/controlPanel`);
             const data = (await response.json()) as ControlPanelStats[];
 
             setData(data);
@@ -184,8 +184,6 @@ export default function OrdersLoyaltyStats() {
                             </Card>
                         </div>
 
-                        <CouponTypes />
-
                         <Card>
                             <CardHeader className='px-7'>
                                 <CardTitle>Orders & Loyalty Points</CardTitle>
@@ -211,6 +209,8 @@ export default function OrdersLoyaltyStats() {
                             ordersValueChartData={ordersValueChartData}
                             ordersNumberChartData={ordersNumberChartData}
                         />
+
+                        <CouponTypes />
                     </div>
                 </div>
             </div>

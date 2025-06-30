@@ -1,6 +1,7 @@
 'use server';
 
 import {
+    BACKEND_BASE_URL,
     SubmitBreederCertificateSchema,
     SubmitBreederCertificateState,
 } from '@/app/lib/definitions';
@@ -24,7 +25,7 @@ export default async function submitBreederCertificate(
 
     try {
         const response = await fetch(
-            'https://purrform-apps-027e.onrender.com/uploadBreederCertificate',
+            `${BACKEND_BASE_URL}/uploadBreederCertificate`,
             {
                 method: 'POST',
                 body: formData,

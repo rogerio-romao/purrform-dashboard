@@ -1,12 +1,14 @@
 'use server';
 
+import { BACKEND_BASE_URL } from '../lib/definitions';
+
 export default async function acceptBreederCertificate(
     certificateId: number,
     email: string
 ): Promise<{ ok: false; error: string } | { ok: true }> {
     try {
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/acceptBreederCertificate?id=${certificateId}&breeder_email=${encodeURIComponent(
+            `${BACKEND_BASE_URL}/acceptBreederCertificate?id=${certificateId}&breeder_email=${encodeURIComponent(
                 email
             )}`
         );

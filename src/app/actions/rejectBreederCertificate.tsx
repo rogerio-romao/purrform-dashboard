@@ -1,11 +1,13 @@
 'use server';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 export default async function rejectBreederCertificate(
     certificateId: number
 ): Promise<{ ok: false; error: string } | { ok: true }> {
     try {
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/rejectBreederCertificate?id=${certificateId}`
+            `${BACKEND_BASE_URL}/rejectBreederCertificate?id=${certificateId}`
         );
 
         if (!response.ok) {

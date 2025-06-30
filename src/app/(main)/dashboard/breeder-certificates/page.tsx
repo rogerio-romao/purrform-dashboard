@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 import type { BreederCertificate } from '@/app/lib/types';
 
 export default function BreederCertificates() {
@@ -28,7 +30,7 @@ export default function BreederCertificates() {
     useEffect(() => {
         const fetchData = async () => {
             const response = await fetch(
-                'https://purrform-apps-027e.onrender.com/getBreederCertificates'
+                `${BACKEND_BASE_URL}/getBreederCertificates`
             );
             const data = (await response.json()) as BreederCertificate[];
 

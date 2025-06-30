@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import { CreditSystemOrder } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
 
@@ -136,7 +137,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         }
 
         // Construct the URL with query parameters
-        const baseUrl = `https://purrform-apps-027e.onrender.com/editCreditSystemOrder`;
+        const baseUrl = `${BACKEND_BASE_URL}/editCreditSystemOrder`;
         const queryParams = new URLSearchParams({
             orderId: String(orderId),
             traderId: String(traderId),
@@ -221,7 +222,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         // Handle the payment logic here
         try {
             const response = await fetch(
-                `https://purrform-apps-027e.onrender.com/markCreditSystemOrderAsPaid?orderId=${orderId}&traderId=${traderId}&orderStatus=${orderStatus}&orderTotal=${orderTotal}`
+                `${BACKEND_BASE_URL}/markCreditSystemOrderAsPaid?orderId=${orderId}&traderId=${traderId}&orderStatus=${orderStatus}&orderTotal=${orderTotal}`
             );
 
             if (!response.ok) {

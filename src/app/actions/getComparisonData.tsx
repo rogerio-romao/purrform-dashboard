@@ -1,5 +1,7 @@
 'use server';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 export default async function getComparisonData(
     periodType: string,
     period1: string,
@@ -7,7 +9,7 @@ export default async function getComparisonData(
 ) {
     try {
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/comparisonData?periodType=${periodType}&period1=${period1}&period2=${period2}`
+            `${BACKEND_BASE_URL}/comparisonData?periodType=${periodType}&period1=${period1}&period2=${period2}`
         );
 
         if (!response.ok) {

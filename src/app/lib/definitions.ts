@@ -3,6 +3,8 @@ import type { UserRole } from './types';
 
 const PASSWORD = process.env.PASSWORD;
 
+export const BACKEND_BASE_URL = 'https://purrform-apps-027e.onrender.com';
+
 export const BOOKKEEPER_EMAIL = 'bookkeeper@test.com';
 
 export const LoginFormSchema = z.object({

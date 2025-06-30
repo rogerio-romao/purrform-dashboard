@@ -66,3 +66,14 @@ export const addTraderToCreditFormSchema = z.object({
         .nullable(),
     invoiceEmail: z.string().email('Invalid email format').nullable(),
 });
+
+export const createCouponTypeFormSchema = z.object({
+    name: z
+        .string({ required_error: 'Name is required' })
+        .min(3, 'Name must be at least 3 characters'),
+    prefix: z
+        .string({ required_error: 'Prefix is required' })
+        .min(1, 'Prefix must be at least 1 character'),
+    description: z.string().optional(),
+    details: z.string().optional(),
+});

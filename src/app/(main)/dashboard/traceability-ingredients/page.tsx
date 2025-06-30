@@ -11,6 +11,8 @@ import CreateIngredient from '@/components/traceability/createIngredient';
 import CurrentIngredients from '@/components/traceability/current-ingredients';
 import TraceabilityHeader from '@/components/traceability/traceability-header';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 import type {
     TraceabilityIngredientsFeature,
     TraceabilityIngredientsGeodata,
@@ -26,7 +28,7 @@ export default function TraceabilityIngredients() {
     useEffect(() => {
         const fetchData = async () => {
             const response = await fetch(
-                'https://purrform-apps-027e.onrender.com/traceabilityIngredients'
+                `${BACKEND_BASE_URL}/traceabilityIngredients`
             );
             const data =
                 (await response.json()) as TraceabilityIngredientsGeodata;

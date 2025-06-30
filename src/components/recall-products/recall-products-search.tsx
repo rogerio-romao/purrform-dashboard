@@ -33,6 +33,8 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 interface RecallProductsSearchProps {
     products: BcProduct[];
     setRecallLoading: (loading: boolean) => void;
@@ -98,7 +100,7 @@ export default function RecallProductsSearch({
 
         // Call API to search for orders
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/recallProducts?productName=${encodeURIComponent(
+            `${BACKEND_BASE_URL}/recallProducts?productName=${encodeURIComponent(
                 selectedProductName
             )}&productId=${selectedProductId}&startDate=${startDateWithTime}&endDate=${endDateWithTime}`
         );

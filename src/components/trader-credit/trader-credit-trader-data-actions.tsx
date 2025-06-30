@@ -29,6 +29,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 interface TraderCreditTraderDataActionsProps {
     trader: CreditSystemTrader;
     handleViewPendingPayments: () => void;
@@ -142,7 +144,7 @@ export default function TraderCreditTraderDataActions({
 
         try {
             const response = await fetch(
-                `https://purrform-apps-027e.onrender.com/changeCreditTraderInfo?traderId=${
+                `${BACKEND_BASE_URL}/changeCreditTraderInfo?traderId=${
                     trader.id
                 }&companyName=${encodeURIComponent(
                     newCompanyName ?? trader.bc_customer_company
