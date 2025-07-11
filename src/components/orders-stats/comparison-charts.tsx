@@ -6,6 +6,8 @@ type PeriodData = {
     sales_nr: number;
     loyalty_value: number;
     loyalty_nr: number;
+    coupons_value: number;
+    coupons_nr: number;
     label: string;
 };
 

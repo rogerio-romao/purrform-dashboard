@@ -27,9 +27,9 @@ const chartConfig = {
         label: 'Loyalty Points',
         color: 'hsl(var(--chart-2))',
     },
-    percent: {
-        label: 'Percentage',
-        color: 'hsl(var(--chart-3))',
+    coupons: {
+        label: 'Coupons',
+        color: 'hsl(var(--chart-4))',
     },
 } satisfies ChartConfig;
 
@@ -37,7 +37,9 @@ type OrdersValueBarChartProps = {
     month: string;
     orders: number;
     loyalty: number;
-    percent: number;
+    loyaltyPercentage: number;
+    coupons: number;
+    couponsPercentage: number;
 }[];
 
 export default function OrdersValueBarChart({
@@ -92,8 +94,8 @@ export default function OrdersValueBarChart({
                             radius={4}
                         />
                         <Bar
-                            dataKey='percent'
-                            fill='var(--color-percent)'
+                            dataKey='coupons'
+                            fill='var(--color-coupons)'
                             radius={4}
                         />
                     </BarChart>

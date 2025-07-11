@@ -27,7 +27,9 @@ type OrdersNumberBarChartProps = {
     month: string;
     orders: number;
     loyalty: number;
-    percent: number;
+    loyaltyPercentage: number;
+    coupons: number;
+    couponsPercentage: number;
 }[];
 
 interface ComparisonData {
@@ -35,6 +37,8 @@ interface ComparisonData {
     sales_nr: number;
     loyalty_value: number;
     loyalty_nr: number;
+    coupons_value: number;
+    coupons_nr: number;
     label: string;
 }
 

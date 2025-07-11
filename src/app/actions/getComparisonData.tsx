@@ -8,8 +8,10 @@ export default async function getComparisonData(
     period2: string
 ) {
     try {
+        // TODO: Replace with the actual backend URL when available
         const response = await fetch(
-            `${BACKEND_BASE_URL}/comparisonData?periodType=${periodType}&period1=${period1}&period2=${period2}`
+            `http://localhost:5555/comparisonData?periodType=${periodType}&period1=${period1}&period2=${period2}`
+            // `${BACKEND_BASE_URL}/comparisonData?periodType=${periodType}&period1=${period1}&period2=${period2}`
         );
 
         if (!response.ok) {

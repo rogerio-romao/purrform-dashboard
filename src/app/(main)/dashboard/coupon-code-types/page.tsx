@@ -55,6 +55,7 @@ export default function RecallProducts() {
     const { toast } = useToast();
     const [couponTypes, setCouponTypes] = useState<CouponType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchCouponTypes = async () => {
@@ -118,6 +119,9 @@ export default function RecallProducts() {
                 title: 'Success',
                 description: 'Coupon type created successfully.',
             });
+
+            // close the dialog
+            setDialogOpen(false);
         });
     }
 
@@ -157,7 +161,7 @@ export default function RecallProducts() {
                 ))}
 
                 {/* Add New Coupon Type */}
-                <Dialog>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
                         <Card className='flex flex-col cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors group'>
                             <CardHeader>
@@ -165,7 +169,8 @@ export default function RecallProducts() {
                                     New Coupon Type
                                 </CardTitle>
                                 <CardDescription>
-                                    Create a new type of coupon code.
+                                    Create a new type of coupon code. If
+                                    possible use an underscore after the prefix.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className='flex-1'>
@@ -218,7 +223,7 @@ export default function RecallProducts() {
                                                 <FormLabel>Prefix</FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder='e.g. NPL'
+                                                        placeholder='e.g. NPL_'
                                                         {...field}
                                                     />
                                                 </FormControl>

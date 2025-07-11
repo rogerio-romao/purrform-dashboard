@@ -36,8 +36,8 @@ import type { NavItem, UserRole } from '@/app/lib/types';
 // Menu items.
 const items: NavItem[] = [
     {
-        title: 'Sales & Loyalty Stats',
-        to: 'orders-loyalty-stats',
+        title: 'Sales Statistics',
+        to: 'sales-statistics',
         icon: BarChart,
         allowedRoles: ['admin'],
     },
