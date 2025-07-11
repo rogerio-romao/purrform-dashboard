@@ -7,6 +7,7 @@ import { months } from '@/app/lib/utils';
 
 import Loading from '@/components/common/loading';
 import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
+import { OrdersPercentagePieChart } from '@/components/orders-stats/orders-percentage-pie-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
 import PeriodComparison from '@/components/orders-stats/period-comparison';
 import {
@@ -41,7 +42,6 @@ export default function OrdersLoyaltyStats() {
             const response = await fetch(`${BACKEND_BASE_URL}/controlPanel`);
             const data = (await response.json()) as ControlPanelStats[];
 
-            console.log('Fetched data:', data);
             setData(data);
         };
         fetchData();
@@ -61,7 +61,7 @@ export default function OrdersLoyaltyStats() {
     const loyaltyPointsThisMonth = new Intl.NumberFormat('en-UK').format(
         currentMonth.loyalty_value
     );
-    const loyaltyPointsNr = new Intl.NumberFormat('en-UK').format(
+    const loyaltyPointsNrThisMonth = new Intl.NumberFormat('en-UK').format(
         currentMonth.loyalty_nr
     );
     const couponsValueThisMonth = new Intl.NumberFormat('en-UK').format(
@@ -130,7 +130,7 @@ export default function OrdersLoyaltyStats() {
                     <div className='grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2'>
                         <div className='grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4'>
                             <Card
-                                className='sm:col-span-2'
+                                className='sm:col-span-1'
                                 x-chunk='dashboard-05-chunk-0'
                             >
                                 <CardHeader className='pb-3'>
@@ -183,7 +183,7 @@ export default function OrdersLoyaltyStats() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className='text-xs text-muted-foreground'>
-                                        {loyaltyPointsNr} orders
+                                        {loyaltyPointsNrThisMonth} orders
                                     </div>
                                 </CardContent>
                                 <CardFooter>
@@ -249,6 +249,16 @@ export default function OrdersLoyaltyStats() {
                                     </div>
                                 </CardFooter>
                             </Card>
+
+                            <OrdersPercentagePieChart
+                                normalOrders={
+                                    currentMonth.sales_nr -
+                                    currentMonth.loyalty_nr -
+                                    (currentMonth.coupons_nr ?? 0)
+                                }
+                                loyaltyOrders={currentMonth.loyalty_nr}
+                                couponsOrders={currentMonth.coupons_nr ?? 0}
+                            />
                         </div>
 
                         <Card>
