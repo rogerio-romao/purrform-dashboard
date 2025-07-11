@@ -17,21 +17,17 @@ import {
 } from '@/components/ui/chart';
 
 const chartConfig = {
-    orders: {
-        label: 'Orders',
+    loyaltyPercentage: {
+        label: 'Loyalty %',
         color: 'hsl(var(--chart-1))',
     },
-    loyalty: {
-        label: 'Loyalty Points',
+    couponsPercentage: {
+        label: 'Coupons %',
         color: 'hsl(var(--chart-2))',
-    },
-    coupons: {
-        label: 'Coupons',
-        color: 'hsl(var(--chart-4))',
     },
 } satisfies ChartConfig;
 
-type OrdersNumberBarChartProps = {
+type OrdersValueBarChartProps = {
     month: string;
     orders: number;
     loyalty: number;
@@ -40,10 +36,10 @@ type OrdersNumberBarChartProps = {
     couponsPercentage: number;
 }[];
 
-export default function OrdersNumberBarChart({
+export default function OrdersValuePercentageBarChart({
     chartData,
 }: {
-    chartData: OrdersNumberBarChartProps;
+    chartData: OrdersValueBarChartProps;
 }) {
     if (!chartData) {
         return null;
@@ -52,7 +48,7 @@ export default function OrdersNumberBarChart({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>By Number of Orders</CardTitle>
+                <CardTitle>Percentage of Value</CardTitle>
                 <CardDescription>
                     {chartData[0].month} -{' '}
                     {chartData[chartData.length - 1].month}{' '}
@@ -82,18 +78,13 @@ export default function OrdersNumberBarChart({
                         />
                         <ChartLegend content={<ChartLegendContent />} />
                         <Bar
-                            dataKey='orders'
-                            fill='var(--color-orders)'
+                            dataKey='loyaltyPercentage'
+                            fill='var(--color-loyaltyPercentage)'
                             radius={4}
                         />
                         <Bar
-                            dataKey='loyalty'
-                            fill='var(--color-loyalty)'
-                            radius={4}
-                        />
-                        <Bar
-                            dataKey='coupons'
-                            fill='var(--color-coupons)'
+                            dataKey='couponsPercentage'
+                            fill='var(--color-couponsPercentage)'
                             radius={4}
                         />
                     </BarChart>

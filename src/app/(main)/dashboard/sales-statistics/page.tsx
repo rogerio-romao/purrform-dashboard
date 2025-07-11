@@ -7,8 +7,9 @@ import { months } from '@/app/lib/utils';
 
 import Loading from '@/components/common/loading';
 import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
-import { OrdersPercentagePieChart } from '@/components/orders-stats/orders-percentage-pie-chart';
+import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
+import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
 import PeriodComparison from '@/components/orders-stats/period-comparison';
 import {
     Card,
@@ -249,16 +250,6 @@ export default function OrdersLoyaltyStats() {
                                     </div>
                                 </CardFooter>
                             </Card>
-
-                            <OrdersPercentagePieChart
-                                normalOrders={
-                                    currentMonth.sales_nr -
-                                    currentMonth.loyalty_nr -
-                                    (currentMonth.coupons_nr ?? 0)
-                                }
-                                loyaltyOrders={currentMonth.loyalty_nr}
-                                couponsOrders={currentMonth.coupons_nr ?? 0}
-                            />
                         </div>
 
                         <Card>
@@ -279,6 +270,18 @@ export default function OrdersLoyaltyStats() {
                                 </CardContent>
                                 <CardContent>
                                     <OrdersNumberBarChart
+                                        chartData={ordersNumberChartData}
+                                    />
+                                </CardContent>
+                            </section>
+                            <section className='grid lg:grid-cols-2'>
+                                <CardContent>
+                                    <OrdersValuePercentageBarChart
+                                        chartData={ordersValueChartData}
+                                    />
+                                </CardContent>
+                                <CardContent>
+                                    <OrdersNumberPercentageBarChart
                                         chartData={ordersNumberChartData}
                                     />
                                 </CardContent>
