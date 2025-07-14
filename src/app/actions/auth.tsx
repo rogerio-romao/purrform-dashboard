@@ -1,7 +1,7 @@
 'use server';
 
 import {
-    BOOKKEEPER_EMAIL,
+    BOOKKEEPER_EMAILS,
     LoginFormSchema,
     LoginFormState,
 } from '@/app/lib/definitions';
@@ -25,7 +25,7 @@ export async function login(state: LoginFormState, formData: FormData) {
     // If access needed, we can access the validated fields
     const { email } = validatedFields.data;
 
-    if (email === BOOKKEEPER_EMAIL) {
+    if (BOOKKEEPER_EMAILS.includes(email)) {
         await createSession('bookkeeper');
         // redirect to trader credit page
         redirect('/dashboard/trader-credit');

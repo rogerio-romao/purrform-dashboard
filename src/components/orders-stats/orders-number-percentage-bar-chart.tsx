@@ -19,11 +19,11 @@ import {
 const chartConfig = {
     loyaltyPercentage: {
         label: 'Loyalty %',
-        color: 'hsl(var(--chart-1))',
+        color: 'hsl(var(--chart-2))',
     },
     couponsPercentage: {
         label: 'Coupons %',
-        color: 'hsl(var(--chart-2))',
+        color: 'hsl(var(--chart-4))',
     },
 } satisfies ChartConfig;
 

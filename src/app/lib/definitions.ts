@@ -5,7 +5,10 @@ const PASSWORD = process.env.PASSWORD;
 
 export const BACKEND_BASE_URL = 'https://purrform-apps-027e.onrender.com';
 
-export const BOOKKEEPER_EMAIL = 'bookkeeper@test.com';
+export const BOOKKEEPER_EMAILS = [
+    'wendy@carterbookkeepingservices.co.uk',
+    'george@carterbookkeepingservices.co.uk',
+];
 
 export const LoginFormSchema = z.object({
     email: z.enum(
@@ -15,7 +18,7 @@ export const LoginFormSchema = z.object({
             'support@purrform.co.uk',
             'djgroovy@gmail.com',
             'rogerio.romao@hotmail.com',
-            BOOKKEEPER_EMAIL,
+            ...BOOKKEEPER_EMAILS,
         ],
         { message: 'Invalid email' }
     ),

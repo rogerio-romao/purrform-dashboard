@@ -6,11 +6,13 @@ import { useEffect, useState } from 'react';
 import { months } from '@/app/lib/utils';
 
 import Loading from '@/components/common/loading';
+import CouponTypesBreakdown from '@/components/orders-stats/coupon-types-breakdown';
 import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
 import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
 import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
 import PeriodComparison from '@/components/orders-stats/period-comparison';
+
 import {
     Card,
     CardContent,
@@ -223,7 +225,7 @@ export default function OrdersLoyaltyStats() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className='text-xs text-muted-foreground'>
-                                        {couponsNrThisMonth} coupons
+                                        {couponsNrThisMonth} orders
                                     </div>
                                 </CardContent>
                                 <CardFooter>
@@ -287,10 +289,13 @@ export default function OrdersLoyaltyStats() {
                                 </CardContent>
                             </section>
                         </Card>
+
                         <PeriodComparison
                             ordersValueChartData={ordersValueChartData}
                             ordersNumberChartData={ordersNumberChartData}
                         />
+
+                        <CouponTypesBreakdown />
                     </div>
                 </div>
             </div>

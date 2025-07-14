@@ -43,13 +43,7 @@ import createCouponType from '@/app/actions/createCouponType';
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import { createCouponTypeFormSchema } from '@/app/lib/utils';
 
-interface CouponType {
-    id: number;
-    name: string;
-    prefix: string;
-    description?: string;
-    details?: string;
-}
+import type { CouponType } from '@/app/lib/types';
 
 export default function RecallProducts() {
     const { toast } = useToast();

@@ -107,7 +107,7 @@ export default function PeriodComparison(
     return (
         <Card>
             <CardHeader className='px-7 relative'>
-                <CardTitle>Compare Time Periods</CardTitle>
+                <CardTitle>Sales Statistics - Compare Time Periods</CardTitle>
                 <CardDescription className='flex flex-col gap-2'>
                     Select time periods to compare
                     <Select
