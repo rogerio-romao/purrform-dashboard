@@ -189,7 +189,7 @@ export default function OrdersLoyaltyStats() {
                                         {loyaltyPointsNrThisMonth} orders
                                     </div>
                                 </CardContent>
-                                <CardFooter>
+                                <CardFooter className='flex flex-col gap-2'>
                                     <div className='flex flex-col w-full gap-2'>
                                         <div className='text-xs text-muted-foreground'>
                                             {loyaltyPercentageOfValue}% of value
@@ -211,6 +211,16 @@ export default function OrdersLoyaltyStats() {
                                             aria-label={`%{loyaltyPercentageOfOrders}% of orders`}
                                         />
                                     </div>
+                                    <div className='text-xs text-muted-foreground'>
+                                        Average value per order:{' '}
+                                        <span className='font-semibold'>
+                                            £
+                                            {(
+                                                currentMonth.loyalty_value /
+                                                currentMonth.loyalty_nr
+                                            ).toFixed(2)}
+                                        </span>
+                                    </div>
                                 </CardFooter>
                             </Card>
 
@@ -228,7 +238,7 @@ export default function OrdersLoyaltyStats() {
                                         {couponsNrThisMonth} orders
                                     </div>
                                 </CardContent>
-                                <CardFooter>
+                                <CardFooter className='flex flex-col gap-2'>
                                     <div className='flex flex-col w-full gap-2'>
                                         <div className='text-xs text-muted-foreground'>
                                             {couponsPercentageOfValue}% of value
@@ -249,6 +259,17 @@ export default function OrdersLoyaltyStats() {
                                             )}
                                             aria-label={`%{couponsPercentageOfOrders}% of orders`}
                                         />
+                                    </div>
+                                    <div className='text-xs text-muted-foreground'>
+                                        Average value per order:{' '}
+                                        <span className='font-semibold'>
+                                            £
+                                            {(
+                                                (currentMonth.coupons_value ||
+                                                    0) /
+                                                (currentMonth.coupons_nr || 1)
+                                            ).toFixed(2)}
+                                        </span>
                                     </div>
                                 </CardFooter>
                             </Card>
