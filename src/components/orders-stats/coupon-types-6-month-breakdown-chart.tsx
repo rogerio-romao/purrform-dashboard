@@ -132,20 +132,13 @@ export default function CouponTypes6MonthBreakdownChart({
     const bottom3ByValue = Object.entries(accumulatedValuesByCouponPrefix)
         .toSorted((a, b) => a[1] - b[1])
         .slice(0, 3);
-    const top3ByNr = chartData
-        .toSorted((a, b) => b.coupon_nr - a.coupon_nr)
-        .slice(0, 3);
-    const bottom3ByNr = chartData
-        .toSorted((a, b) => a.coupon_nr - b.coupon_nr)
-        .slice(0, 3);
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{currentPeriod}</CardTitle>
+                <CardTitle>{currentPeriod} (£ Value)</CardTitle>
                 <CardDescription>
-                    Coupon statistics by value and number of orders for the last
-                    6 months.
+                    Coupon statistics by value for the last 6 months.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -218,7 +211,7 @@ export default function CouponTypes6MonthBreakdownChart({
                     Top & Bottom Coupons (accumulated 6 months)
                 </div>
                 <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2 w-full'>
-                    <Card className='col-span-1'>
+                    <Card className='col-span-2'>
                         <CardHeader>
                             <CardTitle className='text-base'>
                                 Top 3 by Value
@@ -240,28 +233,8 @@ export default function CouponTypes6MonthBreakdownChart({
                             )}
                         </CardContent>
                     </Card>
-                    <Card className='ml-2 col-span-1'>
-                        <CardHeader>
-                            <CardTitle className='text-base'>
-                                Top 3 by Number
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {top3ByNr.map((item, index) => (
-                                <div
-                                    key={`${item.coupon_prefix}-${index}`}
-                                    className='flex justify-between'
-                                >
-                                    <span className='font-medium text-green-600'>
-                                        {item.coupon_prefix}{' '}
-                                    </span>
-                                    <span>{item.coupon_nr}</span>
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
 
-                    <Card className='ml-2 col-span-1'>
+                    <Card className='ml-2 col-span-2'>
                         <CardHeader>
                             <CardTitle className='text-base'>
                                 Bottom 3 by Value
@@ -281,27 +254,6 @@ export default function CouponTypes6MonthBreakdownChart({
                                     </div>
                                 )
                             )}
-                        </CardContent>
-                    </Card>
-
-                    <Card className='ml-2 col-span-1'>
-                        <CardHeader>
-                            <CardTitle className='text-base'>
-                                Bottom 3 by Number
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {bottom3ByNr.map((item, index) => (
-                                <div
-                                    key={`${item.coupon_prefix}-${index}`}
-                                    className='flex justify-between'
-                                >
-                                    <span className='font-medium text-green-600'>
-                                        {item.coupon_prefix}{' '}
-                                    </span>
-                                    <span>{item.coupon_nr}</span>
-                                </div>
-                            ))}
                         </CardContent>
                     </Card>
                 </div>
