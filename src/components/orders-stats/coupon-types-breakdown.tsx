@@ -13,6 +13,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
+import CouponTypes6MonthBreakdown from './coupon-types-6-month-breakdown';
 import CouponTypesCurrentMonthBreakdown from './coupon-types-current-month-breakdown';
 
 import type { CouponType } from '@/app/lib/types';
@@ -49,7 +50,8 @@ export default function CouponTypesBreakdown() {
             <CardHeader className='px-7'>
                 <CardTitle>Coupon Codes by Type</CardTitle>
                 <CardDescription className='flex items-center gap-2'>
-                    Current month breakdown
+                    Current month breakdown, 6 months breakdown and lookup by
+                    date and type comparison.
                     <TrendingUp className='h-4 w-4' />
                 </CardDescription>
             </CardHeader>
@@ -58,6 +60,11 @@ export default function CouponTypesBreakdown() {
                     <CouponTypesCurrentMonthBreakdown
                         couponTypes={couponTypes}
                     />
+                </CardContent>
+            </section>
+            <section className='grid lg:grid-cols-1'>
+                <CardContent>
+                    <CouponTypes6MonthBreakdown couponTypes={couponTypes} />
                 </CardContent>
             </section>
         </Card>

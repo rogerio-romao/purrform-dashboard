@@ -1,4 +1,4 @@
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 import {
     Card,
@@ -11,42 +11,85 @@ import {
 import {
     ChartConfig,
     ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
     ChartTooltip,
     ChartTooltipContent,
 } from '@/components/ui/chart';
 
 import type { CouponType, CouponTypeMonthBreakdown } from '@/app/lib/types';
-import { Car } from 'lucide-react';
+import { transformDataForCouponValueSemesterGraph } from '@/app/lib/utils';
 
 const chartConfig = {
-    couponValue: {
-        label: 'Coupon Value',
+    '10K': {
+        label: '10K',
         color: 'hsl(var(--chart-1))',
     },
-    couponNr: {
-        label: 'Coupon Number',
+    BRB_: {
+        label: 'BRB_',
         color: 'hsl(var(--chart-2))',
+    },
+    BRC_: {
+        label: 'BRC_',
+        color: 'hsl(var(--chart-3))',
+    },
+    CB_: {
+        label: 'CB_',
+        color: 'hsl(var(--chart-4))',
+    },
+    FSK: {
+        label: 'FSK',
+        color: 'hsl(var(--chart-5))',
+    },
+    KWF_: {
+        label: 'KWF_',
+        color: 'hsl(220 70% 50%)',
+    },
+    OHT_: {
+        label: 'OHT_',
+        color: 'hsl(280 70% 50%)',
+    },
+    OTHER: {
+        label: 'OTHER',
+        color: 'hsl(340 70% 50%)',
+    },
+    RFC_: {
+        label: 'RFC_',
+        color: 'hsl(40 70% 50%)',
+    },
+    RFF_: {
+        label: 'RFF_',
+        color: 'hsl(160 70% 50%)',
     },
 } satisfies ChartConfig;
 
-interface CouponTypesCurrentMonthBreakdownChartProps {
-    currentMonthYear: string;
+interface CouponTypes6MonthBreakdownChartProps {
+    currentPeriod: string;
+    last6Months: string[];
     chartData: CouponTypeMonthBreakdown[];
     couponTypes: CouponType[];
 }
 
-export default function CouponTypesCurrentMonthBreakdownChart({
-    currentMonthYear,
+export default function CouponTypes6MonthBreakdownChart({
+    currentPeriod,
+    last6Months,
     chartData,
     couponTypes,
-}: CouponTypesCurrentMonthBreakdownChartProps) {
+}: CouponTypes6MonthBreakdownChartProps) {
     if (!chartData || chartData.length === 0) {
         return (
             <Card>
-                <CardContent>No data available for this month.</CardContent>
+                <CardContent>
+                    No data available for this period, please try again later.
+                </CardContent>
             </Card>
         );
     }
+
+    const transformedData = transformDataForCouponValueSemesterGraph(
+        chartData,
+        last6Months
+    );
 
     const top3ByValue = chartData
         .toSorted((a, b) => b.coupon_value - a.coupon_value)
@@ -64,23 +107,31 @@ export default function CouponTypesCurrentMonthBreakdownChart({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{currentMonthYear}</CardTitle>
+                <CardTitle>{currentPeriod}</CardTitle>
                 <CardDescription>
-                    Coupon statistics by value and number of orders for the
-                    current month.
+                    Coupon statistics by value and number of orders for the last
+                    6 months.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
-                    <BarChart accessibilityLayer data={chartData}>
-                        <CartesianGrid vertical={false} />
+                    <LineChart
+                        accessibilityLayer
+                        data={transformedData}
+                        margin={{
+                            left: 12,
+                            right: 12,
+                        }}
+                    >
+                        <CartesianGrid vertical={true} strokeDasharray='3 3' />
                         <XAxis
-                            dataKey='coupon_prefix'
+                            dataKey='month'
                             tickLine={false}
-                            tickMargin={10}
                             axisLine={false}
+                            tickMargin={10}
                         />
                         <YAxis
+                            domain={[0, 'dataMax + 100']}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
@@ -88,19 +139,81 @@ export default function CouponTypesCurrentMonthBreakdownChart({
                         />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent indicator='dashed' />}
+                            content={<ChartTooltipContent />}
                         />
-                        <Bar
-                            dataKey='coupon_value'
-                            fill='var(--color-couponValue)'
-                            radius={4}
+                        <Legend wrapperStyle={{ paddingTop: 16 }} />
+
+                        <Line
+                            dataKey='10K'
+                            type='monotone'
+                            stroke='var(--color-10K)'
+                            strokeWidth={2}
+                            dot={true}
                         />
-                        <Bar
-                            dataKey='coupon_nr'
-                            fill='var(--color-couponNr)'
-                            radius={4}
+                        <Line
+                            dataKey='BRB_'
+                            type='monotone'
+                            stroke='var(--color-BRB_)'
+                            strokeWidth={2}
+                            dot={true}
                         />
-                    </BarChart>
+                        <Line
+                            dataKey='BRC_'
+                            type='monotone'
+                            stroke='var(--color-BRC_)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                        <Line
+                            dataKey='CB_'
+                            type='monotone'
+                            stroke='var(--color-CB_)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                        <Line
+                            dataKey='FSK'
+                            type='monotone'
+                            stroke='var(--color-FSK)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                        <Line
+                            dataKey='KWF_'
+                            type='monotone'
+                            stroke='var(--color-KWF_)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                        <Line
+                            dataKey='OHT_'
+                            type='monotone'
+                            stroke='var(--color-OHT_)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                        <Line
+                            dataKey='OTHER'
+                            type='monotone'
+                            stroke='var(--color-OTHER)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                        <Line
+                            dataKey='RFC_'
+                            type='monotone'
+                            stroke='var(--color-RFC_)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                        <Line
+                            dataKey='RFF_'
+                            type='monotone'
+                            stroke='var(--color-RFF_)'
+                            strokeWidth={2}
+                            dot={true}
+                        />
+                    </LineChart>
                 </ChartContainer>
             </CardContent>
             <CardFooter className='flex-col items-start gap-2 text-sm'>
