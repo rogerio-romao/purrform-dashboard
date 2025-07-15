@@ -247,9 +247,9 @@ export default function CouponTypes6MonthBreakdownChart({
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {top3ByNr.map((item) => (
+                            {top3ByNr.map((item, index) => (
                                 <div
-                                    key={item.coupon_prefix}
+                                    key={`${item.coupon_prefix}-${index}`}
                                     className='flex justify-between'
                                 >
                                     <span className='font-medium text-green-600'>
@@ -269,9 +269,9 @@ export default function CouponTypes6MonthBreakdownChart({
                         </CardHeader>
                         <CardContent>
                             {bottom3ByValue.map(
-                                ([coupon_prefix, coupon_value]) => (
+                                ([coupon_prefix, coupon_value], index) => (
                                     <div
-                                        key={coupon_prefix}
+                                        key={`${coupon_prefix}-${index}`}
                                         className='flex justify-between'
                                     >
                                         <span className='font-medium text-green-600'>
@@ -291,9 +291,9 @@ export default function CouponTypes6MonthBreakdownChart({
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {bottom3ByNr.map((item) => (
+                            {bottom3ByNr.map((item, index) => (
                                 <div
-                                    key={item.coupon_prefix}
+                                    key={`${item.coupon_prefix}-${index}`}
                                     className='flex justify-between'
                                 >
                                     <span className='font-medium text-green-600'>

@@ -70,8 +70,6 @@ export default function CouponTypes6MonthBreakdown({
                     return a.coupon_prefix.localeCompare(b.coupon_prefix);
                 });
 
-                console.log('Fetched data:', sortedData);
-
                 setData(sortedData);
                 setError(null);
             } catch (error) {
