@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import {
     AlertDialog,
+    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -274,20 +275,46 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                             <TableCell className='inline-flex gap-2'>
                                 {(order.order_status === 'pending' ||
                                     order.order_status === 'overdue') && (
-                                    <Button
-                                        variant={'default'}
-                                        size={'sm'}
-                                        onClick={() =>
-                                            handlePayNow(
-                                                order.id,
-                                                order.trader_id,
-                                                order.order_status,
-                                                order.order_total
-                                            )
-                                        }
-                                    >
-                                        Pay Now
-                                    </Button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button
+                                                variant={'default'}
+                                                size={'sm'}
+                                            >
+                                                Pay Now
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>
+                                                    Confirm Payment
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Are you sure you want to
+                                                    mark order #{order.order_nr}{' '}
+                                                    as paid for £
+                                                    {order.order_total}?
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>
+                                                    Cancel
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={() =>
+                                                        handlePayNow(
+                                                            order.id,
+                                                            order.trader_id,
+                                                            order.order_status,
+                                                            order.order_total
+                                                        )
+                                                    }
+                                                >
+                                                    Confirm Payment
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 )}
                                 {/* Button to trigger the single dialog */}
                                 <Button
