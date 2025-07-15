@@ -55,7 +55,6 @@ type ComparisonBarChartProps = {
         | 'loyalty_value'
         | 'loyalty_nr'
         | 'coupons_value'
-        | 'coupons_nr'
         | 'coupons_nr';
     chartData: {
         sales_value: number;
