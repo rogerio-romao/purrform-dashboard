@@ -27,7 +27,7 @@ export default async function createCouponType(
         });
 
         const response = await fetch(
-            `https://ecb8-2a01-4b00-805d-b800-859-805d-88b9-e154.ngrok-free.app/createCouponType?${searchParams.toString()}`
+            `${BACKEND_BASE_URL}/createCouponType?${searchParams.toString()}`
         );
 
         if (!response.ok) {
