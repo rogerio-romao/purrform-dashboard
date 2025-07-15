@@ -45,7 +45,7 @@ import { createCouponTypeFormSchema } from '@/app/lib/utils';
 
 import type { CouponType } from '@/app/lib/types';
 
-export default function RecallProducts() {
+export default function CouponCodeTypes() {
     const { toast } = useToast();
     const [couponTypes, setCouponTypes] = useState<CouponType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
