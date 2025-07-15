@@ -6,6 +6,7 @@ import Loading from '@/components/common/loading';
 import CouponTypes6MonthBreakdownChartByNumber from './coupon-types-6-month-breakdown-chart-by-number';
 import CouponTypes6MonthBreakdownChartByValue from './coupon-types-6-month-breakdown-chart-by-value';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import type { CouponType, CouponTypeMonthBreakdown } from '@/app/lib/types';
 import { generateLast6MonthStrings } from '@/app/lib/utils';
 
@@ -53,7 +54,7 @@ export default function CouponTypes6MonthBreakdown({
             setLoading(true);
             try {
                 const response = await fetch(
-                    `http://localhost:5555/getCouponTypesSemester?startMonth=${sixMonthsAgoMonthNumeric}&startYear=${sixMonthsAgoYear}`
+                    `${BACKEND_BASE_URL}/getCouponTypesSemester?startMonth=${sixMonthsAgoMonthNumeric}&startYear=${sixMonthsAgoYear}`
                 );
 
                 if (!response.ok) {

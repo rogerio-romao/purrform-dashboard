@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Loading from '@/components/common/loading';
 import CouponTypesCurrentMonthBreakdownChart from './coupon-types-current-month-breakdown-chart';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import type { CouponType, CouponTypeMonthBreakdown } from '@/app/lib/types';
 
 type CouponTypesCurrentMonthBreakdownResponse =
@@ -34,7 +35,7 @@ export default function CouponTypesCurrentMonthBreakdown({
             setLoading(true);
             try {
                 const response = await fetch(
-                    `http://localhost:5555/getCouponTypesCurrentMonth?month=${currentMonthYear}`
+                    `${BACKEND_BASE_URL}/getCouponTypesCurrentMonth?month=${currentMonthYear}`
                 );
 
                 if (!response.ok) {
