@@ -73,7 +73,7 @@ interface CouponTypes6MonthBreakdownChartProps {
     couponTypes: CouponType[];
 }
 
-export default function CouponTypes6MonthBreakdownChart({
+export default function CouponTypes6MonthBreakdownChartByValue({
     currentPeriod,
     last6Months,
     chartData,

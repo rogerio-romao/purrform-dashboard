@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import type {
     CouponTypeMonthBreakdown,
-    TransformedDataForCouponValueSemesterGraph,
+    TransformedDataForCouponSemesterGraph,
 } from '@/app/lib/types';
 
 export function cn(...inputs: ClassValue[]) {
@@ -121,18 +121,42 @@ export function generateLast6MonthStrings(
 export function transformDataForCouponValueSemesterGraph(
     chartData: CouponTypeMonthBreakdown[],
     last6Months: string[]
-): TransformedDataForCouponValueSemesterGraph[] {
-    const result: TransformedDataForCouponValueSemesterGraph[] = [];
+): TransformedDataForCouponSemesterGraph[] {
+    const result: TransformedDataForCouponSemesterGraph[] = [];
 
     for (const month of last6Months) {
         const monthData = chartData.filter((item) => item.month === month);
-        const transformedMonth: TransformedDataForCouponValueSemesterGraph = {
+        const transformedMonth: TransformedDataForCouponSemesterGraph = {
             month: month.split('-')[0].slice(0, 3), // Get first 3 letters of month
         };
 
         for (const item of monthData) {
             const prefix = item.coupon_prefix;
             transformedMonth[prefix] = item.coupon_value;
+        }
+
+        result.push(transformedMonth);
+    }
+
+    return result;
+}
+
+// Transform the data to group by month and pivot coupon_nr values
+export function transformDataForCouponNrSemesterGraph(
+    chartData: CouponTypeMonthBreakdown[],
+    last6Months: string[]
+): TransformedDataForCouponSemesterGraph[] {
+    const result: TransformedDataForCouponSemesterGraph[] = [];
+
+    for (const month of last6Months) {
+        const monthData = chartData.filter((item) => item.month === month);
+        const transformedMonth: TransformedDataForCouponSemesterGraph = {
+            month: month.split('-')[0].slice(0, 3), // Get first 3 letters of month
+        };
+
+        for (const item of monthData) {
+            const prefix = item.coupon_prefix;
+            transformedMonth[prefix] = item.coupon_nr;
         }
 
         result.push(transformedMonth);

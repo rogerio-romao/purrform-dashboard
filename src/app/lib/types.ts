@@ -134,7 +134,7 @@ export interface CouponType {
     details?: string;
 }
 
-export type TransformedDataForCouponValueSemesterGraph = {
+export type TransformedDataForCouponSemesterGraph = {
     month: string;
     [key: string]: number | string;
 };

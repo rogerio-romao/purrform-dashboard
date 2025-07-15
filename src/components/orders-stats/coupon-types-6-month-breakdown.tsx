@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 
 import Loading from '@/components/common/loading';
-import CouponTypes6MonthBreakdownChart from './coupon-types-6-month-breakdown-chart';
+import CouponTypes6MonthBreakdownChartByNumber from './coupon-types-6-month-breakdown-chart-by-number';
+import CouponTypes6MonthBreakdownChartByValue from './coupon-types-6-month-breakdown-chart-by-value';
 
 import type { CouponType, CouponTypeMonthBreakdown } from '@/app/lib/types';
 import { generateLast6MonthStrings } from '@/app/lib/utils';
@@ -90,11 +91,19 @@ export default function CouponTypes6MonthBreakdown({
     }
 
     return (
-        <CouponTypes6MonthBreakdownChart
-            currentPeriod={`${sixMonthsAgoMonthYear} to ${currentMonthYear}`}
-            last6Months={last6Months}
-            chartData={data}
-            couponTypes={couponTypes}
-        />
+        <section className='grid lg:grid-cols-1 gap-6'>
+            <CouponTypes6MonthBreakdownChartByValue
+                currentPeriod={`${sixMonthsAgoMonthYear} to ${currentMonthYear}`}
+                last6Months={last6Months}
+                chartData={data}
+                couponTypes={couponTypes}
+            />
+            <CouponTypes6MonthBreakdownChartByNumber
+                currentPeriod={`${sixMonthsAgoMonthYear} to ${currentMonthYear}`}
+                last6Months={last6Months}
+                chartData={data}
+                couponTypes={couponTypes}
+            />
+        </section>
     );
 }
