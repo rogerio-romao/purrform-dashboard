@@ -188,7 +188,13 @@ export default function CouponTypes6MonthBreakdownChart({
                                 key={type.id}
                                 className='border rounded-sm p-1'
                             >
-                                <span className='font-medium text-green-600'>
+                                <span
+                                    className='font-medium'
+                                    style={{
+                                        color: dynamicChartConfig[type.prefix]
+                                            ?.color,
+                                    }}
+                                >
                                     {type.prefix}
                                 </span>
                                 <span className='ml-2'>{type.name}</span>
