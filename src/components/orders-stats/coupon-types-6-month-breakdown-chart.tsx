@@ -114,11 +114,23 @@ export default function CouponTypes6MonthBreakdownChart({
         }
     }
 
-    const top3ByValue = chartData
-        .toSorted((a, b) => b.coupon_value - a.coupon_value)
+    const accumulatedValuesByCouponPrefix = transformedDataKeys.reduce(
+        (acc, key) => {
+            acc[key] = transformedData.reduce(
+                (sum, item) => sum + (Number(item[key]) || 0),
+                0
+            );
+            return acc;
+        },
+        {} as Record<string, number>
+    );
+
+    // grab the top 3 from accumulatedValuesByCouponPrefix
+    const top3ByValue = Object.entries(accumulatedValuesByCouponPrefix)
+        .toSorted((a, b) => b[1] - a[1])
         .slice(0, 3);
-    const bottom3ByValue = chartData
-        .toSorted((a, b) => a.coupon_value - b.coupon_value)
+    const bottom3ByValue = Object.entries(accumulatedValuesByCouponPrefix)
+        .toSorted((a, b) => a[1] - b[1])
         .slice(0, 3);
     const top3ByNr = chartData
         .toSorted((a, b) => b.coupon_nr - a.coupon_nr)
@@ -203,7 +215,7 @@ export default function CouponTypes6MonthBreakdownChart({
                     </div>
                 </div>
                 <div className='leading-none font-medium mt-3'>
-                    Top & Bottom Coupons
+                    Top & Bottom Coupons (accumulated 6 months)
                 </div>
                 <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2 w-full'>
                     <Card className='col-span-1'>
@@ -213,17 +225,19 @@ export default function CouponTypes6MonthBreakdownChart({
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {top3ByValue.map((item) => (
-                                <div
-                                    key={item.coupon_prefix}
-                                    className='flex justify-between'
-                                >
-                                    <span className='font-medium text-green-600'>
-                                        {item.coupon_prefix}{' '}
-                                    </span>
-                                    <span>£{item.coupon_value.toFixed(2)}</span>
-                                </div>
-                            ))}
+                            {top3ByValue.map(
+                                ([coupon_prefix, coupon_value]) => (
+                                    <div
+                                        key={coupon_prefix}
+                                        className='flex justify-between'
+                                    >
+                                        <span className='font-medium text-green-600'>
+                                            {coupon_prefix}{' '}
+                                        </span>
+                                        <span>£{coupon_value.toFixed(2)}</span>
+                                    </div>
+                                )
+                            )}
                         </CardContent>
                     </Card>
                     <Card className='ml-2 col-span-1'>
@@ -254,17 +268,19 @@ export default function CouponTypes6MonthBreakdownChart({
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {bottom3ByValue.map((item) => (
-                                <div
-                                    key={item.coupon_prefix}
-                                    className='flex justify-between'
-                                >
-                                    <span className='font-medium text-green-600'>
-                                        {item.coupon_prefix}{' '}
-                                    </span>
-                                    <span>£{item.coupon_value.toFixed(2)}</span>
-                                </div>
-                            ))}
+                            {bottom3ByValue.map(
+                                ([coupon_prefix, coupon_value]) => (
+                                    <div
+                                        key={coupon_prefix}
+                                        className='flex justify-between'
+                                    >
+                                        <span className='font-medium text-green-600'>
+                                            {coupon_prefix}{' '}
+                                        </span>
+                                        <span>£{coupon_value.toFixed(2)}</span>
+                                    </div>
+                                )
+                            )}
                         </CardContent>
                     </Card>
 
