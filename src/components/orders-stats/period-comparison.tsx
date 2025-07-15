@@ -27,7 +27,9 @@ type OrdersNumberBarChartProps = {
     month: string;
     orders: number;
     loyalty: number;
-    percent: number;
+    loyaltyPercentage: number;
+    coupons: number;
+    couponsPercentage: number;
 }[];
 
 interface ComparisonData {
@@ -35,6 +37,8 @@ interface ComparisonData {
     sales_nr: number;
     loyalty_value: number;
     loyalty_nr: number;
+    coupons_value: number;
+    coupons_nr: number;
     label: string;
 }
 
@@ -103,7 +107,7 @@ export default function PeriodComparison(
     return (
         <Card>
             <CardHeader className='px-7 relative'>
-                <CardTitle>Compare Time Periods</CardTitle>
+                <CardTitle>Sales Statistics - Compare Time Periods</CardTitle>
                 <CardDescription className='flex flex-col gap-2'>
                     Select time periods to compare
                     <Select

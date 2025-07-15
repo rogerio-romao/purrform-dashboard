@@ -12,6 +12,8 @@ import PendingOrdersForTrader from './pending-orders-for-trader';
 import TraderCreditTraderDataActions from './trader-credit-trader-data-actions';
 import TraderCreditTraderDataHeader from './trader-credit-trader-data-header';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 import type {
     CreditSystemOrder,
     CreditSystemTrader,
@@ -159,7 +161,7 @@ export default function TraderCreditTraderData({
         }
 
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/removeTraderFromCreditSystem?traderId=${trader.id}`
+            `${BACKEND_BASE_URL}/removeTraderFromCreditSystem?traderId=${trader.id}`
         );
 
         if (response.ok) {
@@ -189,7 +191,7 @@ export default function TraderCreditTraderData({
         }
 
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/getPendingOrdersForTrader?traderId=${trader.id}`
+            `${BACKEND_BASE_URL}/getPendingOrdersForTrader?traderId=${trader.id}`
         );
 
         if (response.ok) {
@@ -223,7 +225,7 @@ export default function TraderCreditTraderData({
         }
 
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/getOrderHistoryForTrader?traderId=${trader.id}`
+            `${BACKEND_BASE_URL}/getOrderHistoryForTrader?traderId=${trader.id}`
         );
 
         if (response.ok) {

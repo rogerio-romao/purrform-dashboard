@@ -1,3 +1,5 @@
+import { BACKEND_BASE_URL } from '../lib/definitions';
+
 interface TraceabilityIngredient {
     title: string;
     location: string;
@@ -20,7 +22,7 @@ export default async function createIngredient(
         const { title, location, latitude, longitude } = ingredient;
 
         const response = await fetch(
-            `https://purrform-apps-027e.onrender.com/createTraceabilityIngredient?title=${title}&location=${location}&latitude=${latitude}&longitude=${longitude}`
+            `${BACKEND_BASE_URL}/createTraceabilityIngredient?title=${title}&location=${location}&latitude=${latitude}&longitude=${longitude}`
         );
 
         if (!response.ok) {

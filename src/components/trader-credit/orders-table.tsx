@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import {
     AlertDialog,
+    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -35,6 +36,7 @@ import {
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import { CreditSystemOrder } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
 
@@ -136,7 +138,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         }
 
         // Construct the URL with query parameters
-        const baseUrl = `https://purrform-apps-027e.onrender.com/editCreditSystemOrder`;
+        const baseUrl = `${BACKEND_BASE_URL}/editCreditSystemOrder`;
         const queryParams = new URLSearchParams({
             orderId: String(orderId),
             traderId: String(traderId),
@@ -221,7 +223,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         // Handle the payment logic here
         try {
             const response = await fetch(
-                `https://purrform-apps-027e.onrender.com/markCreditSystemOrderAsPaid?orderId=${orderId}&traderId=${traderId}&orderStatus=${orderStatus}&orderTotal=${orderTotal}`
+                `${BACKEND_BASE_URL}/markCreditSystemOrderAsPaid?orderId=${orderId}&traderId=${traderId}&orderStatus=${orderStatus}&orderTotal=${orderTotal}`
             );
 
             if (!response.ok) {
@@ -273,20 +275,46 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                             <TableCell className='inline-flex gap-2'>
                                 {(order.order_status === 'pending' ||
                                     order.order_status === 'overdue') && (
-                                    <Button
-                                        variant={'default'}
-                                        size={'sm'}
-                                        onClick={() =>
-                                            handlePayNow(
-                                                order.id,
-                                                order.trader_id,
-                                                order.order_status,
-                                                order.order_total
-                                            )
-                                        }
-                                    >
-                                        Pay Now
-                                    </Button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button
+                                                variant={'default'}
+                                                size={'sm'}
+                                            >
+                                                Pay Now
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>
+                                                    Confirm Payment
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Are you sure you want to
+                                                    mark order #{order.order_nr}{' '}
+                                                    as paid for £
+                                                    {order.order_total}?
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>
+                                                    Cancel
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={() =>
+                                                        handlePayNow(
+                                                            order.id,
+                                                            order.trader_id,
+                                                            order.order_status,
+                                                            order.order_total
+                                                        )
+                                                    }
+                                                >
+                                                    Confirm Payment
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 )}
                                 {/* Button to trigger the single dialog */}
                                 <Button

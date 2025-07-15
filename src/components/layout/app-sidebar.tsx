@@ -7,6 +7,7 @@ import {
     ArrowLeftFromLine,
     BarChart,
     Beef,
+    CirclePercent,
     CreditCard,
     ShieldCheck,
 } from 'lucide-react';
@@ -35,8 +36,8 @@ import type { NavItem, UserRole } from '@/app/lib/types';
 // Menu items.
 const items: NavItem[] = [
     {
-        title: 'Sales & Loyalty Stats',
-        to: 'orders-loyalty-stats',
+        title: 'Sales Statistics',
+        to: 'sales-statistics',
         icon: BarChart,
         allowedRoles: ['admin'],
     },
@@ -63,6 +64,12 @@ const items: NavItem[] = [
         to: 'trader-credit',
         icon: CreditCard,
         allowedRoles: ['admin', 'bookkeeper'],
+    },
+    {
+        title: 'Coupon Code Types',
+        to: 'coupon-code-types',
+        icon: CirclePercent,
+        allowedRoles: ['admin'],
     },
 ];
 

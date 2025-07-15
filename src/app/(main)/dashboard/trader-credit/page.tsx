@@ -17,6 +17,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 export default function TraderCredit() {
     const { toast } = useToast();
     const [creditTraders, setCreditTraders] = useState<CreditSystemTrader[]>(
@@ -35,7 +37,7 @@ export default function TraderCredit() {
         const fetchCreditTraders = async () => {
             try {
                 const response = await fetch(
-                    'https://purrform-apps-027e.onrender.com/getCreditSystemTraders'
+                    `${BACKEND_BASE_URL}/getCreditSystemTraders`
                 );
 
                 if (!response.ok) {
@@ -58,7 +60,7 @@ export default function TraderCredit() {
         const fetchAllTraders = async () => {
             try {
                 const response = await fetch(
-                    'https://purrform-apps-027e.onrender.com/getAllBcTradeCustomers'
+                    `${BACKEND_BASE_URL}/getAllBcTradeCustomers`
                 );
 
                 if (!response.ok) {

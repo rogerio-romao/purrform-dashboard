@@ -33,6 +33,8 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 interface TraderCreditFormProps {
     mappedTraders: {
         id: number;
@@ -109,7 +111,7 @@ export default function TraderCreditAddTrader({
         };
 
         await fetch(
-            `https://purrform-apps-027e.onrender.com/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}&invoiceEmail=${traderToAdd.invoice_email}`,
+            `${BACKEND_BASE_URL}/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}&invoiceEmail=${traderToAdd.invoice_email}`,
             {
                 method: 'GET',
                 headers: {

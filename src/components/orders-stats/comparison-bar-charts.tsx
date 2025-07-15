@@ -5,6 +5,8 @@ type ComparisonBarChartProps = {
     sales_nr: number;
     loyalty_value: number;
     loyalty_nr: number;
+    coupons_value: number;
+    coupons_nr: number;
     label: string;
 }[];
 
@@ -21,6 +23,8 @@ export default function ComparisonBarCharts({
         <section className='grid grid-rows-2 lg:grid-cols-2 gap-12 p-6'>
             <ComparisonBarChart type='sales_value' chartData={chartData} />
             <ComparisonBarChart type='sales_nr' chartData={chartData} />
+            <ComparisonBarChart type='coupons_value' chartData={chartData} />
+            <ComparisonBarChart type='coupons_nr' chartData={chartData} />
             <ComparisonBarChart type='loyalty_value' chartData={chartData} />
             <ComparisonBarChart type='loyalty_nr' chartData={chartData} />
         </section>

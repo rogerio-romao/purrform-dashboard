@@ -2,6 +2,11 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
 
+import type {
+    CouponTypeMonthBreakdown,
+    TransformedDataForCouponSemesterGraph,
+} from '@/app/lib/types';
+
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
@@ -66,3 +71,96 @@ export const addTraderToCreditFormSchema = z.object({
         .nullable(),
     invoiceEmail: z.string().email('Invalid email format').nullable(),
 });
+
+export const createCouponTypeFormSchema = z.object({
+    name: z
+        .string({ required_error: 'Name is required' })
+        .min(3, 'Name must be at least 3 characters'),
+    prefix: z
+        .string({ required_error: 'Prefix is required' })
+        .min(1, 'Prefix must be at least 1 character'),
+    description: z.string().optional(),
+    details: z.string().optional(),
+});
+
+export function generateLast6MonthStrings(
+    startMonth: number,
+    startYear: number
+): string[] {
+    const monthNames = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+    ];
+
+    const result: string[] = [];
+    const date = new Date(startYear, startMonth - 1, 1); // Month is 0-indexed in Date
+
+    for (let i = 0; i < 6; i++) {
+        const monthName = monthNames[date.getMonth()];
+        const year = date.getFullYear();
+        result.push(`${monthName}-${year}`);
+
+        // Move to next month
+        date.setMonth(date.getMonth() + 1);
+    }
+
+    return result;
+}
+
+// Transform the data to group by month and pivot coupon_prefix values
+export function transformDataForCouponValueSemesterGraph(
+    chartData: CouponTypeMonthBreakdown[],
+    last6Months: string[]
+): TransformedDataForCouponSemesterGraph[] {
+    const result: TransformedDataForCouponSemesterGraph[] = [];
+
+    for (const month of last6Months) {
+        const monthData = chartData.filter((item) => item.month === month);
+        const transformedMonth: TransformedDataForCouponSemesterGraph = {
+            month: month.split('-')[0].slice(0, 3), // Get first 3 letters of month
+        };
+
+        for (const item of monthData) {
+            const prefix = item.coupon_prefix;
+            transformedMonth[prefix] = item.coupon_value;
+        }
+
+        result.push(transformedMonth);
+    }
+
+    return result;
+}
+
+// Transform the data to group by month and pivot coupon_nr values
+export function transformDataForCouponNrSemesterGraph(
+    chartData: CouponTypeMonthBreakdown[],
+    last6Months: string[]
+): TransformedDataForCouponSemesterGraph[] {
+    const result: TransformedDataForCouponSemesterGraph[] = [];
+
+    for (const month of last6Months) {
+        const monthData = chartData.filter((item) => item.month === month);
+        const transformedMonth: TransformedDataForCouponSemesterGraph = {
+            month: month.split('-')[0].slice(0, 3), // Get first 3 letters of month
+        };
+
+        for (const item of monthData) {
+            const prefix = item.coupon_prefix;
+            transformedMonth[prefix] = item.coupon_nr;
+        }
+
+        result.push(transformedMonth);
+    }
+
+    return result;
+}

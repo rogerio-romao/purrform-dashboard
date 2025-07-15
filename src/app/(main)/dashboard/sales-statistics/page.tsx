@@ -6,9 +6,13 @@ import { useEffect, useState } from 'react';
 import { months } from '@/app/lib/utils';
 
 import Loading from '@/components/common/loading';
+import CouponTypesBreakdown from '@/components/orders-stats/coupon-types-breakdown';
 import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
+import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
+import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
 import PeriodComparison from '@/components/orders-stats/period-comparison';
+
 import {
     Card,
     CardContent,
@@ -19,6 +23,8 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 interface ControlPanelStats {
     id: number;
     month: number;
@@ -27,6 +33,8 @@ interface ControlPanelStats {
     sales_nr: number;
     loyalty_value: number;
     loyalty_nr: number;
+    coupons_value?: number;
+    coupons_nr?: number;
 }
 
 export default function OrdersLoyaltyStats() {
@@ -34,9 +42,7 @@ export default function OrdersLoyaltyStats() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch(
-                'https://purrform-apps-027e.onrender.com/controlPanel'
-            );
+            const response = await fetch(`${BACKEND_BASE_URL}/controlPanel`);
             const data = (await response.json()) as ControlPanelStats[];
 
             setData(data);
@@ -58,8 +64,14 @@ export default function OrdersLoyaltyStats() {
     const loyaltyPointsThisMonth = new Intl.NumberFormat('en-UK').format(
         currentMonth.loyalty_value
     );
-    const loyaltyPointsNr = new Intl.NumberFormat('en-UK').format(
+    const loyaltyPointsNrThisMonth = new Intl.NumberFormat('en-UK').format(
         currentMonth.loyalty_nr
+    );
+    const couponsValueThisMonth = new Intl.NumberFormat('en-UK').format(
+        currentMonth.coupons_value || 0
+    );
+    const couponsNrThisMonth = new Intl.NumberFormat('en-UK').format(
+        currentMonth.coupons_nr || 0
     );
 
     const lastMonth = data[1];
@@ -79,20 +91,39 @@ export default function OrdersLoyaltyStats() {
         100
     ).toFixed(2);
 
+    const couponsPercentageOfValue = (
+        ((currentMonth.coupons_value || 0) / currentMonth.sales_value) *
+        100
+    ).toFixed(2);
+    const couponsPercentageOfOrders = (
+        ((currentMonth.coupons_nr || 0) / currentMonth.sales_nr) *
+        100
+    ).toFixed(2);
+
     const ordersValueChartData = data.toReversed().map((month) => ({
         month: months[month.month - 1],
         orders: month.sales_value,
         loyalty: month.loyalty_value,
-        percent: Number(
+        loyaltyPercentage: +Number(
             ((month.loyalty_value / month.sales_value) * 100).toFixed(2)
         ),
+        coupons: month.coupons_value || 0,
+        couponsPercentage: +Number(
+            ((month.coupons_value || 0) / month.sales_value) * 100
+        ).toFixed(2),
     }));
 
     const ordersNumberChartData = data.toReversed().map((month) => ({
         month: months[month.month - 1],
         orders: month.sales_nr,
         loyalty: month.loyalty_nr,
-        percent: Number(((month.loyalty_nr / month.sales_nr) * 100).toFixed(2)),
+        loyaltyPercentage: +Number(
+            ((month.loyalty_nr / month.sales_nr) * 100).toFixed(2)
+        ),
+        coupons: month.coupons_nr || 0,
+        couponsPercentage: +Number(
+            ((month.coupons_nr || 0) / month.sales_nr) * 100
+        ).toFixed(2),
     }));
 
     return (
@@ -102,17 +133,16 @@ export default function OrdersLoyaltyStats() {
                     <div className='grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2'>
                         <div className='grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4'>
                             <Card
-                                className='sm:col-span-2'
+                                className='sm:col-span-1'
                                 x-chunk='dashboard-05-chunk-0'
                             >
                                 <CardHeader className='pb-3'>
-                                    <CardTitle>
-                                        Orders & Loyalty Points
-                                    </CardTitle>
+                                    <CardTitle>Orders Statistics</CardTitle>
                                     <CardDescription className='max-w-lg text-balance leading-relaxed'>
                                         Reporting number of orders, value of
-                                        orders, and loyalty points usage value
-                                        and percentage of total orders.
+                                        orders, coupon codes usage and loyalty
+                                        points usage value and percentage of
+                                        total orders.
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -144,6 +174,7 @@ export default function OrdersLoyaltyStats() {
                                     </div>
                                 </CardContent>
                             </Card>
+
                             <Card x-chunk='dashboard-05-chunk-2'>
                                 <CardHeader className='pb-2'>
                                     <CardDescription>
@@ -155,10 +186,10 @@ export default function OrdersLoyaltyStats() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className='text-xs text-muted-foreground'>
-                                        {loyaltyPointsNr} orders
+                                        {loyaltyPointsNrThisMonth} orders
                                     </div>
                                 </CardContent>
-                                <CardFooter>
+                                <CardFooter className='flex flex-col gap-2'>
                                     <div className='flex flex-col w-full gap-2'>
                                         <div className='text-xs text-muted-foreground'>
                                             {loyaltyPercentageOfValue}% of value
@@ -180,12 +211,75 @@ export default function OrdersLoyaltyStats() {
                                             aria-label={`%{loyaltyPercentageOfOrders}% of orders`}
                                         />
                                     </div>
+                                    <div className='text-xs text-muted-foreground'>
+                                        Average value per order:{' '}
+                                        <span className='font-semibold'>
+                                            £
+                                            {(
+                                                currentMonth.loyalty_value /
+                                                currentMonth.loyalty_nr
+                                            ).toFixed(2)}
+                                        </span>
+                                    </div>
+                                </CardFooter>
+                            </Card>
+
+                            <Card x-chunk='dashboard-05-chunk-3'>
+                                <CardHeader className='pb-2'>
+                                    <CardDescription>
+                                        Coupons This month
+                                    </CardDescription>
+                                    <CardTitle className='text-2xl lg:text-3xl'>
+                                        £{couponsValueThisMonth}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className='text-xs text-muted-foreground'>
+                                        {couponsNrThisMonth} orders
+                                    </div>
+                                </CardContent>
+                                <CardFooter className='flex flex-col gap-2'>
+                                    <div className='flex flex-col w-full gap-2'>
+                                        <div className='text-xs text-muted-foreground'>
+                                            {couponsPercentageOfValue}% of value
+                                        </div>
+                                        <Progress
+                                            value={Number(
+                                                couponsPercentageOfValue
+                                            )}
+                                            aria-label={`%{couponsPercentageOfValue}% of value`}
+                                        />
+                                        <div className='text-xs text-muted-foreground'>
+                                            {couponsPercentageOfOrders}% of
+                                            orders
+                                        </div>
+                                        <Progress
+                                            value={Number(
+                                                couponsPercentageOfOrders
+                                            )}
+                                            aria-label={`%{couponsPercentageOfOrders}% of orders`}
+                                        />
+                                    </div>
+                                    <div className='text-xs text-muted-foreground'>
+                                        Average value per order:{' '}
+                                        <span className='font-semibold'>
+                                            £
+                                            {(
+                                                (currentMonth.coupons_value ||
+                                                    0) /
+                                                (currentMonth.coupons_nr || 1)
+                                            ).toFixed(2)}
+                                        </span>
+                                    </div>
                                 </CardFooter>
                             </Card>
                         </div>
+
                         <Card>
                             <CardHeader className='px-7'>
-                                <CardTitle>Orders & Loyalty Points</CardTitle>
+                                <CardTitle>
+                                    Orders, Loyalty Points & Coupons
+                                </CardTitle>
                                 <CardDescription className='flex items-center gap-2'>
                                     Last 6 months breakdown
                                     <TrendingUp className='h-4 w-4' />
@@ -203,11 +297,26 @@ export default function OrdersLoyaltyStats() {
                                     />
                                 </CardContent>
                             </section>
+                            <section className='grid lg:grid-cols-2'>
+                                <CardContent>
+                                    <OrdersValuePercentageBarChart
+                                        chartData={ordersValueChartData}
+                                    />
+                                </CardContent>
+                                <CardContent>
+                                    <OrdersNumberPercentageBarChart
+                                        chartData={ordersNumberChartData}
+                                    />
+                                </CardContent>
+                            </section>
                         </Card>
+
                         <PeriodComparison
                             ordersValueChartData={ordersValueChartData}
                             ordersNumberChartData={ordersNumberChartData}
                         />
+
+                        <CouponTypesBreakdown />
                     </div>
                 </div>
             </div>

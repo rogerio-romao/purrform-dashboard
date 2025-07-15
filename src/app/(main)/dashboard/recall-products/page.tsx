@@ -10,6 +10,8 @@ import RecallData from '@/components/recall-products/recall-data';
 import RecallHeader from '@/components/recall-products/recall-header';
 import RecallProductsSearch from '@/components/recall-products/recall-products-search';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+
 export default function RecallProducts() {
     const { toast } = useToast();
     const [products, setProducts] = useState<BcProduct[]>([]);
@@ -24,7 +26,7 @@ export default function RecallProducts() {
             setLoading(true);
             try {
                 const response = await fetch(
-                    'https://purrform-apps-027e.onrender.com/getAllBcProducts'
+                    `${BACKEND_BASE_URL}/getAllBcProducts`
                 );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

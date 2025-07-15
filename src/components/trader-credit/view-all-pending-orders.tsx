@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import ClosePanel from '../common/close-panel';
 import OrdersTable from './orders-table';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import supabase from '@/app/lib/supabase';
 import type { CreditSystemOrder } from '@/app/lib/types';
 
@@ -86,7 +87,7 @@ export default function ViewAllPendingOrders({
     const handleFetchAllPendingOrders = async () => {
         try {
             const response = await fetch(
-                'https://purrform-apps-027e.onrender.com/getAllTraderPendingOrders'
+                `${BACKEND_BASE_URL}/getAllTraderPendingOrders`
             );
 
             if (!response.ok) {

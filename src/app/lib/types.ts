@@ -105,6 +105,14 @@ export interface CreditSystemOrder {
     trader_id: number;
 }
 
+export interface CouponTypeMonthBreakdown {
+    id: number;
+    coupon_prefix: string;
+    coupon_value: number;
+    coupon_nr: number;
+    month: string;
+}
+
 export type SupabaseError = { error: string };
 
 export type OkOrErrorResponse = { ok: true } | { ok: false; error: string };
@@ -117,3 +125,16 @@ export interface NavItem {
     icon: React.ElementType;
     allowedRoles: UserRole[];
 }
+
+export interface CouponType {
+    id: number;
+    name: string;
+    prefix: string;
+    description?: string;
+    details?: string;
+}
+
+export type TransformedDataForCouponSemesterGraph = {
+    month: string;
+    [key: string]: number | string;
+};

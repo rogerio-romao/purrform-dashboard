@@ -30,23 +30,39 @@ const chartConfig = {
         label: 'Number of Orders',
         color: 'hsl(var(--chart-2))',
     },
+    coupons_value: {
+        label: 'Coupons Value',
+        color: 'hsl(var(--chart-3))',
+    },
+    coupons_nr: {
+        label: 'Number of Coupons',
+        color: 'hsl(var(--chart-4))',
+    },
     loyalty_value: {
         label: 'Loyalty Points Value',
-        color: 'hsl(var(--chart-3))',
+        color: 'hsl(var(--chart-5))',
     },
     loyalty_nr: {
         label: 'Number of Loyalty Orders',
-        color: 'hsl(var(--chart-4))',
+        color: 'hsl(var(--chart-6))',
     },
 } satisfies ChartConfig;
 
 type ComparisonBarChartProps = {
-    type: 'sales_value' | 'sales_nr' | 'loyalty_value' | 'loyalty_nr';
+    type:
+        | 'sales_value'
+        | 'sales_nr'
+        | 'loyalty_value'
+        | 'loyalty_nr'
+        | 'coupons_value'
+        | 'coupons_nr';
     chartData: {
         sales_value: number;
         sales_nr: number;
         loyalty_value: number;
         loyalty_nr: number;
+        coupons_value?: number; // Optional for backward compatibility
+        coupons_nr?: number; // Optional for backward compatibility
         label: string;
     }[];
 };
@@ -67,7 +83,10 @@ export default function ComparisonBarChart({
     const lastValue = chartData[chartData.length - 1][type];
     const lastLabel = chartData[chartData.length - 1].label;
 
-    const percentageDifference = calculateDifference(firstValue, lastValue);
+    const percentageDifference = calculateDifference(
+        firstValue ?? 0,
+        lastValue ?? 0
+    );
 
     return (
         <Card>
@@ -99,7 +118,7 @@ export default function ComparisonBarChart({
                                 dataKey={type}
                                 position='outside'
                                 offset={8}
-                                className='fill-foreground'
+                                className='fill-background'
                                 fontSize={14}
                                 formatter={(value: number) =>
                                     `${labelPrefix}${value.toLocaleString()}`
@@ -113,8 +132,8 @@ export default function ComparisonBarChart({
                 <div className='flex gap-2 font-medium leading-none'>
                     <TrendingText
                         percentageDifference={percentageDifference}
-                        firstValue={firstValue}
-                        secondValue={lastValue}
+                        firstValue={firstValue ?? 0}
+                        secondValue={lastValue ?? 0}
                         label={lastLabel}
                         labelPrefix={labelPrefix}
                     />
