@@ -20,7 +20,10 @@ import {
 import type { CouponType, CouponTypeMonthBreakdown } from '@/app/lib/types';
 import { transformDataForCouponValueSemesterGraph } from '@/app/lib/utils';
 
-const chartConfig = {
+// Add index signature to allow any string key
+const chartConfig: ChartConfig & {
+    [key: string]: { label: string; color: string };
+} = {
     '10K': {
         label: '10K',
         color: 'hsl(var(--chart-1))',
@@ -91,6 +94,26 @@ export default function CouponTypes6MonthBreakdownChart({
         last6Months
     );
 
+    const lastMonthOfTransformedData =
+        transformedData[transformedData.length - 1];
+
+    const transformedDataKeys = Object.keys(lastMonthOfTransformedData).filter(
+        (key) => key !== 'month'
+    );
+
+    // Create a mutable copy of chartConfig
+    const dynamicChartConfig = { ...chartConfig };
+
+    // if there are keys in transformedData that are not in chartConfig, add them to the copy
+    for (const key of transformedDataKeys) {
+        if (!dynamicChartConfig[key]) {
+            dynamicChartConfig[key] = {
+                label: key,
+                color: `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`, // Random color for unknown keys
+            };
+        }
+    }
+
     const top3ByValue = chartData
         .toSorted((a, b) => b.coupon_value - a.coupon_value)
         .slice(0, 3);
@@ -114,7 +137,7 @@ export default function CouponTypes6MonthBreakdownChart({
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig}>
+                <ChartContainer config={dynamicChartConfig}>
                     <LineChart
                         accessibilityLayer
                         data={transformedData}
@@ -143,76 +166,16 @@ export default function CouponTypes6MonthBreakdownChart({
                         />
                         <Legend wrapperStyle={{ paddingTop: 16 }} />
 
-                        <Line
-                            dataKey='10K'
-                            type='monotone'
-                            stroke='var(--color-10K)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='BRB_'
-                            type='monotone'
-                            stroke='var(--color-BRB_)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='BRC_'
-                            type='monotone'
-                            stroke='var(--color-BRC_)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='CB_'
-                            type='monotone'
-                            stroke='var(--color-CB_)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='FSK'
-                            type='monotone'
-                            stroke='var(--color-FSK)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='KWF_'
-                            type='monotone'
-                            stroke='var(--color-KWF_)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='OHT_'
-                            type='monotone'
-                            stroke='var(--color-OHT_)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='OTHER'
-                            type='monotone'
-                            stroke='var(--color-OTHER)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='RFC_'
-                            type='monotone'
-                            stroke='var(--color-RFC_)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
-                        <Line
-                            dataKey='RFF_'
-                            type='monotone'
-                            stroke='var(--color-RFF_)'
-                            strokeWidth={2}
-                            dot={true}
-                        />
+                        {Object.keys(dynamicChartConfig).map((key) => (
+                            <Line
+                                key={key}
+                                dataKey={key}
+                                type='monotone'
+                                stroke={`var(--color-${key})`}
+                                strokeWidth={2}
+                                dot={true}
+                            />
+                        ))}
                     </LineChart>
                 </ChartContainer>
             </CardContent>
