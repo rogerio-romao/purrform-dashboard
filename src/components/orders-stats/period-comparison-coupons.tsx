@@ -185,6 +185,7 @@ export default function PeriodComparisonCoupons() {
             {selectedPeriodType ? (
                 <TimeSelection
                     minYearForOrders={2024}
+                    minMonthForOrdersOnFirstYear={8}
                     selectedPeriodType={selectedPeriodType}
                     selectedPeriod1={selectedPeriod1}
                     handleSelectPeriod1={handleSelectPeriod1}
