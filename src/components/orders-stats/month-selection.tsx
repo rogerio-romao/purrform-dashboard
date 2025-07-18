@@ -75,6 +75,10 @@ export default function MonthSelection({
                                         <SelectItem
                                             key={month}
                                             value={`${month}-${year}`}
+                                            disabled={
+                                                `${month}-${year}` ===
+                                                otherPeriod
+                                            }
                                         >
                                             {month}{' '}
                                             <span className='text-xs text-muted-foreground'>

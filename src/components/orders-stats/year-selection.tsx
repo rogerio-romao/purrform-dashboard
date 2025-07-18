@@ -34,7 +34,11 @@ export default function YearSelection({
                 </SelectTrigger>
                 <SelectContent>
                     {yearsForOrders.map((year) => (
-                        <SelectItem key={year} value={year}>
+                        <SelectItem
+                            key={year}
+                            value={year}
+                            disabled={year === otherPeriod}
+                        >
                             {year}
                         </SelectItem>
                     ))}
