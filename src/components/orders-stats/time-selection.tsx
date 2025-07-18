@@ -90,10 +90,16 @@ export default function TimeSelection({
         return (
             <CardContent className='grid grid-cols-1 gap-2 lg:grid-cols-2 lg:gap-12'>
                 <DaySelection
+                    startYear={minYearForOrders}
+                    startMonth={minMonthForOrdersOnFirstYear}
+                    startDay={startDay}
                     handleSelectPeriod={handleSelectPeriod1}
                     otherPeriod={selectedPeriod2}
                 />
                 <DaySelection
+                    startYear={minYearForOrders}
+                    startMonth={minMonthForOrdersOnFirstYear}
+                    startDay={startDay}
                     handleSelectPeriod={handleSelectPeriod2}
                     otherPeriod={selectedPeriod1}
                 />

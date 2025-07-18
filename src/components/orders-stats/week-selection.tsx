@@ -20,11 +20,8 @@ export default function WeekSelection({
 }: WeekSelectionProps) {
     const [selectedWeek, setSelectedWeek] = useState<DateRange | undefined>();
 
-    const startDate = useMemo(
-        () => new Date(startYear, startMonth, startDay),
-        []
-    );
-    const endDate = useMemo(() => new Date().getTime() + 86400000, []);
+    const startDate = new Date(startYear, startMonth, startDay);
+    const endDate = new Date().getTime() + 86400000; // Add one day to include today
 
     const [disabledDays, setDisabledDays] = useState([
         { from: new Date(0), to: startDate }, // Disable all dates before startDate
@@ -74,7 +71,7 @@ export default function WeekSelection({
                 weekStartsOn={1}
                 captionLayout='dropdown'
                 defaultMonth={new Date()}
-                startMonth={new Date(2022, 7)}
+                startMonth={new Date(startYear, startMonth)}
                 endMonth={new Date()}
                 modifiers={{
                     selected: selectedWeek,
