@@ -51,7 +51,7 @@ interface PeriodComparisonProps {
     ordersNumberChartData: OrdersNumberBarChartProps;
 }
 
-export default function PeriodComparison(
+export default function PeriodComparisonGlobal(
     { ordersValueChartData, ordersNumberChartData }: PeriodComparisonProps = {
         ordersValueChartData: [],
         ordersNumberChartData: [],

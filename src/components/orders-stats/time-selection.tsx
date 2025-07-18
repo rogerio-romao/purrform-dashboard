@@ -5,6 +5,7 @@ import WeekSelection from './week-selection';
 import YearSelection from './year-selection';
 
 type TimeSelectionProps = {
+    minYearForOrders?: number;
     selectedPeriodType: string;
     selectedPeriod1: string;
     selectedPeriod2: string;
@@ -13,6 +14,7 @@ type TimeSelectionProps = {
 };
 
 export default function TimeSelection({
+    minYearForOrders = 2022,
     selectedPeriodType,
     selectedPeriod1,
     selectedPeriod2,
@@ -23,11 +25,13 @@ export default function TimeSelection({
         return (
             <CardContent className='grid grid-cols-2'>
                 <YearSelection
+                    minYearForOrders={minYearForOrders}
                     handleSelectPeriod={handleSelectPeriod1}
                     selectedPeriod={selectedPeriod1}
                     otherPeriod={selectedPeriod2}
                 />
                 <YearSelection
+                    minYearForOrders={minYearForOrders}
                     handleSelectPeriod={handleSelectPeriod2}
                     selectedPeriod={selectedPeriod2}
                     otherPeriod={selectedPeriod1}
