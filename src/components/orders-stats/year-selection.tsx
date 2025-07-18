@@ -33,13 +33,11 @@ export default function YearSelection({
                     <SelectValue placeholder='Pick an option' />
                 </SelectTrigger>
                 <SelectContent>
-                    {yearsForOrders
-                        .filter((y) => y !== otherPeriod)
-                        .map((year) => (
-                            <SelectItem key={year} value={year}>
-                                {year}
-                            </SelectItem>
-                        ))}
+                    {yearsForOrders.map((year) => (
+                        <SelectItem key={year} value={year}>
+                            {year}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
         </div>

@@ -58,8 +58,6 @@ export default function MonthSelection({
                         <SelectGroup key={year}>
                             <SelectLabel>{year}</SelectLabel>
                             {months
-
-                                .filter((m) => `${m}-${year}` !== otherPeriod)
                                 .map((month, index) => {
                                     if (
                                         (year === yearsForOrders[0] &&
