@@ -21,11 +21,12 @@ export default function WeekSelection({
     const [selectedWeek, setSelectedWeek] = useState<DateRange | undefined>();
 
     const startDate = new Date(startYear, startMonth, startDay);
-    const endDate = new Date().getTime() + 86400000; // Add one day to include today
+    const endDate = new Date(); // Just use today's date
+    endDate.setDate(endDate.getDate() + 1); // Add one day properly
 
     const [disabledDays, setDisabledDays] = useState([
-        { from: new Date(0), to: startDate }, // Disable all dates before startDate
-        { from: new Date(endDate), to: new Date(2100, 0, 1) }, // Disable all dates after today
+        { from: new Date(0), to: startDate },
+        { from: endDate, to: new Date(2100, 0, 1) },
     ]);
 
     useEffect(() => {

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 
-import getComparisonData from '@/app/actions/getComparisonData';
+import getComparisonDataCoupons from '@/app/actions/getComparisonDataCoupons';
 
-import ComparisonCharts from './comparison-charts';
+import ComparisonChartsCoupons from './comparison-charts-coupons';
 import TimeSelection from './time-selection';
 
 import { Button } from '@/components/ui/button';
@@ -27,18 +27,21 @@ import {
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import type { CouponType } from '@/app/lib/types';
 
-interface ComparisonData {
-    sales_value: number;
-    sales_nr: number;
-    loyalty_value: number;
-    loyalty_nr: number;
-    coupons_value: number;
-    coupons_nr: number;
+interface ComparisonDataCoupons {
+    coupon_prefix: string;
+    coupon_value?: number;
+    coupon_nr?: number;
     label: string;
 }
 
-type ControlPanelComparisonDataResponse =
-    | { ok: true; data: { period1: ComparisonData; period2: ComparisonData } }
+type ControlPanelComparisonDataCouponsResponse =
+    | {
+          ok: true;
+          data: {
+              period1: ComparisonDataCoupons;
+              period2: ComparisonDataCoupons;
+          };
+      }
     | { ok: false; error: string };
 
 export default function PeriodComparisonCoupons() {
@@ -50,8 +53,10 @@ export default function PeriodComparisonCoupons() {
     const [selectedCouponPrefix, setSelectedCouponPrefix] =
         useState<string>('');
 
-    const [period1Data, setPeriod1Data] = useState<ComparisonData | null>(null);
-    const [period2Data, setPeriod2Data] = useState<ComparisonData | null>(null);
+    const [period1Data, setPeriod1Data] =
+        useState<ComparisonDataCoupons | null>(null);
+    const [period2Data, setPeriod2Data] =
+        useState<ComparisonDataCoupons | null>(null);
     const [fetchDataError, setFetchDataError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -91,16 +96,16 @@ export default function PeriodComparisonCoupons() {
     };
 
     const handleGetData = async () => {
-        const comparisonData: ControlPanelComparisonDataResponse =
-            await getComparisonData(
-                selectedPeriodType,
-                selectedPeriod1,
-                selectedPeriod2
-            );
+        const comparisonData = await getComparisonDataCoupons(
+            selectedPeriodType,
+            selectedPeriod1,
+            selectedPeriod2,
+            selectedCouponPrefix
+        );
 
         if (!comparisonData.ok) {
             console.error(
-                'Error fetching comparison data:',
+                'Error fetching comparison data for coupons:',
                 comparisonData.error
             );
             setPeriod1Data(null);
@@ -194,7 +199,7 @@ export default function PeriodComparisonCoupons() {
                     handleSelectPeriod2={handleSelectPeriod2}
                 />
             ) : null}
-            <ComparisonCharts
+            <ComparisonChartsCoupons
                 period1Data={period1Data}
                 period2Data={period2Data}
             />
