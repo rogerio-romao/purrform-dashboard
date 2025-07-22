@@ -58,11 +58,11 @@ export default function ComparisonBarChartCoupons({
     const lastValue = chartData[chartData.length - 1][type];
     const lastLabel = chartData[chartData.length - 1].label;
 
-
     const averageValueData = chartData.map((data) => ({
         average: (data.coupon_value ?? 0) / (data.coupon_nr ?? 1),
         label: data.label,
     }));
+
     const percentageDifference = calculateDifference(
         firstValue ?? 0,
         lastValue ?? 0

@@ -1,9 +1,6 @@
-import {
-    default as ComparisonBarCharCoupons,
-    default as ComparisonBarChartCoupons,
-} from './comparison-bar-chart-coupons';
+import ComparisonBarChartCoupons from './comparison-bar-chart-coupons';
 
-type ComparisonBarChartCouponsProps = {
+type ComparisonBarChartsCouponsProps = {
     coupon_prefix: string;
     coupon_value?: number;
     coupon_nr?: number;
@@ -13,7 +10,7 @@ type ComparisonBarChartCouponsProps = {
 export default function ComparisonBarChartsCoupons({
     chartData,
 }: {
-    chartData: ComparisonBarChartCouponsProps;
+    chartData: ComparisonBarChartsCouponsProps;
 }) {
     if (!chartData) {
         return null;
