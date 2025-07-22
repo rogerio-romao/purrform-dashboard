@@ -6,24 +6,25 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-const minYearForOrders = 2022;
-const maxYearForOrders = new Date().getFullYear();
-const yearsForOrders = Array.from(
-    { length: maxYearForOrders - minYearForOrders + 1 },
-    (_, i) => String(minYearForOrders + i)
-);
-
 type YearSelectionProps = {
+    minYearForOrders?: number;
     selectedPeriod: string;
     otherPeriod: string;
     handleSelectPeriod: (value: string) => void;
 };
 
 export default function YearSelection({
+    minYearForOrders = 2022,
     handleSelectPeriod,
     selectedPeriod,
     otherPeriod,
 }: YearSelectionProps) {
+    const maxYearForOrders = new Date().getFullYear();
+    const yearsForOrders = Array.from(
+        { length: maxYearForOrders - minYearForOrders + 1 },
+        (_, i) => String(minYearForOrders + i)
+    );
+
     return (
         <div className='flex items-center gap-2'>
             Year:{' '}
@@ -32,13 +33,15 @@ export default function YearSelection({
                     <SelectValue placeholder='Pick an option' />
                 </SelectTrigger>
                 <SelectContent>
-                    {yearsForOrders
-                        .filter((y) => y !== otherPeriod)
-                        .map((year) => (
-                            <SelectItem key={year} value={year}>
-                                {year}
-                            </SelectItem>
-                        ))}
+                    {yearsForOrders.map((year) => (
+                        <SelectItem
+                            key={year}
+                            value={year}
+                            disabled={year === otherPeriod}
+                        >
+                            {year}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
         </div>

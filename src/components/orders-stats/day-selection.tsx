@@ -1,18 +1,24 @@
 import { Checkbox } from '@/components/ui/checkbox';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 
 type DaySelectionProps = {
+    startYear?: number;
+    startMonth?: number;
+    startDay?: number;
     otherPeriod: string;
     handleSelectPeriod: (value: string) => void;
 };
 
 export default function DaySelection({
+    startYear = 2022,
+    startMonth = 7,
+    startDay = 22,
     otherPeriod,
     handleSelectPeriod,
 }: DaySelectionProps) {
-    const startDate = useMemo(() => new Date(2022, 7, 22), []);
-    const endDate = useMemo(() => new Date().getTime(), []);
+    const startDate = new Date(startYear, startMonth, startDay);
+    const endDate = new Date().getTime();
 
     const [multiple, setMultiple] = useState(false);
     const [disabledDays, setDisabledDays] = useState([
@@ -57,11 +63,15 @@ export default function DaySelection({
             </p>
             {multiple ? (
                 <MultipleDays
+                    startYear={startYear}
+                    startMonth={startMonth}
                     disabledDays={disabledDays}
                     handleSelectPeriod={handleSelectPeriod}
                 />
             ) : (
                 <SingleDay
+                    startYear={startYear}
+                    startMonth={startMonth}
                     disabledDays={disabledDays}
                     handleSelectPeriod={handleSelectPeriod}
                 />
@@ -71,11 +81,18 @@ export default function DaySelection({
 }
 
 type SingleDayProps = {
+    startYear?: number;
+    startMonth?: number;
     disabledDays: { from: Date; to: Date }[];
     handleSelectPeriod: (value: string) => void;
 };
 
-function SingleDay({ disabledDays, handleSelectPeriod }: SingleDayProps) {
+function SingleDay({
+    disabledDays,
+    handleSelectPeriod,
+    startYear = 2022,
+    startMonth = 7,
+}: SingleDayProps) {
     return (
         <DayPicker
             showOutsideDays={true}
@@ -88,7 +105,7 @@ function SingleDay({ disabledDays, handleSelectPeriod }: SingleDayProps) {
             fixedWeeks
             captionLayout='dropdown'
             defaultMonth={new Date()}
-            startMonth={new Date(2022, 7)}
+            startMonth={new Date(startYear, startMonth)}
             endMonth={new Date()}
             className='rounded-md border'
         />
@@ -96,11 +113,18 @@ function SingleDay({ disabledDays, handleSelectPeriod }: SingleDayProps) {
 }
 
 type MultipleDaysProps = {
+    startYear?: number;
+    startMonth?: number;
     disabledDays: { from: Date; to: Date }[];
     handleSelectPeriod: (value: string) => void;
 };
 
-function MultipleDays({ disabledDays, handleSelectPeriod }: MultipleDaysProps) {
+function MultipleDays({
+    disabledDays,
+    handleSelectPeriod,
+    startYear = 2022,
+    startMonth = 7,
+}: MultipleDaysProps) {
     const [selectedDays, setSelectedDays] = useState<Date[]>([]);
 
     useEffect(() => {
@@ -134,7 +158,7 @@ function MultipleDays({ disabledDays, handleSelectPeriod }: MultipleDaysProps) {
             fixedWeeks
             captionLayout='dropdown'
             defaultMonth={new Date()}
-            startMonth={new Date(2022, 7)}
+            startMonth={new Date(startYear, startMonth)}
             endMonth={new Date()}
             modifiers={{
                 selected: selectedDays,

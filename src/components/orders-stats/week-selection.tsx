@@ -4,22 +4,29 @@ import { useEffect, useMemo, useState } from 'react';
 import { DateRange, DayPicker, rangeIncludesDate } from 'react-day-picker';
 
 type WeekSelectionProps = {
+    startYear?: number;
+    startMonth?: number;
+    startDay?: number;
     otherPeriod: string;
     handleSelectPeriod: (value: string) => void;
 };
 
 export default function WeekSelection({
+    startYear = 2022,
+    startMonth = 7,
+    startDay = 21,
     otherPeriod,
     handleSelectPeriod,
 }: WeekSelectionProps) {
     const [selectedWeek, setSelectedWeek] = useState<DateRange | undefined>();
 
-    const startDate = useMemo(() => new Date(2022, 7, 21), []);
-    const endDate = useMemo(() => new Date().getTime() + 86400000, []);
+    const startDate = new Date(startYear, startMonth, startDay);
+    const endDate = new Date(); // Just use today's date
+    endDate.setDate(endDate.getDate() + 1); // Add one day properly
 
     const [disabledDays, setDisabledDays] = useState([
-        { from: new Date(0), to: startDate }, // Disable all dates before startDate
-        { from: new Date(endDate), to: new Date(2100, 0, 1) }, // Disable all dates after today
+        { from: new Date(0), to: startDate },
+        { from: endDate, to: new Date(2100, 0, 1) },
     ]);
 
     useEffect(() => {
@@ -65,7 +72,7 @@ export default function WeekSelection({
                 weekStartsOn={1}
                 captionLayout='dropdown'
                 defaultMonth={new Date()}
-                startMonth={new Date(2022, 7)}
+                startMonth={new Date(startYear, startMonth)}
                 endMonth={new Date()}
                 modifiers={{
                     selected: selectedWeek,

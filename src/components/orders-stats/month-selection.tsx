@@ -23,27 +23,29 @@ const months = [
     'December',
 ];
 
-const minYearForOrders = 2022;
-const maxYearForOrders = new Date().getFullYear();
-const yearsForOrders = Array.from(
-    { length: maxYearForOrders - minYearForOrders + 1 },
-    (_, i) => String(minYearForOrders + i)
-);
-
-const minMonthForOrdersOnFirstYear = 7; // August 2022
-const maxMonthForOrdersOnLastYear = new Date().getMonth(); // current month
-
 type MonthSelectionProps = {
+    minYearForOrders?: number;
+    minMonthForOrdersOnFirstYear?: number;
     selectedPeriod: string;
     otherPeriod: string;
     handleSelectPeriod: (value: string) => void;
 };
 
 export default function MonthSelection({
+    minYearForOrders = 2022,
+    minMonthForOrdersOnFirstYear = 7,
     handleSelectPeriod,
     selectedPeriod,
     otherPeriod,
 }: MonthSelectionProps) {
+    const maxYearForOrders = new Date().getFullYear();
+    const yearsForOrders = Array.from(
+        { length: maxYearForOrders - minYearForOrders + 1 },
+        (_, i) => String(minYearForOrders + i)
+    );
+
+    const maxMonthForOrdersOnLastYear = new Date().getMonth(); // current month
+
     return (
         <div className='flex items-center gap-2'>
             Month:{' '}
@@ -56,8 +58,6 @@ export default function MonthSelection({
                         <SelectGroup key={year}>
                             <SelectLabel>{year}</SelectLabel>
                             {months
-
-                                .filter((m) => `${m}-${year}` !== otherPeriod)
                                 .map((month, index) => {
                                     if (
                                         (year === yearsForOrders[0] &&
@@ -75,6 +75,10 @@ export default function MonthSelection({
                                         <SelectItem
                                             key={month}
                                             value={`${month}-${year}`}
+                                            disabled={
+                                                `${month}-${year}` ===
+                                                otherPeriod
+                                            }
                                         >
                                             {month}{' '}
                                             <span className='text-xs text-muted-foreground'>

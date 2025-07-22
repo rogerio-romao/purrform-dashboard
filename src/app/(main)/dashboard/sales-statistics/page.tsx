@@ -11,7 +11,8 @@ import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-ch
 import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
 import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
-import PeriodComparison from '@/components/orders-stats/period-comparison';
+import PeriodComparisonCoupons from '@/components/orders-stats/period-comparison-coupons';
+import PeriodComparisonGlobal from '@/components/orders-stats/period-comparison-global';
 
 import {
     Card,
@@ -37,7 +38,7 @@ interface ControlPanelStats {
     coupons_nr?: number;
 }
 
-export default function OrdersLoyaltyStats() {
+export default function SalesStatistics() {
     const [data, setData] = useState<ControlPanelStats[]>([]);
 
     useEffect(() => {
@@ -311,12 +312,14 @@ export default function OrdersLoyaltyStats() {
                             </section>
                         </Card>
 
-                        <PeriodComparison
+                        <PeriodComparisonGlobal
                             ordersValueChartData={ordersValueChartData}
                             ordersNumberChartData={ordersNumberChartData}
                         />
 
                         <CouponTypesBreakdown />
+
+                        <PeriodComparisonCoupons />
                     </div>
                 </div>
             </div>
