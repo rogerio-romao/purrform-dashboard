@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { NotebookPen } from 'lucide-react';
+import { CalendarIcon, NotebookPen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -16,6 +16,7 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Form,
@@ -26,6 +27,11 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import {
     Table,
     TableBody,
@@ -38,6 +44,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import { CreditSystemOrder } from '@/app/lib/types';
+import { cn } from '@/app/lib/utils';
 import { toast } from '@/hooks/use-toast';
 
 interface OrdersTableProps {
@@ -47,6 +54,8 @@ interface OrdersTableProps {
 const EditOrderFormSchema = z.object({
     orderNotes: z.string().optional(),
     changeToOtherStatus: z.boolean(),
+    changeToPendingStatus: z.boolean(),
+    dueDate: z.string().optional(),
     adjustedOrderTotal: z.number().min(0).max(10000).optional(),
 });
 
@@ -91,6 +100,8 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
             orderNotes: '',
             changeToOtherStatus: false,
             adjustedOrderTotal: undefined,
+            changeToPendingStatus: false,
+            dueDate: selectedOrder ? selectedOrder.payment_due : '',
         },
     });
 
@@ -106,17 +117,30 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
             return;
         }
 
-        const { orderNotes, changeToOtherStatus, adjustedOrderTotal } = data;
+        const {
+            orderNotes,
+            changeToOtherStatus,
+            adjustedOrderTotal,
+            changeToPendingStatus,
+            dueDate,
+        } = data;
         const orderId = selectedOrder.id; // Get the order ID from selectedOrder
         const traderId = selectedOrder.trader_id; // Get the trader ID from selectedOrder
         const encodedOrderNotes = encodeURIComponent(orderNotes ?? '');
-        const changeStatus =
+        const changeStatusToOther =
             changeToOtherStatus && selectedOrder.order_status === 'paid';
+        const changeStatusToPending =
+            changeToPendingStatus && selectedOrder.order_status === 'overdue';
         const adjustedTotal = adjustedOrderTotal ?? selectedOrder.order_total;
 
         const hasNoteChanges = orderNotes !== (selectedOrder.order_notes ?? '');
         const hasTotalChanges = adjustedTotal !== selectedOrder.order_total;
-        const hasChanges = hasNoteChanges || changeStatus || hasTotalChanges;
+        const hasChanges =
+            hasNoteChanges ||
+            changeStatusToOther ||
+            changeStatusToPending ||
+            hasTotalChanges ||
+            dueDate !== selectedOrder.payment_due;
 
         if (!hasChanges) {
             toast({
@@ -146,8 +170,14 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
         if (hasNoteChanges) {
             queryParams.append('orderNotes', encodedOrderNotes);
         }
-        if (changeStatus) {
+        if (changeStatusToOther) {
             queryParams.append('changeStatusToOther', 'true');
+        }
+        if (changeStatusToPending) {
+            queryParams.append('changeStatusToPending', 'true');
+        }
+        if (dueDate) {
+            queryParams.append('dueDate', dueDate);
         }
         if (hasTotalChanges) {
             queryParams.append('newTotal', String(adjustedTotal));
@@ -167,7 +197,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                 description: `Order #${
                     selectedOrder?.order_nr
                 } has been updated. ${adjustedTotalMessage ?? ''} ${
-                    changeStatus ? 'Order moved to "other" status.' : ''
+                    changeStatusToOther ? 'Order moved to "other" status.' : ''
                 }`,
                 variant: 'default',
             });
@@ -191,6 +221,8 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                 // Consider if 'changeToOtherStatus' should be derived from selectedOrder.order_status
                 changeToOtherStatus: selectedOrder.order_status === 'other',
                 adjustedOrderTotal: selectedOrder.order_total ?? undefined,
+                changeToPendingStatus: false,
+                dueDate: selectedOrder.payment_due,
             });
         } else {
             // Reset form to defaults if selectedOrder is null (e.g., dialog closed)
@@ -198,6 +230,8 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                 orderNotes: '',
                 changeToOtherStatus: false,
                 adjustedOrderTotal: undefined,
+                changeToPendingStatus: false,
+                dueDate: '',
             });
         }
     }, [selectedOrder, form]);
@@ -390,40 +424,142 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
 
                                 {selectedOrder?.order_status === 'overdue' ||
                                 selectedOrder?.order_status === 'pending' ? (
+                                    <>
+                                        <FormField
+                                            control={form.control}
+                                            name='adjustedOrderTotal'
+                                            render={({ field }) => (
+                                                <FormItem className='mt-4'>
+                                                    <FormLabel>
+                                                        Adjust Order Total
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <div className='relative flex items-center'>
+                                                            <span className='absolute left-2 text-muted-foreground'>
+                                                                £
+                                                            </span>
+                                                            <Input
+                                                                type='number'
+                                                                className='pl-6'
+                                                                placeholder='Adjust Amount'
+                                                                {...field}
+                                                                onChange={(e) =>
+                                                                    field.onChange(
+                                                                        Number(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name='dueDate'
+                                            render={({ field }) => (
+                                                <FormItem className='flex flex-col mt-4'>
+                                                    <FormLabel>
+                                                        Change Due Date
+                                                    </FormLabel>
+                                                    <Popover>
+                                                        <PopoverTrigger asChild>
+                                                            <FormControl>
+                                                                <Button
+                                                                    variant={
+                                                                        'outline'
+                                                                    }
+                                                                    className={cn(
+                                                                        'w-[240px] pl-3 text-left font-normal',
+                                                                        !field.value &&
+                                                                            'text-muted-foreground'
+                                                                    )}
+                                                                >
+                                                                    {field.value ? (
+                                                                        field.value
+                                                                    ) : (
+                                                                        <span>
+                                                                            Pick
+                                                                            a
+                                                                            date
+                                                                        </span>
+                                                                    )}
+                                                                    <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                                                                </Button>
+                                                            </FormControl>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent
+                                                            className='w-auto p-0'
+                                                            align='start'
+                                                        >
+                                                            <Calendar
+                                                                mode='single'
+                                                                selected={
+                                                                    new Date(
+                                                                        field.value ||
+                                                                            selectedOrder.payment_due
+                                                                    )
+                                                                }
+                                                                onSelect={(
+                                                                    date
+                                                                ) => {
+                                                                    if (date) {
+                                                                        // this is to avoid timezone issues
+                                                                        date.setHours(
+                                                                            5
+                                                                        );
+                                                                        field.onChange(
+                                                                            date
+                                                                                .toISOString()
+                                                                                .split(
+                                                                                    'T'
+                                                                                )[0]
+                                                                        );
+                                                                    }
+                                                                }}
+                                                                autoFocus
+                                                            />
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </>
+                                ) : null}
+
+                                {selectedOrder?.order_status === 'overdue' && (
                                     <FormField
                                         control={form.control}
-                                        name='adjustedOrderTotal'
+                                        name='changeToPendingStatus'
                                         render={({ field }) => (
                                             <FormItem className='mt-4'>
-                                                <FormLabel>
-                                                    Adjust Order Total
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <div className='relative flex items-center'>
-                                                        <span className='absolute left-2 text-muted-foreground'>
-                                                            £
-                                                        </span>
-                                                        <Input
-                                                            type='number'
-                                                            className='pl-6'
-                                                            placeholder='Adjust Amount'
-                                                            {...field}
-                                                            onChange={(e) =>
-                                                                field.onChange(
-                                                                    Number(
-                                                                        e.target
-                                                                            .value
-                                                                    )
-                                                                )
+                                                <div className='flex items-center space-x-2'>
+                                                    <FormLabel>
+                                                        Change status to
+                                                        Pending?
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={
+                                                                field.value
+                                                            }
+                                                            onCheckedChange={
+                                                                field.onChange
                                                             }
                                                         />
-                                                    </div>
-                                                </FormControl>
+                                                    </FormControl>
+                                                </div>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
-                                ) : null}
+                                )}
 
                                 {selectedOrder?.order_status === 'paid' && (
                                     <FormField
