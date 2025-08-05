@@ -230,7 +230,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                 orderNotes: '',
                 changeToOtherStatus: false,
                 adjustedOrderTotal: undefined,
-                changeToPendingStatus: true,
+                changeToPendingStatus: false,
                 dueDate: '',
             });
         }
