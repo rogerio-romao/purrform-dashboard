@@ -41,6 +41,9 @@ export default function TescoOrders() {
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
+    // Minimum available data date: 1st April 2025 (set hour to avoid TZ issues)
+    const MIN_DATE = new Date(2025, 3, 1, 5);
+
     const form = useForm<z.infer<typeof filterTescoOrdersByDateFormSchema>>({
         resolver: zodResolver(filterTescoOrdersByDateFormSchema),
         defaultValues: {
@@ -177,6 +180,10 @@ export default function TescoOrders() {
                                                                                 );
                                                                             }
                                                                         }}
+                                                                        disabled={{
+                                                                            before: MIN_DATE,
+                                                                            after: new Date(),
+                                                                        }}
                                                                         autoFocus
                                                                     />
                                                                 </PopoverContent>
@@ -255,6 +262,10 @@ export default function TescoOrders() {
                                                                                         )[0]
                                                                                 );
                                                                             }
+                                                                        }}
+                                                                        disabled={{
+                                                                            before: MIN_DATE,
+                                                                            after: new Date(),
                                                                         }}
                                                                         autoFocus
                                                                     />
