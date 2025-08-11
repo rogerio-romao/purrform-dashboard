@@ -138,3 +138,16 @@ export type TransformedDataForCouponSemesterGraph = {
     month: string;
     [key: string]: number | string;
 };
+
+export interface TescoOrder {
+    id: number;
+    bc_order_id: number;
+    tesco_invoice_nr: string;
+    order_value: number;
+    order_date: string;
+}
+
+export interface TescoOrdersResponse {
+    data: TescoOrder[];
+    error: string | null;
+}
