@@ -38,6 +38,9 @@ import { CalendarIcon } from 'lucide-react';
 
 export default function TescoOrders() {
     const [tescoOrders, setTescoOrders] = useState<TescoOrder[]>([]);
+    const [filteredTescoOrders, setFilteredTescoOrders] = useState<
+        TescoOrder[] | null
+    >(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -55,7 +58,61 @@ export default function TescoOrders() {
     function onSubmit(
         values: z.infer<typeof filterTescoOrdersByDateFormSchema>
     ) {
-        console.log('Form submitted:', values);
+        if (!tescoOrders || tescoOrders.length === 0) {
+            setFilteredTescoOrders(null);
+            return;
+        }
+
+        const validated = filterTescoOrdersByDateFormSchema.safeParse(values);
+
+        if (!validated.success) {
+            return;
+        }
+
+        const { startDate, endDate } = values;
+        const [startYear, startMonth, startDay] = startDate.split('-');
+        const [endYear, endMonth, endDay] = endDate.split('-');
+
+        const startDateObj = new Date(
+            Number(startYear),
+            Number(startMonth) - 1,
+            Number(startDay),
+            5,
+            0,
+            0,
+            0
+        );
+        const endDateObj = new Date(
+            Number(endYear),
+            Number(endMonth) - 1,
+            Number(endDay),
+            5,
+            0,
+            0,
+            0
+        );
+
+        setFilteredTescoOrders(
+            tescoOrders.filter((order) => {
+                const [year, month, day] = order.order_date.split('-');
+                const orderDate = new Date(
+                    Number(year),
+                    Number(month) - 1,
+                    Number(day),
+                    5,
+                    0,
+                    0,
+                    0
+                );
+
+                return (
+                    orderDate.getTime() >= startDateObj.getTime() &&
+                    orderDate.getTime() <= endDateObj.getTime()
+                );
+            })
+        );
+
+        form.reset();
     }
 
     useEffect(() => {
@@ -263,11 +320,23 @@ export default function TescoOrders() {
                                                                                 );
                                                                             }
                                                                         }}
-                                                                        disabled={{
-                                                                            before: MIN_DATE,
-                                                                            after: new Date(),
-                                                                        }}
-                                                                        autoFocus
+                                                                        disabled={
+                                                                            form.watch(
+                                                                                'startDate'
+                                                                            )
+                                                                                ? {
+                                                                                      before: new Date(
+                                                                                          form.watch(
+                                                                                              'startDate'
+                                                                                          )
+                                                                                      ),
+                                                                                      after: new Date(),
+                                                                                  }
+                                                                                : {
+                                                                                      before: MIN_DATE,
+                                                                                      after: new Date(),
+                                                                                  }
+                                                                        }
                                                                     />
                                                                 </PopoverContent>
                                                             </Popover>
@@ -276,8 +345,16 @@ export default function TescoOrders() {
                                                     )}
                                                 />
                                             </div>
-                                            <div className='flex gap-2'>
-                                                <Button type='submit'>
+                                            <div className='flex gap-4 items-center'>
+                                                <Button
+                                                    type='submit'
+                                                    disabled={
+                                                        !form.watch(
+                                                            'startDate'
+                                                        ) ||
+                                                        !form.watch('endDate')
+                                                    }
+                                                >
                                                     Submit
                                                 </Button>
                                             </div>
