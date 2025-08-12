@@ -15,7 +15,15 @@ import {
 
 import { TescoOrder } from '@/app/lib/types';
 
-export default function TescoOrdersList({ orders }: { orders: TescoOrder[] }) {
+interface TescoOrdersListProps {
+    orders: TescoOrder[];
+    title: string;
+}
+
+export default function TescoOrdersList({
+    orders,
+    title,
+}: TescoOrdersListProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 25;
 
@@ -35,7 +43,7 @@ export default function TescoOrdersList({ orders }: { orders: TescoOrder[] }) {
     return (
         <Card className='sm:col-span-2'>
             <CardHeader className='pb-3'>
-                <CardTitle className='text-lg'>All Tesco Orders</CardTitle>
+                <CardTitle className='text-lg'>{title}</CardTitle>
                 <CardContent>
                     <Table>
                         <TableHeader>

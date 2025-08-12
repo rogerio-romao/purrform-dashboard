@@ -1,13 +1,16 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CalendarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import Loading from '@/components/common/loading';
 import TescoOrdersList from '@/components/tesco-orders/tesco-orders-list';
+import TescoSummaryCard from '@/components/tesco-orders/tesco-summary-card';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
     Card,
     CardContent,
@@ -23,18 +26,15 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-
-import { BACKEND_BASE_URL } from '@/app/lib/definitions';
-import { TescoOrder, TescoOrdersResponse } from '@/app/lib/types';
-import { cn, filterTescoOrdersByDateFormSchema } from '@/app/lib/utils';
-import { Calendar } from '@/components/ui/calendar';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
+
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+import { TescoOrder, TescoOrdersResponse } from '@/app/lib/types';
+import { cn, filterTescoOrdersByDateFormSchema } from '@/app/lib/utils';
 
 export default function TescoOrders() {
     const [tescoOrders, setTescoOrders] = useState<TescoOrder[]>([]);
@@ -43,6 +43,10 @@ export default function TescoOrders() {
     >(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [totalForThePeriod, setTotalForThePeriod] = useState(0);
+    const [ordersInPeriod, setOrdersInPeriod] = useState(0);
+    const [startDateForSummary, setStartDateForSummary] = useState<string>('');
+    const [endDateForSummary, setEndDateForSummary] = useState<string>('');
 
     // Minimum available data date: 1st April 2025 (set hour to avoid TZ issues)
     const MIN_DATE = new Date(2025, 3, 1, 5);
@@ -92,27 +96,33 @@ export default function TescoOrders() {
             0
         );
 
-        setFilteredTescoOrders(
-            tescoOrders.filter((order) => {
-                const [year, month, day] = order.order_date.split('-');
-                const orderDate = new Date(
-                    Number(year),
-                    Number(month) - 1,
-                    Number(day),
-                    5,
-                    0,
-                    0,
-                    0
-                );
+        const filtered = tescoOrders.filter((order) => {
+            const [year, month, day] = order.order_date.split('-');
+            const orderDate = new Date(
+                Number(year),
+                Number(month) - 1,
+                Number(day),
+                5,
+                0,
+                0,
+                0
+            );
 
-                return (
-                    orderDate.getTime() >= startDateObj.getTime() &&
-                    orderDate.getTime() <= endDateObj.getTime()
-                );
-            })
-        );
+            return (
+                orderDate.getTime() >= startDateObj.getTime() &&
+                orderDate.getTime() <= endDateObj.getTime()
+            );
+        });
 
-        form.reset();
+        const totalForThePeriod = filtered.reduce((acc, order) => {
+            return acc + order.order_value;
+        }, 0);
+
+        setStartDateForSummary(startDate);
+        setEndDateForSummary(endDate);
+        setTotalForThePeriod(totalForThePeriod);
+        setOrdersInPeriod(filtered.length);
+        setFilteredTescoOrders(filtered);
     }
 
     useEffect(() => {
@@ -360,6 +370,22 @@ export default function TescoOrders() {
                                             </div>
                                         </form>
                                     </Form>
+                                    {filteredTescoOrders && (
+                                        <>
+                                            <TescoSummaryCard
+                                                startDate={startDateForSummary}
+                                                endDate={endDateForSummary}
+                                                total={totalForThePeriod}
+                                                ordersCount={ordersInPeriod}
+                                            />
+                                            <div className='mt-8'>
+                                                <TescoOrdersList
+                                                    orders={filteredTescoOrders}
+                                                    title='Search Results'
+                                                />
+                                            </div>
+                                        </>
+                                    )}
                                 </CardContent>
                             </CardHeader>
                         </Card>
@@ -367,7 +393,10 @@ export default function TescoOrders() {
                         {tescoOrders.length === 0 ? (
                             <p>No orders found.</p>
                         ) : (
-                            <TescoOrdersList orders={tescoOrders} />
+                            <TescoOrdersList
+                                orders={tescoOrders}
+                                title='All Tesco Orders'
+                            />
                         )}
                     </div>
                 </div>
