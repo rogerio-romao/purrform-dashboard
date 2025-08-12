@@ -10,6 +10,7 @@ import {
     CirclePercent,
     CreditCard,
     ShieldCheck,
+    Store,
 } from 'lucide-react';
 
 import {
@@ -70,6 +71,12 @@ const items: NavItem[] = [
         to: 'coupon-code-types',
         icon: CirclePercent,
         allowedRoles: ['admin'],
+    },
+    {
+        title: 'Tesco Orders',
+        to: 'tesco-orders',
+        icon: Store,
+        allowedRoles: ['admin', 'bookkeeper'],
     },
 ];
 
