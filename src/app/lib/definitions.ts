@@ -18,6 +18,7 @@ export const LoginFormSchema = z.object({
             'support@purrform.co.uk',
             'djgroovy@gmail.com',
             'rogerio.romao@hotmail.com',
+            'frank.stormfield@nutriment.com',
             ...BOOKKEEPER_EMAILS,
         ],
         { message: 'Invalid email' }
