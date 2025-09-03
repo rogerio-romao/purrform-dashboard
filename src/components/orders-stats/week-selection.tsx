@@ -7,7 +7,7 @@ type WeekSelectionProps = {
     startYear?: number;
     startMonth?: number;
     startDay?: number;
-    otherPeriod: string;
+    otherPeriod?: string;
     handleSelectPeriod: (value: string) => void;
 };
 
