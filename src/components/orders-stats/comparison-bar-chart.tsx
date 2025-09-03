@@ -128,17 +128,19 @@ export default function ComparisonBarChart({
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className='flex-col items-start gap-2 text-sm'>
-                <div className='flex gap-2 font-medium leading-none'>
-                    <TrendingText
-                        percentageDifference={percentageDifference}
-                        firstValue={firstValue ?? 0}
-                        secondValue={lastValue ?? 0}
-                        label={lastLabel}
-                        labelPrefix={labelPrefix}
-                    />
-                </div>
-            </CardFooter>
+            {chartData.length > 1 && (
+                <CardFooter className='flex-col items-start gap-2 text-sm'>
+                    <div className='flex gap-2 font-medium leading-none'>
+                        <TrendingText
+                            percentageDifference={percentageDifference}
+                            firstValue={firstValue ?? 0}
+                            secondValue={lastValue ?? 0}
+                            label={lastLabel}
+                            labelPrefix={labelPrefix}
+                        />
+                    </div>
+                </CardFooter>
+            )}
         </Card>
     );
 }

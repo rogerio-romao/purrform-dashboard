@@ -9,7 +9,7 @@ import {
 type YearSelectionProps = {
     minYearForOrders?: number;
     selectedPeriod: string;
-    otherPeriod: string;
+    otherPeriod?: string;
     handleSelectPeriod: (value: string) => void;
 };
 

@@ -2,19 +2,13 @@
 
 import { useState } from 'react';
 
-import getComparisonData from '@/app/actions/getComparisonData';
+import getSinglePeriodData from '@/app/actions/getSinglePeriodData';
 
-import ComparisonCharts from './comparison-charts';
-import TimeSelection from './time-selection';
+import SinglePeriodCharts from './single-period-charts';
+import TimeSelectionSingle from './time-selection-single';
 
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import {
     Select,
     SelectContent,
@@ -30,9 +24,9 @@ type OrdersNumberBarChartProps = {
     loyaltyPercentage: number;
     coupons: number;
     couponsPercentage: number;
-}[];
+} | null;
 
-interface ComparisonData {
+interface PeriodData {
     sales_value: number;
     sales_nr: number;
     loyalty_value: number;
@@ -43,72 +37,52 @@ interface ComparisonData {
 }
 
 type ControlPanelComparisonDataResponse =
-    | { ok: true; data: { period1: ComparisonData; period2: ComparisonData } }
+    | { ok: true; data: { period: PeriodData } }
     | { ok: false; error: string };
 
-interface PeriodComparisonProps {
+interface SinglePeriodProps {
     ordersValueChartData: OrdersNumberBarChartProps;
     ordersNumberChartData: OrdersNumberBarChartProps;
 }
 
-export default function PeriodComparisonGlobal(
-    { ordersValueChartData, ordersNumberChartData }: PeriodComparisonProps = {
-        ordersValueChartData: [],
-        ordersNumberChartData: [],
-    }
-) {
+export default function SinglePeriodGlobal() {
     const [selectedPeriodType, setSelectedPeriodType] = useState<string>('');
-    const [selectedPeriod1, setSelectedPeriod1] = useState<string>('');
-    const [selectedPeriod2, setSelectedPeriod2] = useState<string>('');
-    const [period1Data, setPeriod1Data] = useState<ComparisonData | null>(null);
-    const [period2Data, setPeriod2Data] = useState<ComparisonData | null>(null);
+    const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+    const [periodData, setPeriodData] = useState<PeriodData | null>(null);
     const [fetchDataError, setFetchDataError] = useState<string | null>(null);
-
-    const showGetDataButton = selectedPeriod1 && selectedPeriod2;
 
     const handleSelectPeriodType = (value: string) => {
         setSelectedPeriodType(value);
-        setSelectedPeriod1('');
-        setSelectedPeriod2('');
+        setSelectedPeriod('');
     };
 
-    const handleSelectPeriod1 = (value: string) => {
-        setSelectedPeriod1(value);
-    };
-
-    const handleSelectPeriod2 = (value: string) => {
-        setSelectedPeriod2(value);
+    const handleSelectPeriod = (value: string) => {
+        setSelectedPeriod(value);
     };
 
     const handleGetData = async () => {
-        const comparisonData: ControlPanelComparisonDataResponse =
-            await getComparisonData(
-                selectedPeriodType,
-                selectedPeriod1,
-                selectedPeriod2
-            );
+        const singlePeriodData: ControlPanelComparisonDataResponse =
+            await getSinglePeriodData(selectedPeriodType, selectedPeriod);
 
-        if (!comparisonData.ok) {
+        if (!singlePeriodData.ok) {
             console.error(
-                'Error fetching comparison data:',
-                comparisonData.error
+                'Error fetching single period data:',
+                singlePeriodData.error
             );
-            setPeriod1Data(null);
-            setPeriod2Data(null);
-            setFetchDataError(comparisonData.error);
+            setPeriodData(null);
+            setFetchDataError(singlePeriodData.error);
             return;
         }
 
         setFetchDataError(null);
-        setPeriod1Data(comparisonData.data.period1);
-        setPeriod2Data(comparisonData.data.period2);
+        setPeriodData(singlePeriodData.data.period);
     };
 
     return (
         <>
             <CardHeader className='px-7 relative'>
                 <CardDescription className='flex flex-col gap-2'>
-                    Select time periods to compare
+                    Select time period
                     <Select
                         value={selectedPeriodType}
                         onValueChange={handleSelectPeriodType}
@@ -124,7 +98,7 @@ export default function PeriodComparisonGlobal(
                         </SelectContent>
                     </Select>
                 </CardDescription>
-                {showGetDataButton ? (
+                {selectedPeriod ? (
                     <Button
                         size={'lg'}
                         className='md:absolute top-4 right-6'
@@ -140,18 +114,13 @@ export default function PeriodComparisonGlobal(
                 </CardContent>
             ) : null}
             {selectedPeriodType ? (
-                <TimeSelection
+                <TimeSelectionSingle
                     selectedPeriodType={selectedPeriodType}
-                    selectedPeriod1={selectedPeriod1}
-                    handleSelectPeriod1={handleSelectPeriod1}
-                    selectedPeriod2={selectedPeriod2}
-                    handleSelectPeriod2={handleSelectPeriod2}
+                    selectedPeriod={selectedPeriod}
+                    handleSelectPeriod={handleSelectPeriod}
                 />
             ) : null}
-            <ComparisonCharts
-                period1Data={period1Data}
-                period2Data={period2Data}
-            />
+            <SinglePeriodCharts periodData={periodData} />
         </>
     );
 }

@@ -27,7 +27,7 @@ type MonthSelectionProps = {
     minYearForOrders?: number;
     minMonthForOrdersOnFirstYear?: number;
     selectedPeriod: string;
-    otherPeriod: string;
+    otherPeriod?: string;
     handleSelectPeriod: (value: string) => void;
 };
 

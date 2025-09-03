@@ -151,3 +151,16 @@ export interface TescoOrdersResponse {
     data: TescoOrder[];
     error: string | null;
 }
+
+export interface CsvDataStats {
+    loyalty_nr: number;
+    loyalty_value: number;
+    sales_nr: number;
+    sales_value: number;
+    coupons_nr: number | null;
+    coupons_value: number | null;
+    day?: string;
+    week?: string;
+    month?: string;
+    year?: number;
+}

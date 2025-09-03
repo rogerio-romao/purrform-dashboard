@@ -7,12 +7,13 @@ import { months } from '@/app/lib/utils';
 
 import Loading from '@/components/common/loading';
 import CouponTypesBreakdown from '@/components/orders-stats/coupon-types-breakdown';
+import CsvReports from '@/components/orders-stats/csv-reports';
 import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
 import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
 import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
 import PeriodComparisonCoupons from '@/components/orders-stats/period-comparison-coupons';
-import PeriodComparisonGlobal from '@/components/orders-stats/period-comparison-global';
+import SalesStatisticsWrapper from '@/components/orders-stats/sales-statistics-wrapper';
 
 import {
     Card,
@@ -276,6 +277,8 @@ export default function SalesStatistics() {
                             </Card>
                         </div>
 
+                        <CsvReports />
+
                         <Card>
                             <CardHeader className='px-7'>
                                 <CardTitle>
@@ -312,7 +315,7 @@ export default function SalesStatistics() {
                             </section>
                         </Card>
 
-                        <PeriodComparisonGlobal
+                        <SalesStatisticsWrapper
                             ordersValueChartData={ordersValueChartData}
                             ordersNumberChartData={ordersNumberChartData}
                         />
