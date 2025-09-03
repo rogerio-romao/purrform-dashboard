@@ -23,13 +23,8 @@ export default function CsvReports() {
             `${BACKEND_BASE_URL}/getDataForCsvStatsReport?period=${period}`
         );
 
-        if (!response.ok) {
-            toast({
-                title: 'Error',
-                description:
-                    'Failed to download report, please try again later.',
-                variant: 'destructive',
             });
+            return;
         }
 
         const data = (await response.json()) as CsvDataStats[];
