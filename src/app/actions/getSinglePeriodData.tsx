@@ -9,7 +9,7 @@ export default async function getSinglePeriodData(
     try {
         const response = await fetch(
             // `${BACKEND_BASE_URL}/singlePeriodData?periodType=${periodType}&period=${period}`
-            `https://7eaf77623caf.ngrok-free.app/singlePeriodData?periodType=${periodType}&period=${period}`
+            `${BACKEND_BASE_URL}/singlePeriodData?periodType=${periodType}&period=${period}`
         );
 
         if (!response.ok) {
