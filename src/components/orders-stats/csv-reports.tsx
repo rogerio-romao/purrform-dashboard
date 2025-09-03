@@ -23,6 +23,11 @@ export default function CsvReports() {
             `${BACKEND_BASE_URL}/getDataForCsvStatsReport?period=${period}`
         );
 
+        if (!response.ok) {
+            toast({
+                title: 'Error',
+                description: 'Failed to fetch report data',
+                variant: 'destructive',
             });
             return;
         }
