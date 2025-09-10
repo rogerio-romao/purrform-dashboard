@@ -89,6 +89,7 @@ export interface CreditSystemTrader {
     credit_ceiling: number;
     current_balance: number;
     has_overdue: boolean;
+    is_tnc_seller: boolean;
     created_at: string;
     invoice_email: string | null;
     updated_at: string;

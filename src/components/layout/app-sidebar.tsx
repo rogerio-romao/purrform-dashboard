@@ -10,6 +10,7 @@ import {
     CirclePercent,
     CreditCard,
     ShieldCheck,
+    ShoppingCart,
     Store,
 } from 'lucide-react';
 
@@ -77,6 +78,12 @@ const items: NavItem[] = [
         to: 'tesco-orders',
         icon: Store,
         allowedRoles: ['admin', 'bookkeeper'],
+    },
+    {
+        title: 'TNC Sellers',
+        to: 'tnc-sellers',
+        icon: ShoppingCart,
+        allowedRoles: ['admin'],
     },
 ];
 
