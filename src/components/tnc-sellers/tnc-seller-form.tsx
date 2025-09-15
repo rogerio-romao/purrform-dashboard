@@ -163,11 +163,13 @@ export default function TncSellerForm({
                                                         )}
                                                     >
                                                         {field.value
-                                                            ? mappedSellers.find(
-                                                                  (seller) =>
-                                                                      seller.email ===
-                                                                      field.value
-                                                              )?.email
+                                                            ? form.getValues(
+                                                                  'selectedSellerFirstName'
+                                                              ) +
+                                                              ' ' +
+                                                              form.getValues(
+                                                                  'selectedSellerLastName'
+                                                              )
                                                             : 'Select seller'}
                                                         <ChevronsUpDown className='opacity-50' />
                                                     </Button>
@@ -188,15 +190,21 @@ export default function TncSellerForm({
                                                                 (seller) => (
                                                                     <CommandItem
                                                                         value={
-                                                                            seller.email
+                                                                            seller.first_name +
+                                                                            ' ' +
+                                                                            seller.last_name
                                                                         }
                                                                         key={
                                                                             seller.bc_id
                                                                         }
                                                                         onSelect={() => {
                                                                             form.setValue(
-                                                                                'selectedSellerEmail',
-                                                                                seller.email
+                                                                                'selectedSellerFirstName',
+                                                                                seller.first_name
+                                                                            );
+                                                                            form.setValue(
+                                                                                'selectedSellerLastName',
+                                                                                seller.last_name
                                                                             );
                                                                             form.setValue(
                                                                                 'selectedSellerId',
@@ -213,18 +221,16 @@ export default function TncSellerForm({
                                                                             );
                                                                         }}
                                                                     >
-                                                                        {
-                                                                            seller.first_name
-                                                                        }
-                                                                        <span className='text-muted-foreground text-xs'>
-                                                                            {' | ' +
-                                                                                seller.last_name}
-                                                                        </span>
+                                                                        {seller.first_name +
+                                                                            ' ' +
+                                                                            seller.last_name}
                                                                         <Check
                                                                             className={cn(
                                                                                 'ml-auto',
                                                                                 seller.email ===
-                                                                                    field.value
+                                                                                    form.getValues(
+                                                                                        'selectedSellerEmail'
+                                                                                    )
                                                                                     ? 'opacity-100'
                                                                                     : 'opacity-0'
                                                                             )}
@@ -250,7 +256,7 @@ export default function TncSellerForm({
                                     form.formState.isSubmitting
                                 }
                             >
-                                Get trader&apos;s credit data
+                                Get seller&apos;s data
                             </Button>
                         </div>
                     </form>
