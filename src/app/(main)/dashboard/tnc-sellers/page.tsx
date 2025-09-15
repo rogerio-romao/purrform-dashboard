@@ -15,19 +15,13 @@ import {
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 
-import type { CreditSystemTrader } from '@/app/lib/types';
-
-interface MappedSeller {
-    bc_id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-}
+import type { CreditSystemTrader, TNCSeller } from '@/app/lib/types';
 
 export default function TncSellersPage() {
     const { toast } = useToast();
 
-    const [mappedSellers, setMappedSellers] = useState<MappedSeller[]>([]);
+    const [traders, setTraders] = useState<CreditSystemTrader[]>([]);
+    const [mappedSellers, setMappedSellers] = useState<TNCSeller[]>([]);
     const [selectedSellerId, setSelectedSellerId] = useState<number | null>(
         null
     );
@@ -55,6 +49,7 @@ export default function TncSellersPage() {
                     }));
 
                 setMappedSellers(mapped);
+                setTraders(data);
             } catch (error) {
                 console.error('Error fetching traders:', error);
                 toast({
@@ -86,6 +81,16 @@ export default function TncSellersPage() {
                         <TncSellerForm
                             mappedSellers={mappedSellers}
                             setSelectedSellerId={setSelectedSellerId}
+                        />
+
+                        <TncSellerData
+                            selectedSellerId={selectedSellerId}
+                            setSelectedSellerId={setSelectedSellerId}
+                            seller={
+                                traders.find(
+                                    (trader) => trader.id === selectedSellerId
+                                ) || null
+                            }
                         />
                     </div>
                 </div>

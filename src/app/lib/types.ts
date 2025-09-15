@@ -165,3 +165,10 @@ export interface CsvDataStats {
     month?: string;
     year?: number;
 }
+
+export interface TNCSeller {
+    bc_id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+}

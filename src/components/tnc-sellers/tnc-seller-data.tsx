@@ -10,7 +10,7 @@ import ClosePanel from '../common/close-panel';
 import OrderHistoryForTrader from '../trader-credit/order-history-for-trader';
 import PendingOrdersForTrader from '../trader-credit/pending-orders-for-trader';
 import TraderCreditTraderDataActions from '../trader-credit/trader-credit-trader-data-actions';
-import TraderCreditTraderDataHeader from '../trader-credit/trader-credit-trader-data-header';
+import TncSellerDataHeader from './tnc-seller-data-header';
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 
@@ -18,180 +18,48 @@ import type {
     CreditSystemOrder,
     CreditSystemTrader,
     SupabaseError,
+    TNCSeller,
 } from '@/app/lib/types';
 
 interface TraderCreditTraderDataProps {
-    trader: CreditSystemTrader | undefined;
-    selectedTraderId: number | null;
-    setSelectedTraderId: React.Dispatch<React.SetStateAction<number | null>>;
-    setCreditTraders: React.Dispatch<
-        React.SetStateAction<CreditSystemTrader[]>
-    >;
+    seller: CreditSystemTrader | null;
+    selectedSellerId: number | null;
+    setSelectedSellerId: (id: number | null) => void;
 }
 
 export default function TncSellerData({
-    trader,
-    selectedTraderId,
-    setSelectedTraderId,
-    setCreditTraders,
+    seller,
+    selectedSellerId,
+    setSelectedSellerId,
 }: TraderCreditTraderDataProps) {
     const { toast } = useToast();
-    const [pendingOrdersForTrader, setPendingOrdersForTrader] = useState<
+    const [pendingOrdersForSeller, setPendingOrdersForSeller] = useState<
         CreditSystemOrder[]
     >([]);
-    const [showPendingOrdersForTrader, setShowPendingOrdersForTrader] =
+    const [showPendingOrdersForSeller, setShowPendingOrdersForSeller] =
         useState<boolean>(false);
-    const [orderHistoryForTrader, setOrderHistoryForTrader] = useState<
+    const [orderHistoryForSeller, setOrderHistoryForSeller] = useState<
         CreditSystemOrder[]
     >([]);
-    const [showOrderHistoryForTrader, setShowOrderHistoryForTrader] =
+    const [showOrderHistoryForSeller, setShowOrderHistoryForSeller] =
         useState<boolean>(false);
 
     useEffect(() => {
-        setShowOrderHistoryForTrader(false);
-        setShowPendingOrdersForTrader(false);
-    }, [selectedTraderId]);
+        setShowOrderHistoryForSeller(false);
+        setShowPendingOrdersForSeller(false);
+    }, [selectedSellerId]);
 
-    useEffect(() => {
-        if (!trader) {
-            return;
-        }
-
-        const changes = supabase
-            .channel('credit-order-changes-single-trader')
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'credit_system_orders',
-                    filter: `trader_id=eq.${trader.id}`,
-                },
-                (payload) => {
-                    if (payload.eventType === 'INSERT') {
-                        if (
-                            payload.new.order_status === 'pending' ||
-                            payload.new.order_status === 'overdue'
-                        ) {
-                            setPendingOrdersForTrader((prevOrders) => [
-                                ...prevOrders,
-                                payload.new as CreditSystemOrder,
-                            ]);
-                        }
-                        setOrderHistoryForTrader((prevOrders) => [
-                            ...prevOrders,
-                            payload.new as CreditSystemOrder,
-                        ]);
-                    } else if (payload.eventType === 'UPDATE') {
-                        setPendingOrdersForTrader((prevOrders) =>
-                            prevOrders
-                                .map((order) =>
-                                    order.id === payload.new.id
-                                        ? (payload.new as CreditSystemOrder)
-                                        : order
-                                )
-                                .filter(
-                                    (order) =>
-                                        order.order_status === 'pending' ||
-                                        order.order_status === 'overdue'
-                                )
-                        );
-                        setOrderHistoryForTrader((prevOrders) =>
-                            prevOrders
-                                .map((order) =>
-                                    order.id === payload.new.id
-                                        ? (payload.new as CreditSystemOrder)
-                                        : order
-                                )
-                                .sort((a, b) => {
-                                    const sortOrder = [
-                                        'overdue',
-                                        'pending',
-                                        'other',
-                                        'paid',
-                                    ];
-                                    return (
-                                        sortOrder.indexOf(a.order_status) -
-                                        sortOrder.indexOf(b.order_status)
-                                    );
-                                })
-                        );
-                    }
-                }
-            )
-            .on(
-                // postgres_changes event for DELETE is not filterable, so we need to handle it separately
-                'postgres_changes',
-                {
-                    event: 'DELETE',
-                    schema: 'public',
-                    table: 'credit_system_orders',
-                },
-                (payload) => {
-                    setPendingOrdersForTrader((prevOrders) =>
-                        prevOrders.filter(
-                            (order) => order.id !== payload.old.id
-                        )
-                    );
-                    setOrderHistoryForTrader((prevOrders) =>
-                        prevOrders.filter(
-                            (order) => order.id !== payload.old.id
-                        )
-                    );
-                }
-            )
-            .subscribe();
-
-        return () => {
-            changes.unsubscribe();
-        };
-    }, [trader]);
-
-    if (!trader) {
+    if (!seller) {
         return null;
     }
 
-    const companyName = trader.bc_customer_company
-        ? trader.bc_customer_company
-        : `${trader.bc_customer_first_name} ${trader.bc_customer_last_name}`;
-
-    async function handleRemoveTrader() {
-        if (!trader) {
-            return;
-        }
-
-        const response = await fetch(
-            `${BACKEND_BASE_URL}/removeTraderFromCreditSystem?traderId=${trader.id}`
-        );
-
-        if (response.ok) {
-            toast({
-                variant: 'default',
-                title: 'Trader Removed',
-                description: `${companyName} has been removed from the credit system.`,
-            });
-
-            setCreditTraders((prevTraders) =>
-                prevTraders.filter((t) => t.id !== trader.id)
-            );
-            setSelectedTraderId(null);
-        } else {
-            const message = await response.text();
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: `Failed to remove trader: ${message}`,
-            });
-        }
-    }
-
     async function handleViewPendingPaymentsForTrader() {
-        if (!trader) {
+        if (!seller) {
             return;
         }
 
         const response = await fetch(
-            `${BACKEND_BASE_URL}/getPendingOrdersForTrader?traderId=${trader.id}`
+            `${BACKEND_BASE_URL}/getPendingOrdersForTrader?traderId=${seller.id}`
         );
 
         if (response.ok) {
@@ -208,8 +76,8 @@ export default function TncSellerData({
                 return;
             }
 
-            setPendingOrdersForTrader(data);
-            setShowPendingOrdersForTrader(true);
+            setPendingOrdersForSeller(data);
+            setShowPendingOrdersForSeller(true);
         } else {
             toast({
                 variant: 'destructive',
@@ -219,13 +87,13 @@ export default function TncSellerData({
         }
     }
 
-    async function handleViewOrderHistoryForTrader() {
-        if (!trader) {
+    async function handleViewOrderHistoryForSeller() {
+        if (!seller) {
             return;
         }
 
         const response = await fetch(
-            `${BACKEND_BASE_URL}/getOrderHistoryForTrader?traderId=${trader.id}`
+            `${BACKEND_BASE_URL}/getOrderHistoryForTrader?traderId=${seller.id}`
         );
 
         if (response.ok) {
@@ -242,8 +110,8 @@ export default function TncSellerData({
                 return;
             }
 
-            setOrderHistoryForTrader(data);
-            setShowOrderHistoryForTrader(true);
+            setOrderHistoryForSeller(data);
+            setShowOrderHistoryForSeller(true);
         } else {
             toast({
                 variant: 'destructive',
@@ -255,23 +123,20 @@ export default function TncSellerData({
 
     return (
         <Card className='sm:col-span-3 relative'>
-            <ClosePanel setClosePanel={() => setSelectedTraderId(null)} />
-            <TraderCreditTraderDataHeader
-                companyName={companyName}
-                trader={trader}
-            />
+            <ClosePanel setClosePanel={() => setSelectedSellerId(null)} />
+            <TncSellerDataHeader seller={seller} />
 
             <Separator className='my-6' />
 
-            <TraderCreditTraderDataActions
+            {/* <TraderCreditTraderDataActions
                 trader={trader}
                 handleViewPendingPayments={handleViewPendingPaymentsForTrader}
                 handleViewOrderHistory={handleViewOrderHistoryForTrader}
                 handleRemoveTrader={handleRemoveTrader}
                 companyName={companyName}
-            />
+            /> */}
 
-            <CardContent>
+            {/* <CardContent>
                 <PendingOrdersForTrader
                     companyName={companyName}
                     pendingOrdersForTrader={pendingOrdersForTrader}
@@ -280,16 +145,16 @@ export default function TncSellerData({
                         setShowPendingOrdersForTrader
                     }
                 />
-            </CardContent>
+            </CardContent> */}
 
-            <CardContent>
+            {/* <CardContent>
                 <OrderHistoryForTrader
                     companyName={companyName}
                     orderHistoryForTrader={orderHistoryForTrader}
                     showOrderHistoryForTrader={showOrderHistoryForTrader}
                     setShowOrderHistoryForTrader={setShowOrderHistoryForTrader}
                 />
-            </CardContent>
+            </CardContent> */}
         </Card>
     );
 }
