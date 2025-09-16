@@ -6,11 +6,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
-import ClosePanel from '../common/close-panel';
-import OrderHistoryForTrader from '../trader-credit/order-history-for-trader';
-import PendingOrdersForTrader from '../trader-credit/pending-orders-for-trader';
-import TraderCreditTraderDataActions from '../trader-credit/trader-credit-trader-data-actions';
+import ClosePanel from '@/components/common/close-panel';
+import TncSellerDataActions from './tnc-seller-data-actions';
 import TncSellerDataHeader from './tnc-seller-data-header';
+import TncSellerOrders from './tnc-seller-orders';
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 
@@ -128,33 +127,15 @@ export default function TncSellerData({
 
             <Separator className='my-6' />
 
-            {/* <TraderCreditTraderDataActions
-                trader={trader}
+            {/* <TncSellerDataActions
+                seller={seller}
                 handleViewPendingPayments={handleViewPendingPaymentsForTrader}
-                handleViewOrderHistory={handleViewOrderHistoryForTrader}
-                handleRemoveTrader={handleRemoveTrader}
-                companyName={companyName}
+                handleViewOrderHistory={handleViewOrderHistoryForSeller}
             /> */}
 
-            {/* <CardContent>
-                <PendingOrdersForTrader
-                    companyName={companyName}
-                    pendingOrdersForTrader={pendingOrdersForTrader}
-                    showPendingOrdersForTrader={showPendingOrdersForTrader}
-                    setShowPendingOrdersForTrader={
-                        setShowPendingOrdersForTrader
-                    }
-                />
-            </CardContent> */}
-
-            {/* <CardContent>
-                <OrderHistoryForTrader
-                    companyName={companyName}
-                    orderHistoryForTrader={orderHistoryForTrader}
-                    showOrderHistoryForTrader={showOrderHistoryForTrader}
-                    setShowOrderHistoryForTrader={setShowOrderHistoryForTrader}
-                />
-            </CardContent> */}
+            <CardContent>
+                <TncSellerOrders seller={seller} />
+            </CardContent>
         </Card>
     );
 }
