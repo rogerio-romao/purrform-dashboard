@@ -28,6 +28,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
+import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import { CreditSystemOrder, CreditSystemTrader } from '@/app/lib/types';
 import {
     cn,
@@ -70,7 +71,7 @@ export default function TncSellerOrders({ seller }: TncSellerOrdersProps) {
             setError(null);
             try {
                 const response = await fetch(
-                    `https://7eaf77623caf.ngrok-free.app/getOrderHistoryForTrader?traderId=${sellerId}`,
+                    `${BACKEND_BASE_URL}/getOrderHistoryForTrader?traderId=${sellerId}`,
                     { signal: controller.signal }
                 );
 
@@ -222,7 +223,9 @@ export default function TncSellerOrders({ seller }: TncSellerOrdersProps) {
                             </div>
                         </CardDescription>
                         <CardContent>
-                            <div className='mt-6'>Filter by date range:</div>
+                            <div className='mt-6 text-gray-500'>
+                                Filter by date range:
+                            </div>
                             <Form {...form}>
                                 <form
                                     onSubmit={form.handleSubmit(onSubmit)}
@@ -404,6 +407,23 @@ export default function TncSellerOrders({ seller }: TncSellerOrdersProps) {
                                             }
                                         >
                                             Submit
+                                        </Button>
+                                        <Button
+                                            type='button'
+                                            variant='secondary'
+                                            disabled={
+                                                !form.watch('startDate') ||
+                                                !form.watch('endDate')
+                                            }
+                                            onClick={() => {
+                                                form.setValue('startDate', '');
+                                                form.setValue('endDate', '');
+                                                setFilteredSellerOrders(
+                                                    sellerOrders
+                                                );
+                                            }}
+                                        >
+                                            Clear Filters
                                         </Button>
                                     </div>
                                 </form>
