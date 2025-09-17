@@ -6,7 +6,7 @@ import { z } from 'zod';
 import type { CreditSystemTrader, OkOrErrorResponse } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
 
-import { CardContent } from '@/components//ui/card';
+import { CardContent } from '@/components/ui/card';
 import {
     AlertDialog,
     AlertDialogAction,
