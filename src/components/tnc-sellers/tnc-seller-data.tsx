@@ -32,92 +32,9 @@ export default function TncSellerData({
     setSelectedSellerId,
 }: TraderCreditTraderDataProps) {
     const { toast } = useToast();
-    const [pendingOrdersForSeller, setPendingOrdersForSeller] = useState<
-        CreditSystemOrder[]
-    >([]);
-    const [showPendingOrdersForSeller, setShowPendingOrdersForSeller] =
-        useState<boolean>(false);
-    const [orderHistoryForSeller, setOrderHistoryForSeller] = useState<
-        CreditSystemOrder[]
-    >([]);
-    const [showOrderHistoryForSeller, setShowOrderHistoryForSeller] =
-        useState<boolean>(false);
-
-    useEffect(() => {
-        setShowOrderHistoryForSeller(false);
-        setShowPendingOrdersForSeller(false);
-    }, [selectedSellerId]);
 
     if (!seller) {
         return null;
-    }
-
-    async function handleViewPendingPaymentsForTrader() {
-        if (!seller) {
-            return;
-        }
-
-        const response = await fetch(
-            `${BACKEND_BASE_URL}/getPendingOrdersForTrader?traderId=${seller.id}`
-        );
-
-        if (response.ok) {
-            const data = (await response.json()) as
-                | CreditSystemOrder[]
-                | SupabaseError;
-
-            if ('error' in data) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error',
-                    description: `Failed to fetch pending orders: ${data.error}`,
-                });
-                return;
-            }
-
-            setPendingOrdersForSeller(data);
-            setShowPendingOrdersForSeller(true);
-        } else {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: `Failed to fetch pending orders, please try again.`,
-            });
-        }
-    }
-
-    async function handleViewOrderHistoryForSeller() {
-        if (!seller) {
-            return;
-        }
-
-        const response = await fetch(
-            `${BACKEND_BASE_URL}/getOrderHistoryForTrader?traderId=${seller.id}`
-        );
-
-        if (response.ok) {
-            const data = (await response.json()) as
-                | CreditSystemOrder[]
-                | SupabaseError;
-
-            if ('error' in data) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Error',
-                    description: `Failed to fetch order history: ${data.error}`,
-                });
-                return;
-            }
-
-            setOrderHistoryForSeller(data);
-            setShowOrderHistoryForSeller(true);
-        } else {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: `Failed to fetch order history, please try again.`,
-            });
-        }
     }
 
     return (
@@ -126,12 +43,6 @@ export default function TncSellerData({
             <TncSellerDataHeader seller={seller} />
 
             <Separator className='my-6' />
-
-            {/* <TncSellerDataActions
-                seller={seller}
-                handleViewPendingPayments={handleViewPendingPaymentsForTrader}
-                handleViewOrderHistory={handleViewOrderHistoryForSeller}
-            /> */}
 
             <CardContent>
                 <TncSellerOrders seller={seller} />
