@@ -14,7 +14,6 @@ interface TncSellerDataHeaderProps {
 export default function TncSellerDataHeader({
     seller,
 }: TncSellerDataHeaderProps) {
-    console.log('Seller in Header:', seller);
     const { has_overdue, credit_ceiling, current_balance } = seller;
 
     const remainingBalancePercent = (current_balance / credit_ceiling) * 100;
