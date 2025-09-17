@@ -95,7 +95,7 @@ export const createCouponTypeFormSchema = z.object({
     details: z.string().optional(),
 });
 
-export const filterTescoOrdersByDateFormSchema = z.object({
+export const filterOrdersByDateFormSchema = z.object({
     startDate: z.string({ required_error: 'Start date is required' }).date(),
     endDate: z.string({ required_error: 'End date is required' }).date(),
 });

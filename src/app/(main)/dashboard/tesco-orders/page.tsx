@@ -34,7 +34,7 @@ import {
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import { TescoOrder, TescoOrdersResponse } from '@/app/lib/types';
-import { cn, filterTescoOrdersByDateFormSchema } from '@/app/lib/utils';
+import { cn, filterOrdersByDateFormSchema } from '@/app/lib/utils';
 
 export default function TescoOrders() {
     const [tescoOrders, setTescoOrders] = useState<TescoOrder[]>([]);
@@ -51,23 +51,21 @@ export default function TescoOrders() {
     // Minimum available data date: 1st April 2025 (set hour to avoid TZ issues)
     const MIN_DATE = new Date(2025, 3, 1, 5);
 
-    const form = useForm<z.infer<typeof filterTescoOrdersByDateFormSchema>>({
-        resolver: zodResolver(filterTescoOrdersByDateFormSchema),
+    const form = useForm<z.infer<typeof filterOrdersByDateFormSchema>>({
+        resolver: zodResolver(filterOrdersByDateFormSchema),
         defaultValues: {
             startDate: '',
             endDate: '',
         },
     });
 
-    function onSubmit(
-        values: z.infer<typeof filterTescoOrdersByDateFormSchema>
-    ) {
+    function onSubmit(values: z.infer<typeof filterOrdersByDateFormSchema>) {
         if (!tescoOrders || tescoOrders.length === 0) {
             setFilteredTescoOrders(null);
             return;
         }
 
-        const validated = filterTescoOrdersByDateFormSchema.safeParse(values);
+        const validated = filterOrdersByDateFormSchema.safeParse(values);
 
         if (!validated.success) {
             return;
