@@ -64,6 +64,7 @@ export default function TraderCreditAddTrader({
             selectedTraderEmail: '',
             creditAmount: 0,
             invoiceEmail: null,
+            isTncSeller: false,
         },
     });
 
@@ -108,10 +109,11 @@ export default function TraderCreditAddTrader({
             invoice_email: data.invoiceEmail
                 ? encodeURIComponent(data.invoiceEmail)
                 : null,
+            is_tnc_seller: data.isTncSeller,
         };
 
         await fetch(
-            `${BACKEND_BASE_URL}/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}&invoiceEmail=${traderToAdd.invoice_email}`,
+            `${BACKEND_BASE_URL}/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}&invoiceEmail=${traderToAdd.invoice_email}&isTncSeller=${traderToAdd.is_tnc_seller}`,
             {
                 method: 'GET',
                 headers: {
@@ -368,6 +370,33 @@ export default function TraderCreditAddTrader({
                                                                     ? e.target
                                                                           .value
                                                                     : null
+                                                            );
+                                                            form.trigger();
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div>
+                                    <FormField
+                                        control={form.control}
+                                        name='isTncSeller'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Is TNC Seller
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type='checkbox'
+                                                        {...field}
+                                                        value={undefined}
+                                                        onChange={(e) => {
+                                                            form.setValue(
+                                                                'isTncSeller',
+                                                                e.target.checked
                                                             );
                                                             form.trigger();
                                                         }}

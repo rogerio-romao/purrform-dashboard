@@ -1,11 +1,11 @@
 import ClosePanel from '@/components/common/close-panel';
+import OrdersTable from '@/components/common/orders-table';
 import {
     Card,
     CardDescription,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import OrdersTable from './orders-table';
 
 import { CreditSystemOrder } from '@/app/lib/types';
 

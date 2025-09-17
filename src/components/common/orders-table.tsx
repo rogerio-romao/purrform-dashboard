@@ -49,6 +49,7 @@ import { toast } from '@/hooks/use-toast';
 
 interface OrdersTableProps {
     orders: CreditSystemOrder[];
+    isSellersTable?: boolean;
 }
 
 const EditOrderFormSchema = z.object({
@@ -59,7 +60,10 @@ const EditOrderFormSchema = z.object({
     adjustedOrderTotal: z.number().min(0).max(10000).optional(),
 });
 
-export default function OrdersTable({ orders }: OrdersTableProps) {
+export default function OrdersTable({
+    orders,
+    isSellersTable = false,
+}: OrdersTableProps) {
     const [showEditOrderDialog, setShowEditOrderDialog] = useState(false);
     const [selectedOrder, setSelectedOrder] =
         useState<CreditSystemOrder | null>(null);
@@ -289,7 +293,9 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                         <TableHead>Payment Due</TableHead>
                         <TableHead>Order Total</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead>
+                            {isSellersTable ? 'Customer' : 'Actions'}
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -306,65 +312,74 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                             >
                                 {order.order_status}
                             </TableCell>
-                            <TableCell className='inline-flex gap-2'>
-                                {(order.order_status === 'pending' ||
-                                    order.order_status === 'overdue') && (
-                                    <AlertDialog>
-                                        <AlertDialogTrigger asChild>
-                                            <Button
-                                                variant={'default'}
-                                                size={'sm'}
-                                            >
-                                                Pay Now
-                                            </Button>
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                                <AlertDialogTitle>
-                                                    Confirm Payment
-                                                </AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                    Are you sure you want to
-                                                    mark order #{order.order_nr}{' '}
-                                                    as paid for £
-                                                    {order.order_total}?
-                                                </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                                <AlertDialogCancel>
-                                                    Cancel
-                                                </AlertDialogCancel>
-                                                <AlertDialogAction
-                                                    onClick={() =>
-                                                        handlePayNow(
-                                                            order.id,
-                                                            order.trader_id,
-                                                            order.order_status,
-                                                            order.order_total
-                                                        )
-                                                    }
+                            {isSellersTable ? (
+                                <TableCell className='inline-flex gap-2'>
+                                    {order.ordered_for || 'N/A'}
+                                </TableCell>
+                            ) : (
+                                <TableCell className='inline-flex gap-2'>
+                                    {(order.order_status === 'pending' ||
+                                        order.order_status === 'overdue') && (
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button
+                                                    variant={'default'}
+                                                    size={'sm'}
                                                 >
-                                                    Confirm Payment
-                                                </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                    </AlertDialog>
-                                )}
-                                {/* Button to trigger the single dialog */}
-                                <Button
-                                    variant={'outline'}
-                                    size={'sm'}
-                                    onClick={() => handleEditOrderClick(order)}
-                                >
-                                    {order.order_notes && (
-                                        <NotebookPen
-                                            size={12}
-                                            className='mr-1'
-                                        />
+                                                    Pay Now
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>
+                                                        Confirm Payment
+                                                    </AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Are you sure you want to
+                                                        mark order #
+                                                        {order.order_nr} as paid
+                                                        for £{order.order_total}
+                                                        ?
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>
+                                                        Cancel
+                                                    </AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        onClick={() =>
+                                                            handlePayNow(
+                                                                order.id,
+                                                                order.trader_id,
+                                                                order.order_status,
+                                                                order.order_total
+                                                            )
+                                                        }
+                                                    >
+                                                        Confirm Payment
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     )}
-                                    Edit Order
-                                </Button>
-                            </TableCell>
+                                    {/* Button to trigger the single dialog */}
+                                    <Button
+                                        variant={'outline'}
+                                        size={'sm'}
+                                        onClick={() =>
+                                            handleEditOrderClick(order)
+                                        }
+                                    >
+                                        {order.order_notes && (
+                                            <NotebookPen
+                                                size={12}
+                                                className='mr-1'
+                                            />
+                                        )}
+                                        Edit Order
+                                    </Button>
+                                </TableCell>
+                            )}
                         </TableRow>
                     ))}
                 </TableBody>

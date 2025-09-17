@@ -7,9 +7,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components//ui/card';
+import ClosePanel from '@/components/common/close-panel';
+import OrdersTable from '@/components/common/orders-table';
 import { Button } from '@/components/ui/button';
-import ClosePanel from '../common/close-panel';
-import OrdersTable from './orders-table';
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 import supabase from '@/app/lib/supabase';

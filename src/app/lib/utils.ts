@@ -71,6 +71,18 @@ export const addTraderToCreditFormSchema = z.object({
         .min(1, 'Credit amount must be at least 1')
         .nullable(),
     invoiceEmail: z.string().email('Invalid email format').nullable(),
+    isTncSeller: z.boolean().default(false),
+});
+
+export const tncSellerFormSchema = z.object({
+    selectedSellerId: z.number().min(1, 'Please select a seller'),
+    selectedSellerFirstName: z
+        .string()
+        .min(1, 'Please select a seller first name'),
+    selectedSellerLastName: z
+        .string()
+        .min(1, 'Please select a seller last name'),
+    selectedSellerEmail: z.string().email('Invalid email format'),
 });
 
 export const createCouponTypeFormSchema = z.object({
@@ -84,7 +96,7 @@ export const createCouponTypeFormSchema = z.object({
     details: z.string().optional(),
 });
 
-export const filterTescoOrdersByDateFormSchema = z.object({
+export const filterOrdersByDateFormSchema = z.object({
     startDate: z.string({ required_error: 'Start date is required' }).date(),
     endDate: z.string({ required_error: 'End date is required' }).date(),
 });
@@ -186,3 +198,8 @@ export function downloadCsv(csv: string, filename: string) {
     a.click();
     URL.revokeObjectURL(url);
 }
+
+export const gbpFormatter = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+});

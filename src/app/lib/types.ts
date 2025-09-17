@@ -89,6 +89,7 @@ export interface CreditSystemTrader {
     credit_ceiling: number;
     current_balance: number;
     has_overdue: boolean;
+    is_tnc_seller: boolean;
     created_at: string;
     invoice_email: string | null;
     updated_at: string;
@@ -102,6 +103,7 @@ export interface CreditSystemOrder {
     order_total: number;
     order_status: 'pending' | 'paid' | 'overdue' | 'other';
     order_notes?: string;
+    ordered_for?: string;
     trader_id: number;
 }
 
@@ -163,4 +165,11 @@ export interface CsvDataStats {
     week?: string;
     month?: string;
     year?: number;
+}
+
+export interface TNCSeller {
+    bc_id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
 }
