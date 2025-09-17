@@ -293,7 +293,9 @@ export default function OrdersTable({
                         <TableHead>Payment Due</TableHead>
                         <TableHead>Order Total</TableHead>
                         <TableHead>Status</TableHead>
-                        {isSellersTable ? null : <TableHead>Actions</TableHead>}
+                        <TableHead>
+                            {isSellersTable ? 'Customer' : 'Actions'}
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -310,7 +312,11 @@ export default function OrdersTable({
                             >
                                 {order.order_status}
                             </TableCell>
-                            {isSellersTable ? null : (
+                            {isSellersTable ? (
+                                <TableCell className='inline-flex gap-2'>
+                                    {order.ordered_for || 'N/A'}
+                                </TableCell>
+                            ) : (
                                 <TableCell className='inline-flex gap-2'>
                                     {(order.order_status === 'pending' ||
                                         order.order_status === 'overdue') && (

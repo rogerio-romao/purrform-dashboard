@@ -103,6 +103,7 @@ export interface CreditSystemOrder {
     order_total: number;
     order_status: 'pending' | 'paid' | 'overdue' | 'other';
     order_notes?: string;
+    ordered_for?: string;
     trader_id: number;
 }
 

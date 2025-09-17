@@ -6,12 +6,14 @@ import Loading from '@/components/common/loading';
 import OrdersTable from '@/components/common/orders-table';
 import {
     Card,
+    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
 
 import { CreditSystemOrder, CreditSystemTrader } from '@/app/lib/types';
+import { gbpFormatter } from '@/app/lib/utils';
 
 interface TncSellerOrdersProps {
     seller: CreditSystemTrader | null;
@@ -21,6 +23,10 @@ export default function TncSellerOrders({ seller }: TncSellerOrdersProps) {
     const [loading, setLoading] = useState(true);
     const [sellerOrders, setSellerOrders] = useState<CreditSystemOrder[]>([]);
     const [error, setError] = useState<string | null>(null);
+
+    const uniqueCustomers = new Set(
+        sellerOrders.map((order) => order.ordered_for ?? 'N/A')
+    ).size;
 
     useEffect(() => {
         const fetchSellerOrders = async () => {
@@ -69,8 +75,35 @@ export default function TncSellerOrders({ seller }: TncSellerOrdersProps) {
                     Order History for {seller?.bc_customer_first_name}{' '}
                     {seller?.bc_customer_last_name}
                 </CardTitle>
-                {sellerOrders.length === 0 && (
+                {sellerOrders.length === 0 ? (
                     <CardDescription>No orders available.</CardDescription>
+                ) : (
+                    <CardDescription className='flex gap-6'>
+                        <div className='font-semibold uppercase'>Summary:</div>
+                        <div>
+                            Total Orders:{' '}
+                            <span className='font-semibold'>
+                                {sellerOrders.length}
+                            </span>
+                        </div>
+                        <div>
+                            Unique Customers:{' '}
+                            <span className='font-semibold'>
+                                {uniqueCustomers}
+                            </span>
+                        </div>
+                        <div>
+                            Total Amount:{' '}
+                            <span className='font-semibold'>
+                                {gbpFormatter.format(
+                                    sellerOrders.reduce(
+                                        (acc, order) => acc + order.order_total,
+                                        0
+                                    )
+                                )}
+                            </span>
+                        </div>
+                    </CardDescription>
                 )}
             </CardHeader>
             {sellerOrders.length > 0 && (

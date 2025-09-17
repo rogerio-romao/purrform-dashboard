@@ -197,3 +197,8 @@ export function downloadCsv(csv: string, filename: string) {
     a.click();
     URL.revokeObjectURL(url);
 }
+
+export const gbpFormatter = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+});
