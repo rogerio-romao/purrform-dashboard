@@ -294,7 +294,7 @@ export default function OrdersTable({
                         <TableHead>Order Total</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>
-                            {isSellersTable ? 'Customer' : 'Actions'}
+                            {isSellersTable ? 'Company' : 'Actions'}
                         </TableHead>
                     </TableRow>
                 </TableHeader>
