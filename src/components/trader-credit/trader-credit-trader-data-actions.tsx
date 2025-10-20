@@ -6,7 +6,6 @@ import { z } from 'zod';
 import type { CreditSystemTrader, OkOrErrorResponse } from '@/app/lib/types';
 import { toast } from '@/hooks/use-toast';
 
-import { CardContent } from '@/components//ui/card';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,15 +18,18 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { CardContent } from '@/components/ui/card';
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
 
@@ -51,12 +53,13 @@ const ChangeCreditFormSchema = z.object({
         .min(0, {
             message: 'Credit limit must be a positive number',
         })
-        .max(10_000, {
-            message: 'Credit limit must be less than £10,000',
+        .max(20_000, {
+            message: 'Credit limit must be less than £20,000',
         }),
     invoiceEmail: z
         .union([z.string().email('Invalid email address'), z.literal('')])
         .optional(),
+    tier: z.boolean().default(false),
 });
 
 export default function TraderCreditTraderDataActions({
@@ -74,6 +77,7 @@ export default function TraderCreditTraderDataActions({
             companyName: trader.bc_customer_company,
             creditLimit: trader.credit_ceiling,
             invoiceEmail: trader.invoice_email ?? '',
+            tier: false,
         },
     });
 
@@ -83,6 +87,7 @@ export default function TraderCreditTraderDataActions({
             companyName: trader.bc_customer_company,
             creditLimit: trader.credit_ceiling,
             invoiceEmail: trader.invoice_email ?? '',
+            tier: trader.tier === '2',
         });
     }, [trader, form]);
 
@@ -94,6 +99,9 @@ export default function TraderCreditTraderDataActions({
         const previousCompanyName = trader.bc_customer_company;
         const newCompanyName = data.companyName;
         const companyNameChanged = previousCompanyName !== newCompanyName;
+        const previousCompanyTier = trader.tier;
+        const newCompanyTier = data.tier ? '2' : '1';
+        const tierChanged = previousCompanyTier !== newCompanyTier;
         const previousCreditLimit = trader.credit_ceiling;
         const newCreditLimit = data.creditLimit;
         const creditDifference = newCreditLimit - previousCreditLimit;
@@ -107,7 +115,8 @@ export default function TraderCreditTraderDataActions({
         if (
             !companyNameChanged &&
             !creditLimitChanged &&
-            !invoiceEmailChanged
+            !invoiceEmailChanged &&
+            !tierChanged
         ) {
             toast({
                 title: 'No changes made',
@@ -140,6 +149,10 @@ export default function TraderCreditTraderDataActions({
                 'Previous Invoice Email': trader.invoice_email || 'N/A',
                 'New Invoice Email': newInvoiceEmail || 'N/A',
             }),
+            ...(tierChanged && {
+                'Previous Tier': previousCompanyTier,
+                'New Tier': newCompanyTier,
+            }),
         };
 
         try {
@@ -150,7 +163,7 @@ export default function TraderCreditTraderDataActions({
                     newCompanyName ?? trader.bc_customer_company
                 )}&creditCeiling=${newCreditLimit}&newBalance=${newBalance}&invoiceEmail=${encodeURIComponent(
                     newInvoiceEmail ?? trader.invoice_email ?? ''
-                )}`
+                )}&tier2=${newCompanyTier === '2' ? 'true' : 'false'}`
             );
 
             if (!response.ok) {
@@ -277,6 +290,33 @@ export default function TraderCreditTraderDataActions({
                                                 />
                                             </FormControl>
                                             <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name='tier'
+                                    render={({ field }) => (
+                                        <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 mt-6 shadow-sm'>
+                                            <div className='space-y-0.5'>
+                                                <FormLabel>
+                                                    Enable Tier 2
+                                                </FormLabel>
+                                                <FormDescription>
+                                                    Use the switch to set the
+                                                    trader tier for enhanced
+                                                    credit terms (30 days
+                                                    instead of 14 days).
+                                                </FormDescription>
+                                            </div>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={
+                                                        field.onChange
+                                                    }
+                                                />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />

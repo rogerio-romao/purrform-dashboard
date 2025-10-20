@@ -90,6 +90,7 @@ export interface CreditSystemTrader {
     current_balance: number;
     has_overdue: boolean;
     is_tnc_seller: boolean;
+    tier: '1' | '2';
     created_at: string;
     invoice_email: string | null;
     updated_at: string;

@@ -71,6 +71,7 @@ export const addTraderToCreditFormSchema = z.object({
         .min(1, 'Credit amount must be at least 1')
         .nullable(),
     invoiceEmail: z.string().email('Invalid email format').nullable(),
+    isTier2: z.boolean().default(false),
     isTncSeller: z.boolean().default(false),
 });
 
