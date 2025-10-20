@@ -21,6 +21,7 @@ import {
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -34,6 +35,7 @@ import {
 } from '@/components/ui/popover';
 
 import { BACKEND_BASE_URL } from '@/app/lib/definitions';
+import { Switch } from '../ui/switch';
 
 interface TraderCreditFormProps {
     mappedTraders: {
@@ -64,6 +66,7 @@ export default function TraderCreditAddTrader({
             selectedTraderEmail: '',
             creditAmount: 0,
             invoiceEmail: null,
+            isTier2: false,
             isTncSeller: false,
         },
     });
@@ -110,10 +113,11 @@ export default function TraderCreditAddTrader({
                 ? encodeURIComponent(data.invoiceEmail)
                 : null,
             is_tnc_seller: data.isTncSeller,
+            tier: data.isTier2 ? '2' : '1',
         };
 
         await fetch(
-            `${BACKEND_BASE_URL}/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}&invoiceEmail=${traderToAdd.invoice_email}&isTncSeller=${traderToAdd.is_tnc_seller}`,
+            `${BACKEND_BASE_URL}/addTraderToCreditSystem?traderId=${traderToAdd.bc_customer_id}&traderEmail=${traderToAdd.bc_customer_email}&traderCompany=${traderToAdd.bc_customer_company}&traderFirstName=${traderToAdd.bc_customer_first_name}&traderLastName=${traderToAdd.bc_customer_last_name}&creditCeiling=${traderToAdd.credit_ceiling}&currentBalance=${traderToAdd.current_balance}&invoiceEmail=${traderToAdd.invoice_email}&isTncSeller=${traderToAdd.is_tnc_seller}&tier=${traderToAdd.tier}`,
             {
                 method: 'GET',
                 headers: {
@@ -307,99 +311,139 @@ export default function TraderCreditAddTrader({
                             />
                         </div>
                         {form.getValues('selectedTraderCompany') && (
-                            <div className='flex gap-8'>
-                                <div className='max-w-xs'>
-                                    <FormField
-                                        control={form.control}
-                                        name='creditAmount'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Credit amount
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <div className='relative w-full'>
-                                                        <PoundSterling className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                            <div>
+                                <div className='flex gap-8'>
+                                    <div className='max-w-xs'>
+                                        <FormField
+                                            control={form.control}
+                                            name='creditAmount'
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Credit amount
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <div className='relative w-full'>
+                                                            <PoundSterling className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                                                            <Input
+                                                                type='number'
+                                                                className='pl-8'
+                                                                placeholder='Credit amount'
+                                                                {...field}
+                                                                value={
+                                                                    undefined
+                                                                }
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    form.setValue(
+                                                                        'creditAmount',
+                                                                        parseInt(
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                            10
+                                                                        )
+                                                                    );
+                                                                    form.trigger();
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className='min-w-lg'>
+                                        <FormField
+                                            control={form.control}
+                                            name='invoiceEmail'
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Invoice Email{' '}
+                                                        <span className='text-muted-foreground text-xs'>
+                                                            (optional)
+                                                        </span>
+                                                    </FormLabel>
+                                                    <FormControl>
                                                         <Input
-                                                            type='number'
-                                                            className='pl-8'
-                                                            placeholder='Credit amount'
+                                                            className='w-72'
+                                                            type='email'
+                                                            placeholder='Invoice Email'
                                                             {...field}
                                                             value={undefined}
                                                             onChange={(e) => {
                                                                 form.setValue(
-                                                                    'creditAmount',
-                                                                    parseInt(
-                                                                        e.target
-                                                                            .value,
-                                                                        10
-                                                                    )
+                                                                    'invoiceEmail',
+                                                                    e.target
+                                                                        .value
+                                                                        ? e
+                                                                              .target
+                                                                              .value
+                                                                        : null
                                                                 );
                                                                 form.trigger();
                                                             }}
                                                         />
-                                                    </div>
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className='min-w-lg'>
-                                    <FormField
-                                        control={form.control}
-                                        name='invoiceEmail'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Invoice Email{' '}
-                                                    <span className='text-muted-foreground text-xs'>
-                                                        (optional)
-                                                    </span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        className='w-72'
-                                                        type='email'
-                                                        placeholder='Invoice Email'
-                                                        {...field}
-                                                        value={undefined}
-                                                        onChange={(e) => {
-                                                            form.setValue(
-                                                                'invoiceEmail',
-                                                                e.target.value
-                                                                    ? e.target
-                                                                          .value
-                                                                    : null
-                                                            );
-                                                            form.trigger();
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <div>
+                                        <FormField
+                                            control={form.control}
+                                            name='isTncSeller'
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Is TNC Seller
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type='checkbox'
+                                                            {...field}
+                                                            value={undefined}
+                                                            onChange={(e) => {
+                                                                form.setValue(
+                                                                    'isTncSeller',
+                                                                    e.target
+                                                                        .checked
+                                                                );
+                                                                form.trigger();
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
                                 </div>
                                 <div>
                                     <FormField
                                         control={form.control}
-                                        name='isTncSeller'
+                                        name='isTier2'
                                         render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Is TNC Seller
-                                                </FormLabel>
+                                            <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 mt-6 shadow-sm max-w-xl'>
+                                                <div className='space-y-0.5'>
+                                                    <FormLabel>
+                                                        Enable Tier 2
+                                                    </FormLabel>
+                                                    <FormDescription>
+                                                        Use the switch to set
+                                                        the trader tier for
+                                                        enhanced credit terms
+                                                        (30 days instead of 14
+                                                        days).
+                                                    </FormDescription>
+                                                </div>
                                                 <FormControl>
-                                                    <Input
-                                                        type='checkbox'
-                                                        {...field}
-                                                        value={undefined}
-                                                        onChange={(e) => {
-                                                            form.setValue(
-                                                                'isTncSeller',
-                                                                e.target.checked
-                                                            );
-                                                            form.trigger();
-                                                        }}
+                                                    <Switch
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
                                                     />
                                                 </FormControl>
                                             </FormItem>

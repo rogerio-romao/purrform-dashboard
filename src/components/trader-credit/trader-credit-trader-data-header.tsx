@@ -39,6 +39,16 @@ export default function TraderCreditTraderDataHeader({
                         <p className='text-muted-foreground mt-[0.15rem]'>
                             {trader.bc_customer_email}
                         </p>
+                        <p className='text-sm'>
+                            <span className='font-semibold'>
+                                Tier {trader.tier}
+                            </span>{' '}
+                            <span className='text-muted-foreground text-xs'>
+                                {trader.tier === '1'
+                                    ? '(14 days terms)'
+                                    : '(30 days terms)'}
+                            </span>
+                        </p>
                         {trader.invoice_email && (
                             <p className='text-muted-foreground mt-[0.15rem]'>
                                 <span className='dark:text-white text-gray-800'>
@@ -47,7 +57,7 @@ export default function TraderCreditTraderDataHeader({
                                 {trader.invoice_email}
                             </p>
                         )}
-                        {trader.has_overdue && (
+                        {has_overdue && (
                             <span className='text-xs text-red-500 font-semibold uppercase tracking-wider'>
                                 Overdue orders
                             </span>
