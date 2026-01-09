@@ -7,6 +7,7 @@ import {
     ArrowLeftFromLine,
     BarChart,
     Beef,
+    CalendarDays,
     CirclePercent,
     CreditCard,
     ShieldCheck,
@@ -83,6 +84,12 @@ const items: NavItem[] = [
         title: 'TNC Sellers',
         to: 'tnc-sellers',
         icon: ShoppingCart,
+        allowedRoles: ['admin'],
+    },
+    {
+        title: 'Delivery Dates',
+        to: 'delivery-dates',
+        icon: CalendarDays,
         allowedRoles: ['admin'],
     },
 ];

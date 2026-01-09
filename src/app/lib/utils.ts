@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { z } from 'zod';
+import { date, z } from 'zod';
 
 import type {
     CouponTypeMonthBreakdown,
@@ -203,4 +203,9 @@ export function downloadCsv(csv: string, filename: string) {
 export const gbpFormatter = new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency: 'GBP',
+});
+
+export const adjustDeliverySlotSchema = z.object({
+    date: z.string({ required_error: 'Date is required' }).min(1),
+    newSlots: z.coerce.number().min(0, 'Number cannot be negative'),
 });

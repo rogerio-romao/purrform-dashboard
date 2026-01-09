@@ -174,3 +174,23 @@ export interface TNCSeller {
     last_name: string;
     email: string;
 }
+
+export interface DeliveryDate {
+    id: number;
+    date: string;
+    slots: number;
+}
+
+export interface BankHolidayEvent {
+    title: string;
+    date: string;
+    notes: string;
+    bunting: boolean;
+}
+
+export interface BankHolidaysResponse {
+    'england-and-wales': {
+        division: string;
+        events: BankHolidayEvent[];
+    };
+}
