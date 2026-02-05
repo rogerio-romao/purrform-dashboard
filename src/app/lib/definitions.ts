@@ -20,9 +20,11 @@ export const LoginFormSchema = z.object({
             'rogerio.romao@hotmail.com',
             'frank.stormfield@nutriment.com',
             'fredrik.bergstrom@nutriment.com',
+            'sofia.benmessaoud@nutriment.com',
+            'ryan.winwright@nutriment.com',
             ...BOOKKEEPER_EMAILS,
         ],
-        { message: 'Invalid email' }
+        { message: 'Invalid email' },
     ),
     password: z.enum([PASSWORD!], { message: 'Invalid password' }),
 });
