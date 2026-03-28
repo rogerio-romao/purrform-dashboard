@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
@@ -106,33 +105,35 @@ export default function PeriodComparisonGlobal(
 
     return (
         <>
-            <CardHeader className='px-7 relative'>
-                <CardDescription className='flex flex-col gap-2'>
-                    Select time periods to compare
-                    <Select
-                        value={selectedPeriodType}
-                        onValueChange={handleSelectPeriodType}
-                    >
-                        <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='Select Period' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='Year'>Year</SelectItem>
-                            <SelectItem value='Month'>Month</SelectItem>
-                            <SelectItem value='Week'>Week</SelectItem>
-                            <SelectItem value='Day'>Day</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </CardDescription>
-                {showGetDataButton ? (
-                    <Button
-                        size={'lg'}
-                        className='md:absolute top-4 right-6'
-                        onClick={handleGetData}
-                    >
-                        Get Data
-                    </Button>
-                ) : null}
+            <CardHeader className='px-7'>
+                <div className='flex items-center gap-4 flex-wrap'>
+                    <div className='flex items-center gap-2'>
+                        <span className='text-sm text-muted-foreground whitespace-nowrap'>Period Type</span>
+                        <Select
+                            value={selectedPeriodType}
+                            onValueChange={handleSelectPeriodType}
+                        >
+                            <SelectTrigger className='w-[180px]'>
+                                <SelectValue placeholder='Select Period' />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value='Year'>Year</SelectItem>
+                                <SelectItem value='Month'>Month</SelectItem>
+                                <SelectItem value='Week'>Week</SelectItem>
+                                <SelectItem value='Day'>Day</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    {showGetDataButton ? (
+                        <Button
+                            size={'lg'}
+                            className='ml-auto'
+                            onClick={handleGetData}
+                        >
+                            Get Data
+                        </Button>
+                    ) : null}
+                </div>
             </CardHeader>
             {fetchDataError ? (
                 <CardContent className='text-red-500 py-2 px-6'>

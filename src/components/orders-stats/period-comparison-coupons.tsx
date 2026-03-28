@@ -10,7 +10,6 @@ import TimeSelection from './time-selection';
 import { Button } from '@/components/ui/button';
 import {
     CardContent,
-    CardDescription,
     CardHeader,
 } from '@/components/ui/card';
 import {
@@ -119,10 +118,10 @@ export default function PeriodComparisonCoupons() {
 
     return (
         <>
-            <CardHeader className='px-7 relative mb-3'>
-                <div className='grid grid-cols-3 mb-3'>
-                    <CardDescription className='flex flex-col gap-2 col-span-2'>
-                        Select time periods to compare
+            <CardHeader className='px-7'>
+                <div className='flex items-center gap-4 flex-wrap'>
+                    <div className='flex items-center gap-2'>
+                        <span className='text-sm text-muted-foreground whitespace-nowrap'>Period Type</span>
                         <Select
                             value={selectedPeriodType}
                             onValueChange={handleSelectPeriodType}
@@ -137,9 +136,9 @@ export default function PeriodComparisonCoupons() {
                                 <SelectItem value='Day'>Day</SelectItem>
                             </SelectContent>
                         </Select>
-                    </CardDescription>
-                    <CardDescription className='flex flex-col gap-2 col-span-1'>
-                        Select coupon type
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <span className='text-sm text-muted-foreground whitespace-nowrap'>Coupon Type</span>
                         <Select
                             value={selectedCouponPrefix}
                             onValueChange={setSelectedCouponPrefix}
@@ -165,17 +164,17 @@ export default function PeriodComparisonCoupons() {
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                    </CardDescription>
+                    </div>
+                    {showGetDataButton ? (
+                        <Button
+                            size={'lg'}
+                            className='ml-auto'
+                            onClick={handleGetData}
+                        >
+                            Get Data
+                        </Button>
+                    ) : null}
                 </div>
-                {showGetDataButton ? (
-                    <Button
-                        size={'lg'}
-                        className='md:absolute top-4 right-6'
-                        onClick={handleGetData}
-                    >
-                        Get Data
-                    </Button>
-                ) : null}
             </CardHeader>
             {fetchDataError ? (
                 <CardContent className='text-red-500 py-2 px-6'>
