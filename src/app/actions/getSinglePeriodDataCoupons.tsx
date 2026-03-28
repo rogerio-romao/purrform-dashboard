@@ -9,6 +9,10 @@ interface ComparisonDataCoupons {
     label: string;
 }
 
+type BackendResponse =
+    | { ok: true; data: { period1: ComparisonDataCoupons } }
+    | { ok: false; error: string };
+
 export type SinglePeriodDataCouponsResponse =
     | { ok: true; data: { period: ComparisonDataCoupons } }
     | { ok: false; error: string };
@@ -28,12 +32,13 @@ export default async function getSinglePeriodDataCoupons(
             throw new Error(error.error);
         }
 
-        const json = (await response.json()) as SinglePeriodDataCouponsResponse;
+        const json = (await response.json()) as BackendResponse;
+        console.log('Single period coupon data fetched:', json);
         if (!json.ok) {
             throw new Error(json.error);
         }
 
-        return json;
+        return { ok: true, data: { period: json.data.period1 } };
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(
