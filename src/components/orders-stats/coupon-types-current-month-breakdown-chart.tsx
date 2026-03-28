@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import {
@@ -14,9 +17,10 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from '@/components/ui/chart';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 import type { CouponType, CouponTypeMonthBreakdown } from '@/app/lib/types';
-import { Car } from 'lucide-react';
 
 const chartConfig = {
     couponValue: {
@@ -40,6 +44,8 @@ export default function CouponTypesCurrentMonthBreakdownChart({
     chartData,
     couponTypes,
 }: CouponTypesCurrentMonthBreakdownChartProps) {
+    const [hideUnused, setHideUnused] = useState(false);
+
     if (!chartData || chartData.length === 0) {
         return (
             <Card>
@@ -47,6 +53,12 @@ export default function CouponTypesCurrentMonthBreakdownChart({
             </Card>
         );
     }
+
+    const filteredData = hideUnused
+        ? chartData.filter((d) => d.coupon_value > 0 || d.coupon_nr > 0)
+        : chartData;
+
+    const filteredPrefixes = new Set(filteredData.map((d) => d.coupon_prefix));
 
     const top3ByValue = chartData
         .toSorted((a, b) => b.coupon_value - a.coupon_value)
@@ -63,16 +75,31 @@ export default function CouponTypesCurrentMonthBreakdownChart({
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{currentMonthYear}</CardTitle>
-                <CardDescription>
-                    Coupon statistics by value and number of orders for the
-                    current month.
-                </CardDescription>
+            <CardHeader className='flex flex-row items-start justify-between'>
+                <div>
+                    <CardTitle>{currentMonthYear}</CardTitle>
+                    <CardDescription>
+                        Coupon statistics by value and number of orders for the
+                        current month.
+                    </CardDescription>
+                </div>
+                <div className='flex items-center gap-2'>
+                    <Label
+                        htmlFor='hide-unused-toggle'
+                        className='text-sm text-gray-500'
+                    >
+                        Hide unused
+                    </Label>
+                    <Switch
+                        id='hide-unused-toggle'
+                        checked={hideUnused}
+                        onCheckedChange={setHideUnused}
+                    />
+                </div>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
-                    <BarChart accessibilityLayer data={chartData}>
+                    <BarChart accessibilityLayer data={filteredData}>
                         <CartesianGrid vertical={false} />
                         <XAxis
                             dataKey='coupon_prefix'
@@ -107,17 +134,19 @@ export default function CouponTypesCurrentMonthBreakdownChart({
                 <div className='leading-none font-medium'>Legend</div>
                 <div className='text-muted-foreground leading-none text-xs'>
                     <div className='flex flex-wrap gap-2'>
-                        {couponTypes.map((type) => (
-                            <div
-                                key={type.id}
-                                className='border rounded-sm p-1'
-                            >
-                                <span className='font-medium text-green-600'>
-                                    {type.prefix}
-                                </span>
-                                <span className='ml-2'>{type.name}</span>
-                            </div>
-                        ))}
+                        {couponTypes
+                            .filter((t) => filteredPrefixes.has(t.prefix))
+                            .map((type) => (
+                                <div
+                                    key={type.id}
+                                    className='border rounded-sm p-1'
+                                >
+                                    <span className='font-medium text-green-600'>
+                                        {type.prefix}
+                                    </span>
+                                    <span className='ml-2'>{type.name}</span>
+                                </div>
+                            ))}
                     </div>
                 </div>
                 <div className='leading-none font-medium mt-3'>

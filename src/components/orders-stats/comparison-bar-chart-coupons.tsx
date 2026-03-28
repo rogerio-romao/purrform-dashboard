@@ -108,26 +108,28 @@ export default function ComparisonBarChartCoupons({
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className='flex-col items-start gap-2 text-sm'>
-                <div className='flex gap-2 font-medium leading-none'>
-                    <TrendingText
-                        percentageDifference={percentageDifference}
-                        firstValue={firstValue ?? 0}
-                        secondValue={lastValue ?? 0}
-                        label={lastLabel}
-                        labelPrefix={labelPrefix}
-                    />
-                </div>
-                {type === 'coupon_value' && (
-                    <div className='flex gap-1 text-xs text-muted-foreground justify-between w-full'>
-                        {averageValueData.map(({ label, average }) => (
-                            <div key={label}>
-                                £ per coupon {label}: £{average.toFixed(2)}
-                            </div>
-                        ))}
+            {chartData.length > 1 && (
+                <CardFooter className='flex-col items-start gap-2 text-sm'>
+                    <div className='flex gap-2 font-medium leading-none'>
+                        <TrendingText
+                            percentageDifference={percentageDifference}
+                            firstValue={firstValue ?? 0}
+                            secondValue={lastValue ?? 0}
+                            label={lastLabel}
+                            labelPrefix={labelPrefix}
+                        />
                     </div>
-                )}
-            </CardFooter>
+                    {type === 'coupon_value' && (
+                        <div className='flex gap-1 text-xs text-muted-foreground justify-between w-full'>
+                            {averageValueData.map(({ label, average }) => (
+                                <div key={label}>
+                                    £ per coupon {label}: £{average.toFixed(2)}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </CardFooter>
+            )}
         </Card>
     );
 }

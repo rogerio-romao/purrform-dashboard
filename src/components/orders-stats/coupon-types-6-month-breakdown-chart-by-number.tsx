@@ -1,4 +1,7 @@
-import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
+'use client';
+
+import { useState } from 'react';
+import { CartesianGrid, LabelList, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 import {
     Card,
@@ -77,6 +80,12 @@ export default function CouponTypes6MonthBreakdownChartByNumber({
     chartData,
     couponTypes,
 }: CouponTypes6MonthBreakdownChartProps) {
+    const [focusedKey, setFocusedKey] = useState<string | null>(null);
+
+    const handleLegendClick = (dataKey: string) => {
+        setFocusedKey((prev) => (prev === dataKey ? null : dataKey));
+    };
+
     if (!chartData || chartData.length === 0) {
         return (
             <Card>
@@ -146,6 +155,7 @@ export default function CouponTypes6MonthBreakdownChartByNumber({
                         accessibilityLayer
                         data={transformedData}
                         margin={{
+                            top: 24,
                             left: 12,
                             right: 12,
                         }}
@@ -168,18 +178,64 @@ export default function CouponTypes6MonthBreakdownChartByNumber({
                             cursor={false}
                             content={<ChartTooltipContent />}
                         />
-                        <Legend wrapperStyle={{ paddingTop: 16 }} />
+                        <Legend
+                            wrapperStyle={{ paddingTop: 16 }}
+                            onClick={(data) =>
+                                handleLegendClick(data.dataKey as string)
+                            }
+                            formatter={(value, entry) => (
+                                <span
+                                    style={{
+                                        cursor: 'pointer',
+                                        opacity:
+                                            focusedKey &&
+                                            focusedKey !==
+                                                (entry as { dataKey?: string })
+                                                    .dataKey
+                                                ? 0.3
+                                                : 1,
+                                        fontWeight:
+                                            focusedKey ===
+                                            (entry as { dataKey?: string })
+                                                .dataKey
+                                                ? 700
+                                                : 400,
+                                    }}
+                                >
+                                    {value}
+                                </span>
+                            )}
+                        />
 
-                        {Object.keys(dynamicChartConfig).map((key) => (
-                            <Line
-                                key={key}
-                                dataKey={key}
-                                type='monotone'
-                                stroke={`var(--color-${key})`}
-                                strokeWidth={2}
-                                dot={true}
-                            />
-                        ))}
+                        {Object.keys(dynamicChartConfig).map((key) => {
+                            const isFocused = focusedKey === key;
+                            const isDimmed = focusedKey !== null && !isFocused;
+                            return (
+                                <Line
+                                    key={key}
+                                    dataKey={key}
+                                    type='monotone'
+                                    stroke={`var(--color-${key})`}
+                                    strokeWidth={isFocused ? 3 : 2}
+                                    strokeOpacity={isDimmed ? 0.1 : 1}
+                                    dot={!isDimmed}
+                                    activeDot={isDimmed ? false : undefined}
+                                >
+                                    {isFocused && (
+                                        <LabelList
+                                            dataKey={key}
+                                            position='top'
+                                            offset={10}
+                                            className='fill-foreground'
+                                            fontSize={11}
+                                            formatter={(value: number) =>
+                                                value.toLocaleString()
+                                            }
+                                        />
+                                    )}
+                                </Line>
+                            );
+                        })}
                     </LineChart>
                 </ChartContainer>
             </CardContent>
@@ -190,7 +246,24 @@ export default function CouponTypes6MonthBreakdownChartByNumber({
                         {couponTypes.map((type) => (
                             <div
                                 key={type.id}
-                                className='border rounded-sm p-1'
+                                className='border rounded-sm p-1 cursor-pointer select-none'
+                                onClick={() =>
+                                    handleLegendClick(type.prefix)
+                                }
+                                style={{
+                                    opacity:
+                                        focusedKey &&
+                                        focusedKey !== type.prefix
+                                            ? 0.3
+                                            : 1,
+                                    borderColor:
+                                        focusedKey === type.prefix
+                                            ? dynamicChartConfig[type.prefix]
+                                                  ?.color
+                                            : undefined,
+                                    borderWidth:
+                                        focusedKey === type.prefix ? 2 : 1,
+                                }}
                             >
                                 <span
                                     className='font-medium'
