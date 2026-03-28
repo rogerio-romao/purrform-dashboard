@@ -25,7 +25,7 @@ export default function CouponTypesBreakdown() {
         const fetchCouponTypes = async () => {
             try {
                 const response = await fetch(
-                    `${BACKEND_BASE_URL}/getCouponTypes`
+                    `${BACKEND_BASE_URL}/getCouponTypes`,
                 );
                 if (!response.ok) {
                     throw new Error('Failed to fetch coupon types');
@@ -50,8 +50,8 @@ export default function CouponTypesBreakdown() {
             <CardHeader className='px-7'>
                 <CardTitle>Coupon Codes by Type</CardTitle>
                 <CardDescription className='flex items-center gap-2'>
-                    Current month breakdown, 6 months breakdown and lookup by
-                    date and type comparison.
+                    Current month breakdown and 6 months breakdown of coupon
+                    stats by type of coupon.
                     <TrendingUp className='h-4 w-4' />
                 </CardDescription>
             </CardHeader>
