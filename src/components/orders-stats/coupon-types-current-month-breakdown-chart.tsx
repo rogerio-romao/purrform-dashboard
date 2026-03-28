@@ -60,16 +60,16 @@ export default function CouponTypesCurrentMonthBreakdownChart({
 
     const filteredPrefixes = new Set(filteredData.map((d) => d.coupon_prefix));
 
-    const top3ByValue = filteredData
+    const top3ByValue = chartData
         .toSorted((a, b) => b.coupon_value - a.coupon_value)
         .slice(0, 3);
-    const bottom3ByValue = filteredData
+    const bottom3ByValue = chartData
         .toSorted((a, b) => a.coupon_value - b.coupon_value)
         .slice(0, 3);
-    const top3ByNr = filteredData
+    const top3ByNr = chartData
         .toSorted((a, b) => b.coupon_nr - a.coupon_nr)
         .slice(0, 3);
-    const bottom3ByNr = filteredData
+    const bottom3ByNr = chartData
         .toSorted((a, b) => a.coupon_nr - b.coupon_nr)
         .slice(0, 3);
 
