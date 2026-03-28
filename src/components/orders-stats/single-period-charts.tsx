@@ -1,4 +1,3 @@
-import { Skeleton } from '@/components/ui/skeleton';
 import ComparisonBarCharts from './comparison-bar-charts';
 
 type PeriodData = {
@@ -18,14 +17,10 @@ type SinglePeriodChartsProps = {
 export default function SinglePeriodCharts(
     { periodData }: SinglePeriodChartsProps = {
         periodData: null,
-    }
+    },
 ) {
     if (!periodData) {
-        return (
-            <section className='p-6'>
-                <Skeleton className='h-96' />
-            </section>
-        );
+        return null;
     }
 
     return <ComparisonBarCharts chartData={[periodData!]} />;

@@ -17,7 +17,7 @@ export default function ComparisonBarChartsCoupons({
     }
 
     return (
-        <section className='grid grid-rows-2 lg:grid-cols-2 gap-12 p-6'>
+        <section className='grid lg:grid-cols-2 gap-12 p-6'>
             <ComparisonBarChartCoupons
                 type='coupon_value'
                 chartData={chartData}
