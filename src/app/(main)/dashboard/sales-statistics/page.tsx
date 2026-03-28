@@ -8,6 +8,7 @@ import { months } from '@/app/lib/utils';
 import Loading from '@/components/common/loading';
 import CouponTypesBreakdown from '@/components/orders-stats/coupon-types-breakdown';
 import CsvReports from '@/components/orders-stats/csv-reports';
+import NonCouponCampaigns from '@/components/orders-stats/non-coupon-campaigns';
 import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
 import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
@@ -323,6 +324,8 @@ export default function SalesStatistics() {
                         <CouponTypesBreakdown />
 
                         <PeriodComparisonCoupons />
+
+                        <NonCouponCampaigns />
                     </div>
                 </div>
             </div>
