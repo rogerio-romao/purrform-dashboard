@@ -13,7 +13,7 @@ import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-ch
 import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
 import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
 import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
-import PeriodComparisonCoupons from '@/components/orders-stats/period-comparison-coupons';
+import CouponStatisticsWrapper from '@/components/orders-stats/coupon-statistics-wrapper';
 import SalesStatisticsWrapper from '@/components/orders-stats/sales-statistics-wrapper';
 import SectionNav from '@/components/orders-stats/section-nav';
 
@@ -335,7 +335,7 @@ export default function SalesStatistics() {
                         </div>
 
                         <div id='coupon-comparison' className='scroll-mt-16'>
-                            <PeriodComparisonCoupons />
+                            <CouponStatisticsWrapper />
                         </div>
 
                         <div id='non-coupon-campaigns' className='scroll-mt-16'>
