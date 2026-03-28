@@ -15,6 +15,7 @@ import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-char
 import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
 import PeriodComparisonCoupons from '@/components/orders-stats/period-comparison-coupons';
 import SalesStatisticsWrapper from '@/components/orders-stats/sales-statistics-wrapper';
+import SectionNav from '@/components/orders-stats/section-nav';
 
 import {
     Card,
@@ -278,54 +279,68 @@ export default function SalesStatistics() {
                             </Card>
                         </div>
 
-                        <CsvReports />
+                        <SectionNav />
 
-                        <Card>
-                            <CardHeader className='px-7'>
-                                <CardTitle>
-                                    Orders, Loyalty Points & Coupons
-                                </CardTitle>
-                                <CardDescription className='flex items-center gap-2'>
-                                    Last 6 months breakdown
-                                    <TrendingUp className='h-4 w-4' />
-                                </CardDescription>
-                            </CardHeader>
-                            <section className='grid lg:grid-cols-2'>
-                                <CardContent>
-                                    <OrdersValueBarChart
-                                        chartData={ordersValueChartData}
-                                    />
-                                </CardContent>
-                                <CardContent>
-                                    <OrdersNumberBarChart
-                                        chartData={ordersNumberChartData}
-                                    />
-                                </CardContent>
-                            </section>
-                            <section className='grid lg:grid-cols-2'>
-                                <CardContent>
-                                    <OrdersValuePercentageBarChart
-                                        chartData={ordersValueChartData}
-                                    />
-                                </CardContent>
-                                <CardContent>
-                                    <OrdersNumberPercentageBarChart
-                                        chartData={ordersNumberChartData}
-                                    />
-                                </CardContent>
-                            </section>
-                        </Card>
+                        <div id='csv-reports' className='scroll-mt-16'>
+                            <CsvReports />
+                        </div>
 
-                        <SalesStatisticsWrapper
-                            ordersValueChartData={ordersValueChartData}
-                            ordersNumberChartData={ordersNumberChartData}
-                        />
+                        <div id='orders-charts' className='scroll-mt-16'>
+                            <Card>
+                                <CardHeader className='px-7'>
+                                    <CardTitle>
+                                        Orders, Loyalty Points & Coupons
+                                    </CardTitle>
+                                    <CardDescription className='flex items-center gap-2'>
+                                        Last 6 months breakdown
+                                        <TrendingUp className='h-4 w-4' />
+                                    </CardDescription>
+                                </CardHeader>
+                                <section className='grid lg:grid-cols-2'>
+                                    <CardContent>
+                                        <OrdersValueBarChart
+                                            chartData={ordersValueChartData}
+                                        />
+                                    </CardContent>
+                                    <CardContent>
+                                        <OrdersNumberBarChart
+                                            chartData={ordersNumberChartData}
+                                        />
+                                    </CardContent>
+                                </section>
+                                <section className='grid lg:grid-cols-2'>
+                                    <CardContent>
+                                        <OrdersValuePercentageBarChart
+                                            chartData={ordersValueChartData}
+                                        />
+                                    </CardContent>
+                                    <CardContent>
+                                        <OrdersNumberPercentageBarChart
+                                            chartData={ordersNumberChartData}
+                                        />
+                                    </CardContent>
+                                </section>
+                            </Card>
+                        </div>
 
-                        <CouponTypesBreakdown />
+                        <div id='sales-statistics' className='scroll-mt-16'>
+                            <SalesStatisticsWrapper
+                                ordersValueChartData={ordersValueChartData}
+                                ordersNumberChartData={ordersNumberChartData}
+                            />
+                        </div>
 
-                        <PeriodComparisonCoupons />
+                        <div id='coupon-types' className='scroll-mt-16'>
+                            <CouponTypesBreakdown />
+                        </div>
 
-                        <NonCouponCampaigns />
+                        <div id='coupon-comparison' className='scroll-mt-16'>
+                            <PeriodComparisonCoupons />
+                        </div>
+
+                        <div id='non-coupon-campaigns' className='scroll-mt-16'>
+                            <NonCouponCampaigns />
+                        </div>
                     </div>
                 </div>
             </div>
