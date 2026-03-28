@@ -1,6 +1,5 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { months } from '@/app/lib/utils';
@@ -9,10 +8,7 @@ import Loading from '@/components/common/loading';
 import CouponTypesBreakdown from '@/components/orders-stats/coupon-types-breakdown';
 import CsvReports from '@/components/orders-stats/csv-reports';
 import NonCouponCampaigns from '@/components/orders-stats/non-coupon-campaigns';
-import OrdersNumberBarChart from '@/components/orders-stats/orders-number-bar-chart';
-import OrdersNumberPercentageBarChart from '@/components/orders-stats/orders-number-percentage-bar-chart';
-import OrdersValueBarChart from '@/components/orders-stats/orders-value-bar-chart';
-import OrdersValuePercentageBarChart from '@/components/orders-stats/orders-value-percentage-bar-chart';
+import OrdersChartsPanel from '@/components/orders-stats/orders-charts-panel';
 import CouponStatisticsWrapper from '@/components/orders-stats/coupon-statistics-wrapper';
 import SalesStatisticsWrapper from '@/components/orders-stats/sales-statistics-wrapper';
 import SectionNav from '@/components/orders-stats/section-nav';
@@ -286,41 +282,10 @@ export default function SalesStatistics() {
                         </div>
 
                         <div id='orders-charts' className='scroll-mt-16'>
-                            <Card>
-                                <CardHeader className='px-7'>
-                                    <CardTitle>
-                                        Orders, Loyalty Points & Coupons
-                                    </CardTitle>
-                                    <CardDescription className='flex items-center gap-2'>
-                                        Last 6 months breakdown
-                                        <TrendingUp className='h-4 w-4' />
-                                    </CardDescription>
-                                </CardHeader>
-                                <section className='grid lg:grid-cols-2'>
-                                    <CardContent>
-                                        <OrdersValueBarChart
-                                            chartData={ordersValueChartData}
-                                        />
-                                    </CardContent>
-                                    <CardContent>
-                                        <OrdersNumberBarChart
-                                            chartData={ordersNumberChartData}
-                                        />
-                                    </CardContent>
-                                </section>
-                                <section className='grid lg:grid-cols-2'>
-                                    <CardContent>
-                                        <OrdersValuePercentageBarChart
-                                            chartData={ordersValueChartData}
-                                        />
-                                    </CardContent>
-                                    <CardContent>
-                                        <OrdersNumberPercentageBarChart
-                                            chartData={ordersNumberChartData}
-                                        />
-                                    </CardContent>
-                                </section>
-                            </Card>
+                            <OrdersChartsPanel
+                                ordersValueChartData={ordersValueChartData}
+                                ordersNumberChartData={ordersNumberChartData}
+                            />
                         </div>
 
                         <div id='sales-statistics' className='scroll-mt-16'>
