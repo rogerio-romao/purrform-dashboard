@@ -44,7 +44,7 @@ export default function CouponTypesCurrentMonthBreakdownChart({
     chartData,
     couponTypes,
 }: CouponTypesCurrentMonthBreakdownChartProps) {
-    const [hideUnused, setHideUnused] = useState(false);
+    const [hideUnused, setHideUnused] = useState(true);
 
     if (!chartData || chartData.length === 0) {
         return (
