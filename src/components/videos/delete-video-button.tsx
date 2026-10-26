@@ -31,24 +31,33 @@ export default function DeleteVideoButton({
 
     async function handleDelete() {
         setDeleting(true);
-        const response = await deleteVideo(id);
-        setDeleting(false);
+        try {
+            const response = await deleteVideo(id);
 
-        if (!response.ok) {
+            if (!response.ok) {
+                toast({
+                    variant: 'destructive',
+                    title: 'ERROR',
+                    description: response.error,
+                });
+                return;
+            }
+
+            // the list itself is updated by the realtime subscription
+            toast({
+                variant: 'default',
+                title: 'SUCCESS',
+                description: 'Video deleted successfully.',
+            });
+        } catch {
             toast({
                 variant: 'destructive',
                 title: 'ERROR',
-                description: response.error,
+                description: 'Failed to delete video',
             });
-            return;
+        } finally {
+            setDeleting(false);
         }
-
-        // the list itself is updated by the realtime subscription
-        toast({
-            variant: 'default',
-            title: 'SUCCESS',
-            description: 'Video deleted successfully.',
-        });
     }
 
     return (

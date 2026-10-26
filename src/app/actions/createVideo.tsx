@@ -13,7 +13,7 @@ interface YoutubeOembedResponse {
 }
 
 export default async function createVideo(
-    input: z.infer<typeof createVideoFormSchema>
+    input: z.infer<typeof createVideoFormSchema>,
 ): Promise<{ ok: false; error: string } | { ok: true }> {
     try {
         if ((await getSessionRole()) !== 'admin') {
@@ -34,8 +34,9 @@ export default async function createVideo(
         // oEmbed returns 401/404 for private, removed or non-embeddable videos
         const oembedResponse = await fetch(
             `https://www.youtube.com/oembed?url=${encodeURIComponent(
-                youtubeWatchUrl(youtubeId)
-            )}&format=json`
+                youtubeWatchUrl(youtubeId),
+            )}&format=json`,
+            { signal: AbortSignal.timeout(10_000) },
         );
         if (!oembedResponse.ok) {
             return {
@@ -57,7 +58,10 @@ export default async function createVideo(
 
         if (error) {
             if (error.code === '23505') {
-                return { ok: false, error: 'This video has already been added' };
+                return {
+                    ok: false,
+                    error: 'This video has already been added',
+                };
             }
             console.error('Error creating video:', error);
             return { ok: false, error: 'Failed to add video' };
