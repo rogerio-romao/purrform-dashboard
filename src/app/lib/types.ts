@@ -188,6 +188,18 @@ export interface BankHolidayEvent {
     bunting: boolean;
 }
 
+export interface Video {
+    id: number;
+    created_at: string;
+    youtube_id: string;
+    source_url: string | null;
+    title: string | null;
+    description: string | null;
+    youtube_title: string | null;
+    youtube_channel: string | null;
+    category: string | null;
+}
+
 export interface BankHolidaysResponse {
     'england-and-wales': {
         division: string;

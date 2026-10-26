@@ -7,6 +7,7 @@ import type {
     CsvDataStats,
     TransformedDataForCouponSemesterGraph,
 } from '@/app/lib/types';
+import { extractYoutubeId } from '@/app/lib/youtube';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -95,6 +96,26 @@ export const createCouponTypeFormSchema = z.object({
         .min(1, 'Prefix must be at least 1 character'),
     description: z.string().optional(),
     details: z.string().optional(),
+});
+
+export const updateVideoFormSchema = z.object({
+    title: z.string().trim().max(200, 'Title is too long').optional(),
+    description: z
+        .string()
+        .trim()
+        .max(2000, 'Description is too long')
+        .optional(),
+    category: z.string().trim().max(100, 'Category is too long').optional(),
+});
+
+export const createVideoFormSchema = updateVideoFormSchema.extend({
+    url: z
+        .string({ required_error: 'YouTube link is required' })
+        .trim()
+        .min(1, 'YouTube link is required')
+        .refine((value) => extractYoutubeId(value) !== null, {
+            message: 'Please paste a valid YouTube link',
+        }),
 });
 
 export const filterOrdersByDateFormSchema = z.object({
