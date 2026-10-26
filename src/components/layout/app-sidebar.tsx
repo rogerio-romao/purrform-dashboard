@@ -13,6 +13,7 @@ import {
     ShieldCheck,
     ShoppingCart,
     Store,
+    Video,
 } from 'lucide-react';
 
 import {
@@ -90,6 +91,12 @@ const items: NavItem[] = [
         title: 'Delivery Dates',
         to: 'delivery-dates',
         icon: CalendarDays,
+        allowedRoles: ['admin'],
+    },
+    {
+        title: 'Videos',
+        to: 'videos',
+        icon: Video,
         allowedRoles: ['admin'],
     },
 ];
